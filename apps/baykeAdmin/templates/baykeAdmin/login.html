@@ -1,0 +1,86 @@
+{% extends 'baykeAdmin/base_site.html' %}
+
+{% load i18n static %}
+
+{% block stylesheet %}https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css{% endblock %}
+
+{% block container %}
+<section class="hero is-fullheight">
+    <div class="hero-body">
+        <div class="container">
+            <div class="columns is-centered">
+                <div class="column is-5-fullhd is-5-desktop is-5-widescreen">
+                    <div class="box p-6">
+                        <p class="subtitle has-text-centered">{{ title }}</p>
+                        <h1 class="title is-size-3 has-text-centered">{{ site_title }}</h1>
+                        <div class="dropdown-divider"></div>
+
+                        {% if form.errors and not form.non_field_errors %}
+                        <article class="message is-danger">
+                            <div class="message-body">
+                                {% if form.errors.items|length == 1 %}{% translate "Please correct the error below." %}{% else %}{% translate "Please correct the errors below." %}{% endif %}
+                            </div>
+                        </article>
+                        {% endif %}
+
+                        {% if form.non_field_errors %}
+                        <article class="message is-danger">
+                            <div class="message-body">
+                                {% for error in form.non_field_errors %}
+                                   <p> {{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        </article>
+                        {% endif %}
+
+                        <div class="login">
+                            {% if user.is_authenticated %}
+                            <p class="errornote">
+                            {% blocktranslate trimmed %}
+                                You are authenticated as {{ username }}, but are not authorized to
+                                access this page. Would you like to login to a different account?
+                            {% endblocktranslate %}
+                            </p>
+                            {% endif %}
+                
+                            <form action="{{ app_path }}" method="post" id="login-form" class="mt-3">{% csrf_token %}
+                                <div class="field">
+                                    {# {{ form.username.label_tag }} #}
+                                    <div class="control has-icons-left">
+                                        {{ form.username }}
+                                        <span class="icon is-small is-left">
+                                            <i class="mdi mdi-account"></i>
+                                        </span>
+                                    </div>
+                                    <p class="help is-success">{{ form.username.errors }}</p>
+                                </div>
+                                <div class="field">
+                                    {# {{ form.password.label_tag }} #} 
+                                    <div class="control has-icons-left">
+                                        {{ form.password }}
+                                        <span class="icon is-small is-left">
+                                            <i class="mdi mdi-lock"></i>
+                                        </span>
+                                    </div>
+                                    <p class="help is-success">{{ form.password.errors }}</p>
+                                </div>
+                                {% url 'admin_password_reset' as password_reset_url %}
+                                {% if password_reset_url %}
+                                <div class="password-reset-link">
+                                  <a href="{{ password_reset_url }}">{% translate 'Forgotten your password or username?' %}</a>
+                                </div>
+                                {% endif %}
+                                <div class="field">
+                                    <div class="control">
+                                        <input class="button is-primary is-fullwidth" type="submit" value="{% translate 'Log in' %}">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
