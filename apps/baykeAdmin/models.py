@@ -44,3 +44,5 @@ class BaykePermission(BaykeModelMixin):
     def __str__(self):
         """Unicode representation of BaykeMenus."""
         return self.menus.name
+
+
