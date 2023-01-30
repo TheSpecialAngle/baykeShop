@@ -1,0 +1,86 @@
+{% extends 'baykeAdmin/layout.html' %}
+
+{% load i18n static bayke_admin_list %}
+
+{% block stylesheet %}https://unpkg.com/buefy/dist/buefy.min.css{% endblock %}
+
+{% block menu %}
+    {% include 'baykeAdmin/sidebar.html' with app_list=available_apps show_changelinks=False %}
+{% endblock %}
+
+{% block content %}
+
+    <div class="p-3" id="changeList">
+        
+        {% result_list cl as changeData %}
+        {{ changeData|json_script:"change-data" }}
+        <template>
+            <b-table 
+                :data="data"
+                :columns="columns"
+                checkable
+                >     
+            </b-table>
+        </template>
+    </div>
+{% endblock %}
+
+{% block extrafoot %}
+    <script src="https://unpkg.com/vue@2"></script>
+{% endblock %}
+
+{% block extrascript %}
+    <script src="https://unpkg.com/buefy/dist/components/table"></script>
+    <script src="https://unpkg.com/buefy/dist/components/input"></script>
+    <script>
+        var chnangeData = JSON.parse(document.getElementById('change-data').textContent);
+    </script>
+{% endblock %}
+
+{% block vue %}
+    <script>
+        var changeList = new Vue({
+            el: '#changeList',
+            delimiters: ['{$', '$}'],
+            data: {
+                data: chnangeData,
+                columns: [
+                    {
+                        field: 'id',
+                        label: 'ID',
+                    },
+                    {
+                        field: 'name',
+                        label: 'name',
+                    },
+                /*
+                    {
+                        field: 'id',
+                        label: 'ID',
+                        width: '40',
+                        numeric: true
+                    },
+                    {
+                        field: 'first_name',
+                        label: 'First Name',
+                    },
+                    {
+                        field: 'last_name',
+                        label: 'Last Name',
+                    },
+                    {
+                        field: 'date',
+                        label: 'Date',
+                        centered: true
+                    },
+                    {
+                        field: 'gender',
+                        label: 'Gender',
+                    }
+                */
+                ]
+            }
+        })
+    </script>
+{% endblock %}
+    

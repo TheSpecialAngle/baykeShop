@@ -2,12 +2,16 @@
 
 {% load i18n static %}
 
-{% block container %}
+{% block sidebar %}{% endblock %}
+
+{% block is_flex %}{% endblock %}
+
+{% block main %}
 <section class="hero is-fullheight">
     <div class="hero-body">
         <div class="container">
             <div class="columns is-centered">
-                <div class="column is-5-fullhd is-5-desktop is-5-widescreen">
+                <div class="column is-5-fullhd is-5-desktop is-5-widescreen is-5">
                     <div class="box p-6">
                         <p class="subtitle has-text-centered">{{ title }}</p>
                         <h1 class="title is-size-3 has-text-centered">{{ site_title }}</h1>

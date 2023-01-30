@@ -1,0 +1,16 @@
+<aside class="menu">
+  {% for app in app_list  %}
+  <p class="menu-label">
+    {{ app.name }}
+  </p>
+  <ul class="menu-list">
+    {% for menu in app.children %}
+      <li>
+        <a class="{% if menu.admin_url in request.path|urlencode %}is-active{% endif %}" href="{{ menu.admin_url }}">
+          {{ menu.per_name }}
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+  {% endfor %}
+</aside>

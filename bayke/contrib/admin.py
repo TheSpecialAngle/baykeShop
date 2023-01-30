@@ -12,19 +12,18 @@ class BaykeAdminSite(admin.AdminSite):
     login_form = BaykeAdminLoginForm
     login_template = 'baykeAdmin/login.html'
     
-    # index_template = 'baykeAdmin/index.html'
+    index_template = 'baykeAdmin/index.html'
     
     def get_app_list(self, request, app_label=None):
-        
+        menus = []
         if request.user.is_authenticated:
             user = request.user
             # 获取用户拥有权限的菜单
             menus_queryset = BaykeMenu.objects.filter(
                 Q(baykepermission__permission__group__user=user)|
                 Q(baykepermission__permission__user=user)
-            )
+            ).distinct()
 
-            menus = []
             for menu in menus_queryset:
                 menu_dict = {}
                 menu_dict['id'] = menu.id
@@ -32,7 +31,7 @@ class BaykeAdminSite(admin.AdminSite):
                 menu_dict['parent'] = menu.parent.id if menu.parent else None
                 menu_dict['children'] = self._menu_children_list(user, menu.baykepermission_set.show())
                 menus.append(menu_dict)
-        return super().get_app_list(request)
+        return menus
     
     def _menu_children_list(self, user, queryset):
         
@@ -70,7 +69,7 @@ class BaykeAdminSite(admin.AdminSite):
                     q_dict["add_url"] = reverse(
                             "admin:%s_%s_add" % q_dict['info'], current_app=self.name
                         )
-                    children.append(q_dict)
+                    # children.append(q_dict)
                 except NoReverseMatch:
                     pass
                 
