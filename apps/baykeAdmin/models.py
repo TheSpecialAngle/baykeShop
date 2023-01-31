@@ -12,7 +12,8 @@ class BaykeMenu(BaykeModelMixin):
         'self', 
         on_delete=models.CASCADE, 
         blank=True,
-        null=True
+        null=True,
+        editable=False
     )
     
     # TODO: Define fields here
