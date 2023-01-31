@@ -28,3 +28,47 @@ class BaykeModelMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+class BaykeCategoryMixin(BaykeModelMixin):
+    """
+    分类继承基类
+    """
+    name = models.CharField("分类名称", max_length=50)
+    icon = models.CharField("分类icon", max_length=50, blank=True, default="")
+    img_map = models.ImageField(
+        "分类图标", 
+        upload_to="category/imgMap/%Y", 
+        max_length=200,
+        blank=True,
+        null=True
+    )
+    desc = models.CharField("分类描述", max_length=150, blank=True, default="")
+
+    # TODO
+
+    class Meta:
+        abstract = True
+
+
+class BaykeCarouselMixin(BaykeModelMixin):
+    """
+    轮播图基类
+    """
+    img = models.ImageField(
+        "轮播图", 
+        upload_to="Carousel/%Y/%m", 
+        max_length=200,
+    )
+    target_url = models.CharField(
+        "跳转链接", 
+        blank=True, 
+        default="", 
+        max_length=200
+    )
+    desc = models.CharField("描述", max_length=150, blank=True, default="")
+
+    # TODO
+
+    class Meta:
+        abstract = True
