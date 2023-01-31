@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import Permission, Group
+
 # Create your models here.
 
 from baykeCore.models import BaykeModelMixin
@@ -37,10 +38,8 @@ class BaykePermission(BaykeModelMixin):
     # TODO: Define fields here
 
     class Meta:
-        """Meta definition for Permission."""
-
-        verbose_name = 'BaykePermission'
-        verbose_name_plural = 'BaykePermission'
+        verbose_name = '菜单管理'
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         """Unicode representation of BaykeMenus."""

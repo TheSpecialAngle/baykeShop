@@ -1,6 +1,6 @@
-import csv
 from django.contrib import admin
 from django.contrib.auth.models import Permission
+from django.contrib.admin.models import LogEntry
 # Register your models here.
 from .models import BaykeMenu, BaykePermission
 from .custom import CustomActions, CustomColumns
@@ -20,7 +20,7 @@ class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
     
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        if self.model._meta.model_name not in ['user', 'group', 'permission']:
+        if self.model._meta.model_name not in ['user', 'group', 'permission', 'logentry']:
             return queryset.filter(is_del=False)
         return queryset
         
@@ -83,3 +83,25 @@ class BaykePermissionAdmin(BaseModelAdmin):
         if db_field.name == "menus":
             kwargs["queryset"] = BaykeMenu.objects.show().filter(parent__isnull=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
+    
+    
+@admin.register(LogEntry)
+class LogEntryAdmin(BaseModelAdmin):
+    '''Admin View for '''
+
+    list_display = ('id', 'action_time', 'user', 'content_type', 'object_id', 'object_repr', 'action_flag', 'change_message')
+    # list_filter = ('',)
+    # inlines = [
+    #     Inline,
+    # ]
+    # raw_id_fields = ('',)
+    # readonly_fields = ('',)
+    # search_fields = ('',)
+    # date_hierarchy = ''
+    # ordering = ('',)
+    
+    def has_add_permission(self, request) -> bool:
+        return False
+    
+    def has_change_permission(self, request, obj=None) -> bool:
+        return False

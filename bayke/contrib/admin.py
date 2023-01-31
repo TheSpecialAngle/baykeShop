@@ -52,14 +52,16 @@ class BaykeAdminSite(admin.AdminSite):
             q_dict['object_name'] = q.permission.content_type.name
             q_dict['model'] = q.permission.content_type.model
             q_dict['model_obj'] = q.permission.content_type.model_class
-            print(q_dict['object_name'])
             q_dict['info'] = q.permission.content_type.natural_key()
+            
             q_dict['perms'] = {
                 'view': user.has_perm(f"{q_dict['app_label']}.view_{q_dict['model']}"),
                 'change': user.has_perm(f"{q_dict['app_label']}.change_{q_dict['model']}"),
                 'add': user.has_perm(f"{q_dict['app_label']}.add_{q_dict['model']}"),
                 'delete': user.has_perm(f"{q_dict['app_label']}.delete_{q_dict['model']}"),
             }
+            
+            print(q_dict['perms'])
             
             if q_dict['perms']['view'] or q_dict['perms']['change']:
                 q_dict['view_only'] = not q_dict['perms']['change']
@@ -72,14 +74,14 @@ class BaykeAdminSite(admin.AdminSite):
                 except NoReverseMatch:
                     pass
             
-            if q_dict['perms']['add']:
-                try:
-                    q_dict["add_url"] = reverse(
-                            "admin:%s_%s_add" % q_dict['info'], current_app=self.name
-                        )
-                    # children.append(q_dict)
-                except NoReverseMatch:
-                    pass
+            # if q_dict['perms']['add']:
+            #     try:
+            #         q_dict["add_url"] = reverse(
+            #                 "admin:%s_%s_add" % q_dict['info'], current_app=self.name
+            #             )
+            #         # children.append(q_dict)
+            #     except NoReverseMatch:
+            #         pass
                 
         return children
             
