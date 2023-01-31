@@ -1,6 +1,6 @@
 from django.contrib import admin
-from django.contrib.auth.models import Permission, Group
 from django.db.models import Q
+from django.contrib.auth.models import Permission
 from django.urls import NoReverseMatch, reverse
 
 from baykeAdmin.forms import BaykeAdminLoginForm
@@ -24,6 +24,10 @@ class BaykeAdminSite(admin.AdminSite):
                 Q(baykepermission__permission__user=user)
             ).distinct()
 
+            if user.is_superuser:
+                perms_ids = Permission.objects.values_list('id', flat=True)
+                menus_queryset = BaykeMenu.objects.filter(baykepermission__permission__id__in=list(perms_ids)).distinct()
+            
             for menu in menus_queryset:
                 menu_dict = {}
                 menu_dict['id'] = menu.id
@@ -41,12 +45,14 @@ class BaykeAdminSite(admin.AdminSite):
         for q in queryset:
             q_dict = {}
             q_dict['per_name'] = q.permission.name
-            q_dict['name'] = q.permission.name
+            q_dict['name'] = q.permission.content_type.name
+            # q_dict['name'] = q.permission.content_type.model_class._meta.verbose_name_plural
             q_dict['codename'] = q.permission.codename
             q_dict['app_label'] = q.permission.content_type.app_label
             q_dict['object_name'] = q.permission.content_type.name
             q_dict['model'] = q.permission.content_type.model
             q_dict['model_obj'] = q.permission.content_type.model_class
+            print(q_dict['object_name'])
             q_dict['info'] = q.permission.content_type.natural_key()
             q_dict['perms'] = {
                 'view': user.has_perm(f"{q_dict['app_label']}.view_{q_dict['model']}"),

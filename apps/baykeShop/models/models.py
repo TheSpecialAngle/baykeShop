@@ -19,14 +19,14 @@ class BaykeShopCategory(BaykeCategoryMixin):
     # TODO: Define fields here
 
     class Meta:
-        verbose_name = 'BaykeShopCategory'
-        verbose_name_plural = 'BaykeShopCategorys'
+        verbose_name = '商品分类'
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.name 
 
 
-class BaykeShopSPU(BaykeCarouselMixin):
+class BaykeShopSPU(BaykeModelMixin):
     """SPU
     """
 
@@ -42,8 +42,8 @@ class BaykeShopSPU(BaykeCarouselMixin):
     # TODO: Define fields here
 
     class Meta:
-        verbose_name = 'BaykeShopSPU'
-        verbose_name_plural = 'BaykeShopSPUs'
+        verbose_name = '商品管理'
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.name

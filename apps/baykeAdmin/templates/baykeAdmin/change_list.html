@@ -5,7 +5,7 @@
 {% block breadcrumbs %}
 <div class="breadcrumbs">
 <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
-&rsaquo; {{ menu }}
+&rsaquo; {{ menu.menus.name }}
 &rsaquo; {{ cl.opts.verbose_name_plural|capfirst }}
 </div>
 {% endblock %}

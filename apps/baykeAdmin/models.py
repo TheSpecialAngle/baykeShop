@@ -15,12 +15,12 @@ class BaykeMenu(BaykeModelMixin):
         null=True,
         editable=False
     )
+    sort = models.PositiveSmallIntegerField(default=1)
     
     # TODO: Define fields here
 
     class Meta:
-        """Meta definition for BaykeMenus."""
-
+        ordering = ['-sort']
         verbose_name = 'BaykeMenu'
         verbose_name_plural = 'BaykeMenus'
 

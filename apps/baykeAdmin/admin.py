@@ -28,7 +28,7 @@ class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
         permission = BaykePermission.objects.filter(
             permission__content_type__app_label=self.model._meta.app_label
         ).first()
-        extra_context = {'menu': permission.menus.name}
+        extra_context = {'menu': permission}
         return super().changelist_view(request, extra_context)
     
 
