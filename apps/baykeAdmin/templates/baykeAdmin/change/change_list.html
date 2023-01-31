@@ -1,6 +1,6 @@
 {% extends 'baykeAdmin/layout.html' %}
 
-{% load i18n static bayke_admin_list %}
+{% load i18n static admin_list bayke_admin_list %}
 
 {% block stylesheet %}https://unpkg.com/buefy/dist/buefy.min.css{% endblock %}
 
@@ -9,19 +9,19 @@
 {% endblock %}
 
 {% block content %}
-
     <div class="p-3" id="changeList">
+        {% block search %}{% search_form cl %}{% endblock %}
+        <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
         
-        {% result_list cl as changeData %}
-        {{ changeData|json_script:"change-data" }}
-        <template>
-            <b-table 
-                :data="data"
-                :columns="columns"
-                checkable
-                >     
-            </b-table>
-        </template>
+            {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+            
+        <div class="box">
+            <div class="box is-shadowless has-background-light">
+                {% change_list_object_tools %}
+            </div>
+            {% show_results cl %}
+        </div>
+        </form>
     </div>
 {% endblock %}
 
@@ -34,6 +34,7 @@
     <script src="https://unpkg.com/buefy/dist/components/input"></script>
     <script>
         var chnangeData = JSON.parse(document.getElementById('change-data').textContent);
+        var headersData = JSON.parse(document.getElementById('headers-data').textContent);
     </script>
 {% endblock %}
 
@@ -44,41 +45,13 @@
             delimiters: ['{$', '$}'],
             data: {
                 data: chnangeData,
-                columns: [
-                    {
-                        field: 'id',
-                        label: 'ID',
-                    },
-                    {
-                        field: 'name',
-                        label: 'name',
-                    },
-                /*
-                    {
-                        field: 'id',
-                        label: 'ID',
-                        width: '40',
-                        numeric: true
-                    },
-                    {
-                        field: 'first_name',
-                        label: 'First Name',
-                    },
-                    {
-                        field: 'last_name',
-                        label: 'Last Name',
-                    },
-                    {
-                        field: 'date',
-                        label: 'Date',
-                        centered: true
-                    },
-                    {
-                        field: 'gender',
-                        label: 'Gender',
-                    }
-                */
-                ]
+                columns: headersData,
+                path: '{{ request.path }}'
+            },
+            methods: {
+                pageChange(page){
+                    location.replace(this.path+'?p='+page);
+                }
             }
         })
     </script>

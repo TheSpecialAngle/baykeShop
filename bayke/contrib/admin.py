@@ -29,7 +29,8 @@ class BaykeAdminSite(admin.AdminSite):
                 menu_dict['id'] = menu.id
                 menu_dict['name'] = menu.name
                 menu_dict['parent'] = menu.parent.id if menu.parent else None
-                menu_dict['children'] = self._menu_children_list(user, menu.baykepermission_set.show())
+                # menu_dict['children'] = self._menu_children_list(user, menu.baykepermission_set.show())
+                menu_dict['models'] = self._menu_children_list(user, menu.baykepermission_set.show())
                 menus.append(menu_dict)
         return menus
     
@@ -40,6 +41,7 @@ class BaykeAdminSite(admin.AdminSite):
         for q in queryset:
             q_dict = {}
             q_dict['per_name'] = q.permission.name
+            q_dict['name'] = q.permission.name
             q_dict['codename'] = q.permission.codename
             q_dict['app_label'] = q.permission.content_type.app_label
             q_dict['object_name'] = q.permission.content_type.name
