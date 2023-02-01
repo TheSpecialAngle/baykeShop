@@ -113,16 +113,10 @@ class BaykePermissionAdmin(BaseModelAdmin):
 class LogEntryAdmin(BaseModelAdmin):
     '''Admin View for '''
 
-    list_display = ('id', 'action_time', 'user', 'content_type', 'object_id', 'object_repr', 'action_flag', 'change_message')
-    # list_filter = ('',)
-    # inlines = [
-    #     Inline,
-    # ]
-    # raw_id_fields = ('',)
-    # readonly_fields = ('',)
-    # search_fields = ('',)
-    # date_hierarchy = ''
-    # ordering = ('',)
+    list_display = (
+        'id', 'action_time', 'user', 'content_type', 
+        'object_id', 'object_repr', 'action_flag', 'change_message'
+    )
     
     def has_add_permission(self, request) -> bool:
         return False
