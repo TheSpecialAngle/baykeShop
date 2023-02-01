@@ -61,8 +61,6 @@ class BaykeAdminSite(admin.AdminSite):
                 'delete': user.has_perm(f"{q_dict['app_label']}.delete_{q_dict['model']}"),
             }
             
-            print(q_dict['perms'])
-            
             if q_dict['perms']['view'] or q_dict['perms']['change']:
                 q_dict['view_only'] = not q_dict['perms']['change']
                 
@@ -81,8 +79,7 @@ class BaykeAdminSite(admin.AdminSite):
             #             )
             #         # children.append(q_dict)
             #     except NoReverseMatch:
-            #         pass
-                
+            #         pass  
         return children
             
             

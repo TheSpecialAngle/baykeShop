@@ -1,6 +1,10 @@
 from django.contrib import admin
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User, Group
 from django.contrib.admin.models import LogEntry
+from django.contrib.auth.admin import (
+    UserAdmin as BaseUserAdmin, 
+    GroupAdmin as BaseGroupAdmin
+)
 # Register your models here.
 from .models import BaykeMenu, BaykePermission
 from .custom import CustomActions, CustomColumns
@@ -8,6 +12,8 @@ from .custom import CustomActions, CustomColumns
 # 禁用全局删除
 # admin.site.disable_action('delete_selected')
 
+admin.site.unregister(User)
+admin.site.unregister(Group)
     
 class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
     """
@@ -15,7 +21,7 @@ class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
     重写并新增了一些全局方法
     """
     
-    change_list_template = "baykeAdmin/change_list.html"
+    # change_list_template = "baykeAdmin/change_list.html"
     actions = ["mark_delete", "export_as_csv"]
     
     def get_queryset(self, request):
@@ -23,14 +29,32 @@ class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
         if self.model._meta.model_name not in ['user', 'group', 'permission', 'logentry']:
             return queryset.filter(is_del=False)
         return queryset
-        
-    def changelist_view(self, request, extra_context=None):
+    
+    def get_permission(self):
         permission = BaykePermission.objects.filter(
             permission__content_type__app_label=self.model._meta.app_label
-        ).first()
+        )
+        return permission
+    
+    def changelist_view(self, request, extra_context=None):
+        permission = self.get_permission().first()
         extra_context = {'menu': permission}
         return super().changelist_view(request, extra_context)
     
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        permission = self.get_permission().first()
+        extra_context = {'menu': permission}
+        return super().change_view(request, object_id, form_url, extra_context)
+
+
+@admin.register(User)
+class UserAdmin(BaseUserAdmin, BaseModelAdmin):
+    pass
+
+@admin.register(Group)
+class GroupAdmin(BaseGroupAdmin, BaseModelAdmin):
+    pass
+
 
 class BaykePermissionInline(admin.TabularInline):
     '''Tabular Inline View for BaykePermission'''

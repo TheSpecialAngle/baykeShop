@@ -38,11 +38,11 @@ class BaykePermission(BaykeModelMixin):
     # TODO: Define fields here
 
     class Meta:
-        verbose_name = '菜单管理'
+        verbose_name = '权限规则'
         verbose_name_plural = verbose_name
 
     def __str__(self):
         """Unicode representation of BaykeMenus."""
-        return f"{self.menus.name} - {self.permission.name}"
+        return f"{self.permission.name}  "
 
 
