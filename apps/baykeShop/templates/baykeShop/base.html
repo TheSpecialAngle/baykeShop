@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css">
+    <!-- <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/minty/bulmaswatch.min.css"> -->
+    <style>
+        html,
+        body {
+            background: #f9f9f9;
+            /* font-size: 14px; */
+        }
+    </style>
+    {% block extrastyle %}{% endblock %}
+</head>
+
+<body>
+
+    <div class="head-top-box has-background-black-bis">
+        <div class="container">
+            <div class="is-flex">
+                <div class="">
+                    <a>
+                        <span class="mdi mdi-star-outline"></span>
+                        收藏本站
+                    </a>
+                </div>
+                <div style="margin-left: auto;">
+                    <div class="is-flex is-align-content-center">
+                        <a class="mr-3" href="">登录/注册</a>
+                        <span class="is-size-7">|</span>
+                        <a class="ml-3 mr-3" href="">我的订单</a>
+                        <a class="pl-3 pr-3 user-cart" href="">
+                            <span class="mdi mdi-cart-variant"></span>
+                            购物车(0)
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <nav class="navbar is-spaced has-shadow" role="navigation" aria-label="main navigation">
+            <div class="container">
+                <div class="navbar-brand">
+                    <a class="navbar-item" href="https://bulma.io">
+                        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+                    </a>
+
+                    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                        data-target="navbarBasicExample">
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                        <span aria-hidden="true"></span>
+                    </a>
+                </div>
+                <div id="navbarBasicExample" class="navbar-menu">
+                    <div class="navbar-start">
+                        <a class="navbar-item">
+                            首页
+                        </a>
+
+                        <a class="navbar-item">
+                            产品分类
+                        </a>
+
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">
+                                More
+                            </a>
+
+                            <div class="navbar-dropdown">
+                                <a class="navbar-item">
+                                    About
+                                </a>
+                                <a class="navbar-item">
+                                    Jobs
+                                </a>
+                                <a class="navbar-item">
+                                    Contact
+                                </a>
+                                <hr class="navbar-divider">
+                                <a class="navbar-item">
+                                    Report an issue
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="navbar-end">
+                        <div class="navbar-item">
+                            <!-- <div class="buttons">
+                        <a class="button is-primary">
+                        <strong>Sign up</strong>
+                        </a>
+                        <a class="button is-light">
+                        Log in
+                        </a>
+                    </div> -->
+                            <div class="field has-addons">
+                                <div class="control has-icons-left has-icons-right">
+                                    <input class="input" type="email" placeholder="Extra small">
+                                    <span class="icon is-left">
+                                        <i class="mdi mdi-magnify"></i>
+                                    </span>
+                                    <!-- <span class="icon is-small is-right">
+                                <i class="fas fa-check fa-xs"></i>
+                            </span> -->
+                                </div>
+                                <div class="control">
+                                    <button class=" button is-primary">Search</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="container">
+        <div class="is-flex box">
+            <div class="">官方商城</div>
+            <div class="" style="margin-left: auto;">
+                <a href="">更多>></a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="has-background-black-ter">
+        <div class="footer has-background-black-ter">
+            sadasd
+        </div>
+    </footer>
+
+</body>
+
+</html>
