@@ -1,0 +1,51 @@
+<div id="navbar">
+<template>
+    <b-navbar 
+        wrapper-class="{% block navclass %}container{% endblock %}" 
+        spaced shadow transparent>
+        <template #brand>
+            <b-navbar-item tag="a" href="/">
+                <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+            </b-navbar-item>
+        </template>
+        <template #start>
+            <b-navbar-item href="#">
+                Home
+            </b-navbar-item>
+            <b-navbar-item href="#">
+                Documentation
+            </b-navbar-item>
+            <b-navbar-dropdown hoverable label="Info">
+                <b-navbar-item href="#">
+                    About
+                </b-navbar-item>
+                <b-navbar-item href="#">
+                    Contact
+                </b-navbar-item>
+            </b-navbar-dropdown>
+        </template>
+
+        <template #end>
+            <b-navbar-item tag="div">
+                <b-field>
+                    <b-input placeholder="Search..."
+                        type="search"
+                        icon="magnify">
+                    </b-input>
+                    <p class="control">
+                        <b-button type="is-primary" label="Search" />
+                    </p>
+                </b-field>
+            </b-navbar-item>
+        </template>
+    </b-navbar>
+</template>
+</div>
+
+<script>
+    var navbar = new Vue({
+        el: '#navbar',
+        delimiters: ['{$', '$}'],
+        data: {}
+    })
+</script>

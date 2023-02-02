@@ -1,19 +1,24 @@
+{% load i18n static %}
 <!DOCTYPE html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:" en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/buefy/dist/buefy.min.css">
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"> -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css">
     <!-- <link rel="stylesheet" href="https://jenil.github.io/bulmaswatch/minty/bulmaswatch.min.css"> -->
+    <script src="https://unpkg.com/vue@2"></script>
+    <script src="https://unpkg.com/buefy/dist/buefy.min.js"></script>
+
     <style>
         html,
         body {
             background: #f9f9f9;
-            /* font-size: 14px; */
         }
     </style>
     {% block extrastyle %}{% endblock %}
@@ -21,125 +26,231 @@
 
 <body>
 
-    <div class="head-top-box has-background-black-bis">
-        <div class="container">
-            <div class="is-flex">
-                <div class="">
-                    <a>
-                        <span class="mdi mdi-star-outline"></span>
-                        收藏本站
-                    </a>
-                </div>
-                <div style="margin-left: auto;">
-                    <div class="is-flex is-align-content-center">
-                        <a class="mr-3" href="">登录/注册</a>
-                        <span class="is-size-7">|</span>
-                        <a class="ml-3 mr-3" href="">我的订单</a>
-                        <a class="pl-3 pr-3 user-cart" href="">
-                            <span class="mdi mdi-cart-variant"></span>
-                            购物车(0)
-                        </a>
-                    </div>
-                </div>
+    {% block head_top %}{% include 'baykeShop/head_top.html' %}{% endblock %}
+
+    {% block navbar %}{% include 'baykeShop/navbar.html' %}{% endblock %}
+
+    {% block carousel %}{% include 'baykeShop/carousel.html' %}{% endblock %}
+
+    {% block seckill %}{% include 'baykeShop/seckill.html' %}{% endblock %}
+
+    <section class="container mt-3 mb-3">
+        <div class="is-flex is-align-items-center mb-3">
+            <div class="">
+                <h1 class="is-size-4">官方商城</h1>
             </div>
-        </div>
-    </div>
-
-    <header>
-        <nav class="navbar is-spaced has-shadow" role="navigation" aria-label="main navigation">
-            <div class="container">
-                <div class="navbar-brand">
-                    <a class="navbar-item" href="https://bulma.io">
-                        <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
-                    </a>
-
-                    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
-                        data-target="navbarBasicExample">
-                        <span aria-hidden="true"></span>
-                        <span aria-hidden="true"></span>
-                        <span aria-hidden="true"></span>
-                    </a>
-                </div>
-                <div id="navbarBasicExample" class="navbar-menu">
-                    <div class="navbar-start">
-                        <a class="navbar-item">
-                            首页
-                        </a>
-
-                        <a class="navbar-item">
-                            产品分类
-                        </a>
-
-                        <div class="navbar-item has-dropdown is-hoverable">
-                            <a class="navbar-link">
-                                More
-                            </a>
-
-                            <div class="navbar-dropdown">
-                                <a class="navbar-item">
-                                    About
-                                </a>
-                                <a class="navbar-item">
-                                    Jobs
-                                </a>
-                                <a class="navbar-item">
-                                    Contact
-                                </a>
-                                <hr class="navbar-divider">
-                                <a class="navbar-item">
-                                    Report an issue
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="navbar-end">
-                        <div class="navbar-item">
-                            <!-- <div class="buttons">
-                        <a class="button is-primary">
-                        <strong>Sign up</strong>
-                        </a>
-                        <a class="button is-light">
-                        Log in
-                        </a>
-                    </div> -->
-                            <div class="field has-addons">
-                                <div class="control has-icons-left has-icons-right">
-                                    <input class="input" type="email" placeholder="Extra small">
-                                    <span class="icon is-left">
-                                        <i class="mdi mdi-magnify"></i>
-                                    </span>
-                                    <!-- <span class="icon is-small is-right">
-                                <i class="fas fa-check fa-xs"></i>
-                            </span> -->
-                                </div>
-                                <div class="control">
-                                    <button class=" button is-primary">Search</button>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-    </header>
-
-    <section class="container">
-        <div class="is-flex box">
-            <div class="">官方商城</div>
             <div class="" style="margin-left: auto;">
                 <a href="">更多>></a>
             </div>
         </div>
+        <div class="columns is-multiline">
+            <div class="column is-4">
+                <figure class="image is-5by4">
+                    <img src="https://bulma.io/images/placeholders/600x480.png">
+                </figure>
+            </div>
+            <div class="column is-2 spu">
+                <a class="is-block has-background-white p-2">
+                    <figure class="image is-1by1">
+                        <img src="https://bulma.io/images/placeholders/480x480.png">
+                    </figure>
+                    <div class="is-flex is-align-items-center mt-2">
+                        <div>
+                            <h1 class="is-size-4 has-text-weight-bold has-text-primary-dark">
+                                ¥128
+                                <span class="is-size-7 has-text-grey-light ml-1">¥228</span>
+                            </h1>
+                        </div>
+                        <div class="tag is-primary is-light" style="margin-left:auto">
+                            券
+                        </div>
+                    </div>
+                    <p class="has-text-grey-dark mt-2">
+                        微星（MSI）GK50Z 机械键盘 红轴 RGB光效 有线 游戏电竞办公键盘 ...
+                    </p>
+                    <div class="is-flex is-align-items-center has-text-grey-light mt-2">
+                        <span class=" is-size-7">216人付款</span>
+                        <span class=" is-size-7" style="margin-left:auto">4.6分</span>
+                    </div>
+                </a>
+            </div>
+            <div class="column is-2 spu">
+                <a class="is-block has-background-white p-2">
+                    <figure class="image is-1by1">
+                        <img src="https://bulma.io/images/placeholders/480x480.png">
+                    </figure>
+                    <div class="is-flex is-align-items-center mt-2">
+                        <div>
+                            <h1 class="is-size-4 has-text-weight-bold has-text-primary-dark">
+                                ¥128
+                                <span class="is-size-7 has-text-grey-light ml-1"
+                                    style="text-decoration:line-through">¥228
+                                </span>
+                            </h1>
+                        </div>
+                        <div class="tag is-danger is-light" style="margin-left:auto">
+                            券
+                        </div>
+                    </div>
+                    <p class="has-text-grey-dark mt-2">
+                        微星（MSI）GK50Z 机械键盘 红轴 RGB光效 有线 游戏电竞办公键盘 ...
+                    </p>
+                    <div class="is-flex is-align-items-center has-text-grey-light mt-2">
+                        <span class=" is-size-7">216人付款</span>
+                        <span class=" is-size-7" style="margin-left:auto">4.6分</span>
+                    </div>
+                </a>
+            </div>
+            <div class="column is-2 spu">
+                <a class="is-block has-background-white p-2">
+                    <figure class="image is-1by1">
+                        <img src="https://bulma.io/images/placeholders/480x480.png">
+                    </figure>
+                    <div class="is-flex is-align-items-center mt-2">
+                        <div>
+                            <h1 class="is-size-4 has-text-weight-bold has-text-danger-dark">
+                                ¥128
+                                <span class="is-size-7 has-text-grey-light ml-1">¥228</span>
+                            </h1>
+                        </div>
+                        <div class="tag is-danger is-light" style="margin-left:auto">
+                            券
+                        </div>
+                    </div>
+                    <p class="has-text-grey-dark mt-2">
+                        微星（MSI）GK50Z 机械键盘 红轴 RGB光效 有线 游戏电竞办公键盘 ...
+                    </p>
+                    <div class="is-flex is-align-items-center has-text-grey-light mt-2">
+                        <span class=" is-size-7">216人付款</span>
+                        <span class=" is-size-7" style="margin-left:auto">4.6分</span>
+                    </div>
+                </a>
+            </div>
+            <div class="column is-2 spu">
+                <a class="is-block has-background-white p-2">
+                    <figure class="image is-1by1">
+                        <img src="https://bulma.io/images/placeholders/480x480.png">
+                    </figure>
+                    <div class="is-flex is-align-items-center mt-2">
+                        <div>
+                            <h1 class="is-size-4 has-text-weight-bold has-text-danger-dark">
+                                ¥128
+                                <span class="is-size-7 has-text-grey-light ml-1">¥228</span>
+                            </h1>
+                        </div>
+                        <div class="tag is-danger is-light" style="margin-left:auto">
+                            券
+                        </div>
+                    </div>
+                    <p class="has-text-grey-dark mt-2">
+                        微星（MSI）GK50Z 机械键盘 红轴 RGB光效 有线 游戏电竞办公键盘 ...
+                    </p>
+                    <div class="is-flex is-align-items-center has-text-grey-light mt-2">
+                        <span class=" is-size-7">216人付款</span>
+                        <span class=" is-size-7" style="margin-left:auto">4.6分</span>
+                    </div>
+                </a>
+            </div>
+            <div class="column is-2 spu">
+                <a class="is-block has-background-white p-2">
+                    <figure class="image is-1by1">
+                        <img src="https://bulma.io/images/placeholders/480x480.png">
+                    </figure>
+                    <div class="is-flex is-align-items-center mt-2">
+                        <div>
+                            <h1 class="is-size-4 has-text-weight-bold has-text-danger-dark">
+                                ¥128
+                                <span class="is-size-7 has-text-grey-light ml-1">¥228</span>
+                            </h1>
+                        </div>
+                        <div class="tag is-danger is-light" style="margin-left:auto">
+                            券
+                        </div>
+                    </div>
+                    <p class="has-text-grey-dark mt-2">
+                        微星（MSI）GK50Z 机械键盘 红轴 RGB光效 有线 游戏电竞办公键盘 ...
+                    </p>
+                    <div class="is-flex is-align-items-center has-text-grey-light mt-2">
+                        <span class=" is-size-7">216人付款</span>
+                        <span class=" is-size-7" style="margin-left:auto">4.6分</span>
+                    </div>
+                </a>
+            </div>
+        </div>
     </section>
 
-    <footer class="has-background-black-ter">
+    <footer>
         <div class="footer has-background-black-ter">
-            sadasd
+            <nav class=" container level is-mobile">
+                <div class="level-item ">
+                    <span class="icon is-large has-text-grey-light mr-1" style="font-size: 3em;">
+                        <i class="mdi mdi-basket-plus"></i></span>
+                    <div class="has-text-grey-light">
+                        <p class="heading is-size-6">轻松购物</p>
+                        <p class="title has-text-grey-light is-size-5">品种齐全</p>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <p class="has-text-centered has-text-grey-light">|</p>
+                </div>
+                <div class="level-item ">
+                    <span class="icon is-large has-text-grey-light mr-1" style="font-size: 3em;">
+                        <i class="mdi mdi-shield-car"></i>
+                        <!-- <i class="mdi mdi-rv-truck"></i> -->
+                    </span>
+                    <div class="has-text-grey-light">
+                        <p class="heading is-size-6">多仓直发</p>
+                        <p class="title has-text-grey-light is-size-5">极速配送</p>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <p class="has-text-centered has-text-grey-light">|</p>
+                </div>
+                <div class="level-item ">
+                    <span class="icon is-large has-text-grey-light mr-1" style="font-size: 3em;">
+                        <i class="mdi mdi-ballot"></i></span>
+                    <div class="has-text-grey-light">
+                        <p class="heading is-size-6">精致服务</p>
+                        <p class="title has-text-grey-light is-size-5">正品行货</p>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <p class="has-text-centered has-text-grey-light">|</p>
+                </div>
+                <div class="level-item ">
+                    <span class="icon is-large has-text-grey-light mr-1" style="font-size: 3em;">
+                        <i class="mdi mdi-wallet-giftcard"></i></span>
+                    <div class="has-text-grey-light">
+                        <p class="heading is-size-6">畅选无忧</p>
+                        <p class="title has-text-grey-light is-size-5">天天低价</p>
+                    </div>
+                </div>
+                <div class="level-item">
+                    <p class="has-text-centered has-text-grey-light">|</p>
+                </div>
+                <div class="level-item ">
+                    <span class="icon is-large has-text-grey-light mr-1" style="font-size: 3em;">
+                        <i class="mdi mdi-hand-heart"></i></span>
+                    <div class="has-text-grey-light">
+                        <p class="heading is-size-6">极速退换</p>
+                        <p class="title has-text-grey-light is-size-5">无忧售后</p>
+                    </div>
+                </div>
+            </nav>
+            <div class="container">
+                <div class="dropdown-divider has-background-grey-dark"></div>
+                <div class="content has-text-centered has-text-grey-lighter">
+                    <p>Copyright 2022 by <strong class="has-text-grey-lighter">HappyShop</strong>
+                        <a class="has-text-grey-lighter"
+                            href="https://www.toutiao.com/c/user/token/MS4wLjABAAAAFV-cysN1jV5BJyuOG8ePvq2wkIcCCyx21nafBCqofig/?source=feed">
+                            轻编程</a>. All rights reserved.
+                    </p>
+                    <p class="is-size-6">本程序由<a class="has-text-grey-lighter"
+                            href="https://www.djangoproject.com/">Django</a>强力驱动</p>
+                </div>
+            </div>
         </div>
     </footer>
 
 </body>
-
 </html>
