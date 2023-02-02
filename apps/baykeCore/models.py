@@ -37,11 +37,12 @@ class BaykeCategoryMixin(BaykeModelMixin):
     name = models.CharField("分类名称", max_length=50)
     icon = models.CharField("分类icon", max_length=50, blank=True, default="")
     img_map = models.ImageField(
-        "分类图标", 
+        "推荐图", 
         upload_to="category/imgMap/%Y", 
         max_length=200,
         blank=True,
-        null=True
+        null=True,
+        help_text="图片尺寸为600 X 480"
     )
     desc = models.CharField("分类描述", max_length=150, blank=True, default="")
 

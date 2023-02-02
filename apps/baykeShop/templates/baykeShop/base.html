@@ -1,5 +1,4 @@
-{% load i18n static %}
-<!DOCTYPE html>
+{% load i18n static shop_tags %}<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:" en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
 
@@ -28,7 +27,7 @@
 
     {% block head_top %}{% include 'baykeShop/head_top.html' %}{% endblock %}
 
-    {% block navbar %}{% include 'baykeShop/navbar.html' %}{% endblock %}
+    {% block navbar %}{% navbar_result %}{% endblock %}
 
     {% block carousel %}{% include 'baykeShop/carousel.html' %}{% endblock %}
 

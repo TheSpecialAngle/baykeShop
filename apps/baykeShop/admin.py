@@ -10,13 +10,14 @@ from .models import (
     BaykeShopSpecOption
 )
 
-class BaykeShopCategoryInline(admin.StackedInline):
+class BaykeShopCategoryInline(admin.TabularInline):
     '''Tabular Inline View for BaykeShopCategory'''
 
     model = BaykeShopCategory
     min_num = 1
     max_num = 20
     extra = 1
+    exclude = ('img_map', )
     # raw_id_fields = (,)
 
 class BaykeShopSKUInline(admin.StackedInline):

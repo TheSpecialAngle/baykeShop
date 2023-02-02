@@ -15,6 +15,12 @@ class BaykeShopCategory(BaykeCategoryMixin):
         blank=True, 
         null=True
     )
+    
+    is_home = models.BooleanField(
+        default=False, 
+        verbose_name="是否推荐", 
+        help_text="如果为True则推荐到首页楼层及出现在导航菜单"
+    )
 
     # TODO: Define fields here
 
