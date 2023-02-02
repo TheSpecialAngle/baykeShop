@@ -29,10 +29,11 @@
 
     {% block navbar %}{% navbar_result %}{% endblock %}
 
-    {% block carousel %}{% include 'baykeShop/carousel.html' %}{% endblock %}
+    {% block carousel %}{% carousel_result %}{% endblock %}
 
     {% block seckill %}{% include 'baykeShop/seckill.html' %}{% endblock %}
-
+    
+    {% block section %}  
     <section class="container mt-3 mb-3">
         <div class="is-flex is-align-items-center mb-3">
             <div class="">
@@ -177,6 +178,7 @@
             </div>
         </div>
     </section>
+    {% endblock %}
 
     <footer>
         <div class="footer has-background-black-ter">

@@ -1,3 +1,4 @@
+{{ carousels|json_script:"carousel-data" }}
 <div id="carousel" class="container">
     <template>
         <b-carousel>
@@ -13,17 +14,12 @@
 </div>
 
 <script>
+    var value = JSON.parse(document.getElementById('carousel-data').textContent);
     var carousel = new Vue({
         el: '#carousel',
         delimiters: ['{$', '$}'],
         data: {
-            carousels: [
-                { text: 'Slide 1', color: 'primary' },
-                { text: 'Slide 2', color: 'info' },
-                { text: 'Slide 3', color: 'success' },
-                { text: 'Slide 4', color: 'warning' },
-                { text: 'Slide 5', color: 'danger' }
-            ]
+            carousels: value
         }
     })
 </script>

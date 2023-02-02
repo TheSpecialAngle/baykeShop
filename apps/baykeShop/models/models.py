@@ -52,7 +52,7 @@ class BaykeShopSPU(BaykeModelMixin):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.name
+        return self.title
 
 
 class BaykeShopSKU(BaykeModelMixin):
@@ -63,9 +63,9 @@ class BaykeShopSKU(BaykeModelMixin):
     cover_pic = models.ImageField(
         "封面图", 
         upload_to="cover/sku/%Y/%m", 
-        height_field="800", 
-        width_field="800", 
-        max_length=200
+        max_length=200,
+        blank=True,
+        null=True
     )
     price = models.DecimalField("售价", max_digits=8, decimal_places=2)
     cost_price = models.DecimalField("成本价", max_digits=8, decimal_places=2)

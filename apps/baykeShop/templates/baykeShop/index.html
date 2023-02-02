@@ -1,9 +1,66 @@
 {% extends 'baykeShop/base.html' %}
 
-{% load static %}
+{% load static shop_tags %}
 
 {% block title %} 商城首页 {% endblock %}
 
 {% block extrastyle %}
 <link rel="stylesheet" href="{% static 'baykeShop/css/index.css' %}">
+{% endblock %}
+
+{% block section %}
+    {% for cate in category_goods %}
+    
+    {% if cate.parent is null %}
+    <section class="container mt-3 mb-3">
+        <div class="is-flex is-align-items-center mb-3">
+            <div class="">
+                <h1 class="is-size-4">{{ cate.name }}</h1>
+            </div>
+            <div class="" style="margin-left: auto;">
+                <a href="">更多>></a>
+            </div>
+        </div>
+        <div class="columns is-multiline">
+            <div class="column is-4">
+                <figure class="image is-5by4">
+                    <!-- <img src="https://bulma.io/images/placeholders/600x480.png"> -->
+                    <img src="{{ MEDIA_URL }}{{ cate.img_map }}" alt="" srcset="">
+                </figure>
+            </div>
+            
+            {% for good in cate.goods %}
+            <div class="column is-2 spu">
+                <a class="is-block has-background-white p-2">
+                    <figure class="image is-1by1">
+                        <!-- <img src="https://bulma.io/images/placeholders/480x480.png"> -->
+                        <img src="{{ MEDIA_URL }}{{ good.cover_pic }}">
+                    </figure>
+                    <div class="is-flex is-align-items-center mt-2">
+                        <div>
+                            <h1 class="is-size-5 has-text-weight-bold has-text-primary-dark">
+                                ¥{{ good|sku_price }}
+                                <!-- <span class="is-size-7 has-text-grey-light ml-1">¥{{ good|sku_price:'org_price' }}</span> -->
+                            </h1>
+                        </div>
+                        <div class="tag is-primary is-light" style="margin-left:auto">
+                            券
+                        </div>
+                    </div>
+                    <p class="has-text-grey-dark mt-2">
+                        {{ good.title|truncatechars:45 }} ...
+                    </p>
+                    <div class="is-flex is-align-items-center has-text-grey-light mt-2">
+                        <span class=" is-size-7">216人付款</span>
+                        <span class=" is-size-7" style="margin-left:auto">4.6分</span>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+    {% empty %}
+        暂未推荐任何分类
+    {% endfor %}
 {% endblock %}
