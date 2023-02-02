@@ -24,6 +24,6 @@
 
 /* spu */
 
-.spu p{
+.spu p, .breadcrumbs, .breadcrumbs a{
     font-size: 14px;
 }

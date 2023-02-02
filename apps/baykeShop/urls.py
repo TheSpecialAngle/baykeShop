@@ -6,4 +6,5 @@ app_name = "baykeShop"
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
+    path('goods/<int:cate_id>/', views.GoodsView.as_view(), name='goods')
 ]

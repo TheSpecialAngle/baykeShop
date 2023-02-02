@@ -1,0 +1,76 @@
+{% extends 'baykeShop/index.html' %}
+
+{% block title %}
+    {% if category.parent %}
+    {{ category.parent.name }}-
+    {% endif %}       
+    {{ category.name }}
+{% endblock %}
+
+{% block carousel %}{% endblock %}
+
+{% block seckill %}{% endblock %}
+
+{% block section %} 
+
+<div class="container">
+    
+    <div class="breadcrumbs pt-3 pb-3">
+        <a class=" has-text-grey-dark" href="">首页</a>
+        {% if category.parent %}     
+        &rsaquo; <a class=" has-text-grey-dark" href="#">{{ category.parent.name }}</a>
+        {% endif %} 
+        &rsaquo; <span class=" has-text-grey-lighter">{{ category.name }}</span> 
+    </div>
+    
+    <div class="is-flex is-align-items-center has-background-white mb-3 pl-3">
+        {% for cate in cates %}
+            {% if cate.parent is None %}
+                <div class="p-4">
+                    <a class="{% if cate.id == category.parent.id or cate.id == cate_id %} has-text-danger {% else %} has-text-black-ter {% endif %}" 
+                        href="{% url 'baykeShop:goods' cate.id %}">
+                        {{ cate.name }}
+                    </a>
+                </div>
+            {% endif %}
+        {% endfor %}
+        <div class=" has-text-grey-light mr-5" style="margin-left: auto;">更多分类</div>
+    </div>
+
+    <div class="box is-shadowless is-radiusless">
+        {% if sub_cates %}
+        <div class="is-flex is-align-items-center">
+            <div>分类：</div>
+            {% for sub_cate in sub_cates %}
+                <div class="has-text-centered">
+                    <a href="{% url 'baykeShop:goods' sub_cate.id %}" 
+                        class="{% if sub_cate.id == cate_id %} has-text-danger {% else %} has-text-black-ter {% endif %}" >
+                        {{ sub_cate.name }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="is-flex is-align-items-center">
+            <div>分类：</div>
+            {% for sub_cate in category.parent.baykeshopcategory_set.all %}
+                <div class="has-text-centered">
+                    <a href="{% url 'baykeShop:goods' sub_cate.id %}" 
+                        class="{% if sub_cate.id == cate_id %} has-text-danger {% else %} has-text-black-ter {% endif %}">
+                        {{ sub_cate.name }}
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <div class="is-flex is-align-items-center">
+            <div>排序：</div>
+            <div class="has-text-centered">
+                <a href="">正序</a>
+                <a href="">倒叙</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+    
