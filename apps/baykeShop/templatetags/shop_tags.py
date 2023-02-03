@@ -66,3 +66,16 @@ def sku_price(spu, price=None):
     else:
         price = sku(spu, only=True).price
     return price
+
+
+@register.inclusion_tag('baykeShop/paginator.html')
+def paginator_result(request, page_obj):
+    current = request.GET.get('page', 1)
+    per_page = page_obj.paginator.per_page
+    return {
+        'paginator': page_obj.paginator,
+        'total': page_obj.paginator.num_pages,
+        'current': current,
+        'per_page': per_page,
+        'request': request
+    }
