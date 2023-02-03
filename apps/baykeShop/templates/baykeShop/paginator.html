@@ -1,3 +1,33 @@
+{% load static shop_tags %}
+<div class="columns">
+    {% for good in queryset %}
+        <div class="column is-3 spu">
+            <a class="is-block has-background-white p-2">
+                <figure class="image is-1by1">
+                    <img src="{{ MEDIA_URL }}{{ good.cover_pic }}">
+                </figure>
+                <div class="is-flex is-align-items-center mt-2">
+                    <div>
+                        <h1 class="is-size-5 has-text-weight-bold has-text-primary-dark">
+                            ¥{{ good|sku_price }}
+                        </h1>
+                    </div>
+                    <div class="tag is-primary is-light" style="margin-left:auto">
+                        券
+                    </div>
+                </div>
+                <p class="has-text-grey-dark mt-2">
+                    {{ good.title|truncatechars:45 }} ...
+                </p>
+                <div class="is-flex is-align-items-center has-text-grey-light mt-2">
+                    <span class="is-size-7">216人付款</span>
+                    <span class="is-size-7" style="margin-left:auto">4.6分</span>
+                </div>
+            </a>
+        </div>
+    {% endfor %}    
+</div>
+
 <div id="paginator" class="mb-5">
 <template>
     <section>

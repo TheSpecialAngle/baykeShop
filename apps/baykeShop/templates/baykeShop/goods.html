@@ -74,6 +74,7 @@
         </div>
     </div>
 
+{% comment %}
     <div class="columns">
         {% for good in goods_queryset %}
             <div class="column is-3 spu">
@@ -106,7 +107,8 @@
     {% if paginator %}
         {% paginator_result request goods_queryset %}
     {% endif %}
-
+    {% endcomment %}
+{% paginator_result request goods_queryset %}
 </div>
 {% endblock %}
     

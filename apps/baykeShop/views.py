@@ -53,7 +53,7 @@ class GoodsView(CategoryGoods, View):
             'sub_cates': sub_cates,
             'cates': category_queryset, 
             'cate_id': cate_id, 
-            'paginator': goods_queryset.paginator
+            # 'paginator': goods_queryset.paginator
         }
         return render(request, 'baykeShop/goods.html', context)
 
@@ -70,13 +70,13 @@ class GoodsView(CategoryGoods, View):
             goods_queryset = BaykeShopSPU.objects.show().filter(category=cate)
 
         # 默认开启分页
-        is_paginator = is_paginator
-        if goods_queryset is not None and is_paginator:
-            goods_queryset = self.paginator_cate_goods(request, goods_queryset)
+        # is_paginator = is_paginator
+        # if goods_queryset is not None and is_paginator:
+        #     goods_queryset = self.paginator_cate_goods(request, goods_queryset)
             # goods_queryset = paginator(request, goods_queryset)
         return goods_queryset
     
-    def paginator_cate_goods(self, request, goods_queryset, per_page=24, orphans=4):
+    def paginator_cate_goods(self, request, goods_queryset, per_page=24, orphans=1):
         paginator = Paginator(goods_queryset.order_by("id"), per_page=per_page, orphans=orphans)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
