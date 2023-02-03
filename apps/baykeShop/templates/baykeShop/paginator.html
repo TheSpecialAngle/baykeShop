@@ -1,4 +1,5 @@
 {% load static shop_tags %}
+{% if show is None %}
 <div class="columns">
     {% for good in queryset %}
         <div class="column is-3 spu">
@@ -25,9 +26,11 @@
                 </div>
             </a>
         </div>
-    {% endfor %}    
+    {% empty %}
+        <div class="has-text-centered has-text-danger is-flex-grow-1 p-5">该分类下暂未发布任何产品...</div>
+    {% endfor %} 
 </div>
-
+{% endif %}
 <div id="paginator" class="mb-5">
 <template>
     <section>

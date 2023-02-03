@@ -1,5 +1,5 @@
 from django.template import Library
-
+from django.conf import settings
 from django.core.paginator import Paginator
 from baykeShop.models import BaykeShopCategory
 from baykeShop.forms import SearchForm
@@ -12,7 +12,7 @@ def category_queryset(is_home=None):
     当参数is_home为None时返回所有的分类数据
     当传递给is_home值为布尔值True或False时返回该字段对应的数据
     """
-    queryset = BaykeShopCategory.objects.all()
+    queryset = BaykeShopCategory.objects.show()
     if is_home is not None:
         queryset = queryset.filter(is_home=is_home)
     return queryset
@@ -69,36 +69,29 @@ def sku_price(spu, price=None):
         price = sku(spu, only=True).price
     return price
 
+
 def paginator(request, queryset, per_page=24, orphans=4):
-    paginator = Paginator(queryset.order_by("id"), per_page=per_page, orphans=orphans)
+    paginator = Paginator(queryset, per_page=per_page, orphans=orphans)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return page_obj
-    
 
-# @register.inclusion_tag('baykeShop/paginator.html')
-# def paginator_result(request, page_obj):
-#     current = request.GET.get('page', 1)
-#     per_page = page_obj.paginator.per_page
-#     return {
-#         'paginator': page_obj.paginator,
-#         'total': page_obj.paginator.num_pages,
-#         'current': current,
-#         'per_page': per_page,
-#         'request': request
-#     }
-    
-@register.inclusion_tag('baykeShop/paginator.html')
-def paginator_result(request, queryset, per_page=24, orphans=4):
+@register.simple_tag
+def page_obj(request, queryset, per_page=24, orphans=4):
+    return paginator(request, queryset, per_page=per_page, orphans=orphans)
+ 
+@register.inclusion_tag('baykeShop/paginator.html', takes_context=True)
+def paginator_result(context, queryset, per_page=24, orphans=4, **kwargs):
+    request = context['request']
     page_obj = paginator(request, queryset, per_page=per_page, orphans=orphans)
     current = request.GET.get('page', 1)
-    # per_page = page_obj.paginator.per_page
     return {
         'paginator': page_obj.paginator,
         'total': page_obj.paginator.num_pages,
         'current': current,
         'per_page': per_page,
         'request': request,
-        'queryset': queryset,
-        # 'MEDIA_URL': 
+        'queryset': page_obj,
+        'MEDIA_URL': settings.MEDIA_URL,
+        'show': kwargs.get('show', None)
     }

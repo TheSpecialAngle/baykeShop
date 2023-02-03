@@ -1,10 +1,10 @@
 from django.shortcuts import render
 from django.views.generic import View
-from django.core.paginator import Paginator
 
 # Create your views here.
-from baykeShop.models import BaykeShopSPU, BaykeShopCategory
+from baykeShop.models import BaykeShopSPU, BaykeShopCategory, BaykeShopSKU
 from baykeShop.templatetags.shop_tags import category_queryset
+
 
 class CategoryGoods:
     
@@ -45,40 +45,39 @@ class GoodsView(CategoryGoods, View):
         except BaykeShopCategory.DoesNotExist:
             pass
         
-        goods_queryset = self.cate_goods(request, cate)
+        # 分类下的商品数据
+        goods_queryset = self.cate_goods(cate)
         
+        # 结果排序
+        order = self.request.GET.get('order')
+        field = self.request.GET.get('field')
+        
+
+        if order == 'esc' and field:
+            goods_queryset = goods_queryset.order_by(f'-baykeshopsku__{field}')
+        elif order == 'asc' and field:
+            goods_queryset = goods_queryset.order_by(f'baykeshopsku__{field}')
+            
         context={
             'category': cate,
             'goods_queryset': goods_queryset,
             'sub_cates': sub_cates,
             'cates': category_queryset, 
             'cate_id': cate_id, 
-            # 'paginator': goods_queryset.paginator
+            'order': order,
+            'field': field
         }
         return render(request, 'baykeShop/goods.html', context)
 
-    def cate_goods(self, request, cate, is_paginator=True):
+    def cate_goods(self, cate):
         """按分类筛选商品数据
         cate 商品分类对象
         is_paginator 是否开启分页，默认开启
         """ 
-        goods_queryset = None
+        # goods_queryset = None
+        goods_queryset = BaykeShopSPU.objects.show().filter(category=cate).order_by('-pub_date')
         if cate.parent is None:
             subcate_ids = cate.baykeshopcategory_set.show().values_list('id', flat=True)
-            goods_queryset = BaykeShopSPU.objects.show().filter(category__id__in=list(subcate_ids)).distinct()
-        else:
-            goods_queryset = BaykeShopSPU.objects.show().filter(category=cate)
-
-        # 默认开启分页
-        # is_paginator = is_paginator
-        # if goods_queryset is not None and is_paginator:
-        #     goods_queryset = self.paginator_cate_goods(request, goods_queryset)
-            # goods_queryset = paginator(request, goods_queryset)
-        return goods_queryset
-    
-    def paginator_cate_goods(self, request, goods_queryset, per_page=24, orphans=1):
-        paginator = Paginator(goods_queryset.order_by("id"), per_page=per_page, orphans=orphans)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        return page_obj
+            goods_queryset = BaykeShopSPU.objects.show().filter(category__id__in=list(subcate_ids)).order_by('-pub_date').distinct()
         
+        return goods_queryset

@@ -9,13 +9,17 @@
     {{ category.name }}
 {% endblock %}
 
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'baykeShop/css/goods.css' %}">
+{% endblock %}
+
 {% block carousel %}{% endblock %}
 
 {% block seckill %}{% endblock %}
 
 {% block section %} 
 
-<div class="container">
+<div class="container goods">
     
     <div class="breadcrumbs pt-3 pb-3">
         <a class=" has-text-grey-dark" href="">首页</a>
@@ -24,91 +28,115 @@
         {% endif %} 
         &rsaquo; <span class=" has-text-grey-lighter">{{ category.name }}</span> 
     </div>
+
+    <div id="cateFilter" class="mb-3">
+        <div class="is-flex is-align-items-center has-background-white mb-3 pl-3">
+            {% for cate in cates %}
+                {% if cate.parent is None %}
+                    <div class="p-4">
+                        <a class="{% if cate.id == category.parent.id or cate.id == cate_id %} has-text-primary {% else %} has-text-black-ter {% endif %}" 
+                            href="{% url 'baykeShop:goods' cate.id %}?order={{ order }}&field={{ field }}">
+                            {{ cate.name }}
+                        </a>
+                    </div>
+                {% endif %}
+            {% endfor %}
+            <div class=" has-text-grey-light mr-5" style="margin-left: auto;">更多分类</div>
+        </div>
     
-    <div class="is-flex is-align-items-center has-background-white mb-3 pl-3">
-        {% for cate in cates %}
-            {% if cate.parent is None %}
-                <div class="p-4">
-                    <a class="{% if cate.id == category.parent.id or cate.id == cate_id %} has-text-danger {% else %} has-text-black-ter {% endif %}" 
-                        href="{% url 'baykeShop:goods' cate.id %}">
-                        {{ cate.name }}
-                    </a>
-                </div>
+        <div class="box is-shadowless is-radiusless">
+            {% if sub_cates %}
+            <div class="is-flex is-align-items-center is-flex-wrap-wrap">
+                <div class="gooods-cate-label">分类：</div>
+                {% for sub_cate in sub_cates %}
+                    <div class="subcate has-text-centered">
+                        <a href="{% url 'baykeShop:goods' sub_cate.id %}?order={{ order }}&field={{ field }}" 
+                            class="{% if sub_cate.id == cate_id %} has-text-primary {% else %} has-text-black-ter {% endif %}" >
+                            {{ sub_cate.name }}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="is-flex is-align-items-center is-flex-wrap-wrap">
+                <div class="gooods-cate-label">分类：</div>
+                {% for sub_cate in category.parent.baykeshopcategory_set.all %}
+                    <div class="subcate has-text-centered">
+                        <a href="{% url 'baykeShop:goods' sub_cate.id %}?order={{ order }}&field={{ field }}" 
+                            class="{% if sub_cate.id == cate_id %} has-text-primary {% else %} has-text-black-ter {% endif %}">
+                            {{ sub_cate.name }}
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
             {% endif %}
-        {% endfor %}
-        <div class=" has-text-grey-light mr-5" style="margin-left: auto;">更多分类</div>
-    </div>
+            <div class="is-flex is-align-items-center is-flex-wrap-wrap">
+                <div class="gooods-cate-label">排序：</div>
 
-    <div class="box is-shadowless is-radiusless">
-        {% if sub_cates %}
-        <div class="is-flex is-align-items-center">
-            <div>分类：</div>
-            {% for sub_cate in sub_cates %}
-                <div class="has-text-centered">
-                    <a href="{% url 'baykeShop:goods' sub_cate.id %}" 
-                        class="{% if sub_cate.id == cate_id %} has-text-danger {% else %} has-text-black-ter {% endif %}" >
-                        {{ sub_cate.name }}
+                <div class="subcate has-text-centered">
+                    <a class="{% if not order %} has-text-primary {% else %} has-text-black-ter {% endif %}" 
+                        href="{% url 'baykeShop:goods' category.id %}">默认</a>
+                </div>
+
+                <div class="subcate has-text-centered">
+                    <a class="{% if field == 'price' %} has-text-primary {% else %} has-text-black-ter {% endif %}" 
+                        @click="orderfilter('price')">
+                        价格 
+                        {% if field == 'price' and order == 'asc' %}
+                        <span class="mdi mdi-sort-bool-ascending-variant"></span>
+                        {% elif field == 'price' and order == 'esc' %}
+                        <span class="mdi mdi-sort-bool-descending-variant"></span>
+                        {% endif %}
+                            
+                    </a>
+                        
+                </div>
+
+                <!-- <div class="subcate has-text-centered">
+                    <a class="has-text-grey-dark" @click="orderfilter('price')">销量</a>
+                </div> -->
+
+                <div class="subcate has-text-centered">
+                    <a class="{% if field == 'add_date' %} has-text-primary {% else %} has-text-black-ter {% endif %}" 
+                        @click="orderfilter('add_date')">
+                        上架时间
+                        {% if order == 'asc' and field == 'add_date' %}
+                        <span class="mdi mdi-sort-bool-ascending-variant"></span>
+                        {% elif order == 'esc' and field == 'add_date' %}
+                        <span class="mdi mdi-sort-bool-descending-variant"></span>
+                        {% endif %}
                     </a>
                 </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="is-flex is-align-items-center">
-            <div>分类：</div>
-            {% for sub_cate in category.parent.baykeshopcategory_set.all %}
-                <div class="has-text-centered">
-                    <a href="{% url 'baykeShop:goods' sub_cate.id %}" 
-                        class="{% if sub_cate.id == cate_id %} has-text-danger {% else %} has-text-black-ter {% endif %}">
-                        {{ sub_cate.name }}
-                    </a>
-                </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-        <div class="is-flex is-align-items-center">
-            <div>排序：</div>
-            <div class="has-text-centered">
-                <a href="">正序</a>
-                <a href="">倒叙</a>
             </div>
         </div>
     </div>
-
-{% comment %}
-    <div class="columns">
-        {% for good in goods_queryset %}
-            <div class="column is-3 spu">
-                <a class="is-block has-background-white p-2">
-                    <figure class="image is-1by1">
-                        <img src="{{ MEDIA_URL }}{{ good.cover_pic }}">
-                    </figure>
-                    <div class="is-flex is-align-items-center mt-2">
-                        <div>
-                            <h1 class="is-size-5 has-text-weight-bold has-text-primary-dark">
-                                ¥{{ good|sku_price }}
-                            </h1>
-                        </div>
-                        <div class="tag is-primary is-light" style="margin-left:auto">
-                            券
-                        </div>
-                    </div>
-                    <p class="has-text-grey-dark mt-2">
-                        {{ good.title|truncatechars:45 }} ...
-                    </p>
-                    <div class="is-flex is-align-items-center has-text-grey-light mt-2">
-                        <span class="is-size-7">216人付款</span>
-                        <span class="is-size-7" style="margin-left:auto">4.6分</span>
-                    </div>
-                </a>
-            </div>
-        {% endfor %}    
-    </div>
-
-    {% if paginator %}
-        {% paginator_result request goods_queryset %}
-    {% endif %}
-    {% endcomment %}
-{% paginator_result request goods_queryset %}
+    {% paginator_result goods_queryset %}
 </div>
+{% endblock %}
+
+{% block vuescript %}
+    <script>
+        var cateFilter = new Vue({
+            el: '#cateFilter',
+            delimiters: ['{$', '$}'],
+            data: {
+                field: 'price',
+                order: '{{ order }}'
+            },
+            methods: {
+                orderfilter(field){
+                    if (this.order == 'asc') {
+                        this.order = 'esc'
+                        let url = "{{ request.path }}?field="+field+"&order="+this.order
+                        location.replace(url)
+                    }else{
+                        this.order = 'asc'
+                        let url = "{{ request.path }}?field="+field+"&order="+this.order
+                        location.replace(url)
+                    }
+                }
+            }
+        })
+    </script>
 {% endblock %}
     

@@ -1,0 +1,11 @@
+.goods .gooods-cate-label{
+    font-size: 14px;
+    color: rgb(160, 160, 160);
+}
+.goods .subcate{
+    /* width: 100px; */
+    padding-left: 20px;
+    text-align: center;
+    line-height: 30px;
+    font-size: 14px;
+}

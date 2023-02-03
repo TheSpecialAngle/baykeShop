@@ -9,10 +9,10 @@
                 </b-navbar-item>
             </template>
             <template #start>
-                <b-navbar-item href="#">
+                <b-navbar-item href="{% url 'baykeShop:home' %}">
                     首页
                 </b-navbar-item>
-                <b-navbar-item href="#">
+                <b-navbar-item href="">
                     产品分类
                 </b-navbar-item>
                 {% for category in category_qs %}
