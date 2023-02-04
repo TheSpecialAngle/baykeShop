@@ -136,7 +136,12 @@ class GoodDetailView(DetailView):
     
     def get_spu_banners(self):
         spu = self.get_object()
-        banners = spu.baykespucarousel_set.show().values(
+        banners_queryset = spu.baykespucarousel_set.show()
+        banners = banners_queryset.values(
             'img', 'target_url', 'desc'
         )
+        
+        if not banners_queryset:
+            banners = [{'img': str(spu.cover_pic), 'desc': spu.title}]
+        
         return list(banners)
