@@ -8,6 +8,9 @@
 
 {% block extrastyle %}{{ block.super }}
 <style>
+    [v-cloak] {
+        display: none !important;
+    }
     .is-active .al img {
         filter: grayscale(0%);
     }
@@ -17,6 +20,16 @@
     .carousel .carousel-indicator {
         padding: .5rem 0 0 0;
     }
+    .tabs{
+        background-color: rgba(239, 239, 239, 0.787);
+    }
+    /*
+    .tabs ul {
+        border: none;
+    }
+    .tabs .is-active{
+        border-top: solid 2px #c31313;
+    }*/
 </style>
 {% endblock %}
 
@@ -29,24 +42,29 @@
 {% endblock %}
 
 {% block content %} 
-<div id="goodDetail" class="mb-3 mt-3">
+{{ options_skus|json_script:"options-data" }}
+{{ specs|json_script:"specs-data" }}
+{{ sku_options_first|json_script:"sku-options-first-data" }}
+{{ banners|json_script:"banners-data" }}
+<div id="goodDetail" class="mb-3 mt-3" v-cloak>
     <div class="columns">
         <div class="column is-4">
             <div class="box1">
                 <template>
                     <b-carousel :indicator-inside="false">
-                        <b-carousel-item v-for="(item, i) in 4" :key="i">
-                            <b-image class="image" ratio="1by1" :src="getImgUrl(i)"></b-image>
+                        <b-carousel-item v-for="(item, i) in banners" :key="i">
+                            <b-image class="image" ratio="1by1" :src="getImgUrl(item.img)"></b-image>
                         </b-carousel-item>
                         <template #indicators="props">
-                            <b-image class="al image" :src="getImgUrl(props.i)" :title="props.i"></b-image>
+                            <!-- {$ banners[props.i].img $} -->
+                            <b-image class="al image" :src="getImgUrl(banners[props.i].img)" :title="banners[props.i].desc"></b-image>
                         </template>
                     </b-carousel>
                 </template>
             </div>
         </div>
         <div class="column">
-            <div class=" is-flex is-flex-direction-column">
+            <div class=" is-flex is-flex-direction-column" style="height: 100%;">
                 <h1 class=" is-size-4 mb-3">{{ good.title }}</h1>
                 <div class="goodPrice box is-radiusless is-shadowless has-background-primary-dark is-marginless">
                     <div class="is-flex is-align-items-center">
@@ -56,7 +74,7 @@
                         </div>
                         <div style="margin-left: auto;">
                             <div class="is-flex is-flex-direction-column is-align-items-center has-text-grey-lighter pl-5" style="border-left: solid 1px #a9a9a9;">
-                                <div class="is-size-4 has-text-weight-bold">219</div>
+                                <div class="is-size-4 has-text-weight-bold">{$ sales $}</div>
                                 <div class="">销量</div>
                             </div>
                         </div>
@@ -84,27 +102,111 @@
                         </p>
                     </b-collapse>
                 </div>
+                <!-- 规格 -->
+                <div class="is-flex is-align-items-center mt-3" 
+                    v-for="spec, index in specs" 
+                    :key="index">
+                    <span class="is-size-7 mr-3">{$ spec.spec $}:</span>
+                    <b-radio-button v-for="op, i in spec.options" :key="op"
+                        @click.native=""
+                        v-model="radioButton[index]"
+                        :native-value="op"
+                        size="is-small"
+                        class="mr-2"
+                        type="is-danger is-light is-outlined">
+                        <!-- <b-icon icon="close"></b-icon> -->
+                        <span>{$ op $}</span>
+                    </b-radio-button>
+                </div>
+                <!-- 数量 -->
+                <div class="is-flex is-align-items-center mt-4">
+                    <div class="is-size-7 mr-3">数量:</div>
+                    <div>
+                        <b-field>
+                            <b-numberinput 
+                                controls-position="compact" 
+                                min="1" 
+                                :max="stock" 
+                                v-model="num"
+                                size="is-small"
+                                :editable="false">
+                            </b-numberinput> 
+                        </b-field>
+                    </div>
+                    <div class="ml-3">(库存{$ stock $})</div>
+                </div>
+                <!-- 操作 -->
+                <div class="buttons" style="margin-top: auto;">
+                    <button class=" button is-primary is-large">加入购物车</button>
+                    <button class=" button is-primary is-outlined is-large">立即购买</button>
+                </div>
             </div>
 
         </div>
     </div>
+
+    <template>
+            <section>
+                <b-tabs class="block" size="is-medium">
+                    <b-tab-item label="商品详情">
+                        <div class="content">
+                            {{ good.content|safe }}
+                        </div>
+                    </b-tab-item>
+                    <b-tab-item label="累计评论">
+                        评论
+                    </b-tab-item>
+                </b-tabs>
+            </section>
+    </template>
+
 </div>   
 {% endblock %}
 
 {% block vuescript %}
     <script>
+        var options = JSON.parse(document.getElementById('options-data').textContent);
+        var specs = JSON.parse(document.getElementById('specs-data').textContent);
+        var skuOptionsFirst = JSON.parse(document.getElementById('sku-options-first-data').textContent);
+        var banners = JSON.parse(document.getElementById('banners-data').textContent);
         var goodDetail = new Vue({
             el: '#goodDetail',
             delimiters: ['{$', '$}'],
             data: {
-                price: '{{ good|sku_price }}',
-                org_price: "{{ good|sku_price:'org_price' }}"
+                price: '{{ good|sku_price:"price" }}',
+                org_price: "{{ good|sku_price:'org_price' }}",
+                stock: "{{ good|sku_price:'stock' }}",
+                sales: "{{ good|sku_price:'sales' }}",
+                specs: specs,
+                options: options,
+                radioButton: skuOptionsFirst,
+                skuOptionsFirst: skuOptionsFirst,
+                num: 1,
+                banners: banners
             },
             methods: {
                 getImgUrl(value) {
-                    return `https://picsum.photos/id/43${value}/1230/500`
+                    return `/media/${value}`
+                },
+            },
+            
+            watch:{
+                radioButton:{
+                    handler: function(val, oldval){
+                        let strVal = val.join()
+                        sku = this.options[strVal]
+                        if (sku) {
+                            this.price = sku.price
+                            this.org_price = sku.org_price
+                            this.sales = sku.sales
+                            this.stock = sku.stock
+                        } else {
+                            this.stock = 0
+                        }
+                    },
+                    deep: true,
                 }
-            }
+            },
         })
     </script>
 {% endblock %}

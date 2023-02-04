@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.views.generic import View, DetailView
 
 # Create your views here.
-from baykeShop.models import BaykeShopSPU, BaykeShopCategory, BaykeShopSKU
+from baykeShop.models import (
+    BaykeShopSPU, BaykeShopCategory, BaykeShopSKU, BaykeShopSpecOption,
+    BaykeShopSpec
+)
 from baykeShop.templatetags.shop_tags import category_queryset
 
 
@@ -88,37 +91,52 @@ class GoodDetailView(DetailView):
     context_object_name = "good"
     
     def get_context_data(self, **kwargs):
-        self.get_options_skus()
-        self.get_specs()
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context['options_skus'], context['specs'] = self.get_options_skus()
+        context['sku_options_first'] = self.get_sku_first_options()
+        context['banners'] = self.get_spu_banners()
+        return context
     
     def get_sku_queryset(self):
         good = self.get_object()
         skus_queryset = good.baykeshopsku_set.show()
         return skus_queryset
     
-    def get_specs(self):
+    def get_sku_first_options(self):
+        # spu下的第一个sku的options
         skus_queryset = self.get_sku_queryset()
-        specs = [
-            {
-                'spec': op.spec.name, 
-                'options': list(sku.options.show().values_list('name', flat=True))
-            } 
-            for sku in skus_queryset 
-            for op in sku.options.show()
-        ]
-        return specs
+        sku_options_first = list(skus_queryset.first().options.values_list('name', flat=True))
+        return sku_options_first         
     
     def get_options_skus(self):
+        specs = []
+        skus = {}
         skus_queryset = self.get_sku_queryset()
-        skus = []
+    
         for sku in skus_queryset:
-            sku_dict = {}
-            options = tuple(sku.options.show().values_list('name', flat=True))
-            sku_dict[options] = {
+            sku_options = sku.options.show()
+            sku_options_names = sku_options.values_list('name', flat=True)
+            # sku_dict = {}
+            options = ','.join(sku_options_names)
+            skus[options] = {
                 'price': str(sku.price),
                 'org_price': str(sku.org_price),
+                'stock': sku.stock,
+                'sales': sku.sales
             }
-            skus.append(sku_dict)
-        return skus
+            # 返回当前spu下的specs
+            for op in sku_options:
+                spec_dict = {
+                    'spec': op.spec.name, 
+                    'options': list(BaykeShopSpecOption.objects.filter(spec=op.spec).values_list('name', flat=True))
+                }
+                if spec_dict not in specs:
+                    specs.append(spec_dict)
+        return skus, specs
     
+    def get_spu_banners(self):
+        spu = self.get_object()
+        banners = spu.baykespucarousel_set.show().values(
+            'img', 'target_url', 'desc'
+        )
+        return list(banners)

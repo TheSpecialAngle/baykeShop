@@ -71,6 +71,7 @@ class BaykeShopSKU(BaykeModelMixin):
     cost_price = models.DecimalField("成本价", max_digits=8, decimal_places=2)
     org_price = models.DecimalField("原价", max_digits=8, decimal_places=2)
     stock = models.IntegerField("库存", default=0)
+    sales = models.PositiveIntegerField("销量", default=0, editable=False)
     numname = models.CharField("商品编号", max_length=50, default="", blank=True)
     weight = models.FloatField("重量(KG)", default=0, blank=True)
     vol = models.FloatField("体积(m³)", default=0, blank=True)
@@ -83,11 +84,6 @@ class BaykeShopSKU(BaykeModelMixin):
 
     def __str__(self):
         return self.spu.title
-
-    def get_absolute_url(self):
-        return reverse('baykeshopsku-detail', kwargs={'pk' : self.pk})
-
-    # TODO: Define custom methods here
 
 
 class BaykeSPUCarousel(BaykeCarouselMixin):
@@ -102,6 +98,6 @@ class BaykeSPUCarousel(BaykeCarouselMixin):
         verbose_name_plural = 'BaykeSPUCarousels'
 
     def __str__(self):
-        return self.img
+        return f"{self.img.name}"
 
     # TODO: Define custom methods here

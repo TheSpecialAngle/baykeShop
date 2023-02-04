@@ -20,7 +20,7 @@ class BaykeShopCategoryInline(admin.TabularInline):
     exclude = ('img_map', )
     # raw_id_fields = (,)
 
-class BaykeShopSKUInline(admin.StackedInline):
+class BaykeShopSKUInline(admin.TabularInline):
     '''Stacked Inline View for BaykeShopSKU'''
 
     model = BaykeShopSKU
@@ -28,6 +28,15 @@ class BaykeShopSKUInline(admin.StackedInline):
     max_num = 20
     extra = 1
     can_delete = False
+    # raw_id_fields = (,)
+
+class BaykeSPUCarouselInline(admin.TabularInline):
+    '''Tabular Inline View for '''
+
+    model = BaykeSPUCarousel
+    min_num = 1
+    max_num = 20
+    extra = 1
     # raw_id_fields = (,)
 
 
@@ -52,7 +61,7 @@ class BaykeShopCategoryAdmin(BaseModelAdmin):
 class BaykeShopSPUAdmin(BaseModelAdmin):
     list_display = ('id', 'title', 'operate')
     filter_horizontal = ('category',)
-    inlines = (BaykeShopSKUInline, )
+    inlines = (BaykeShopSKUInline, BaykeSPUCarouselInline)
     
     def formfield_for_manytomany(self, db_field, request, **kwargs):
         if db_field.name == 'category':

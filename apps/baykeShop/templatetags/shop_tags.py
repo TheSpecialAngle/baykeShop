@@ -56,18 +56,23 @@ def sku(spu, only=False):
 
 
 @register.filter
-def sku_price(spu, price=None):
+def sku_price(spu, field=None):
     """
     spu为一个商品spu对象
     price参数默认为None,当传入值与商品的价位相关的字段名称对应时返回对应的价位
     """
-    if price == 'cost_price':
-        price = sku(spu, only=True).cost_price
-    if price == 'org_price':
-        price = sku(spu, only=True).org_price
-    else:
-        price = sku(spu, only=True).price
-    return price
+    if field == 'cost_price':
+        field = sku(spu, only=True).cost_price
+    if field == 'org_price':
+        field = sku(spu, only=True).org_price
+    if field == 'stock':
+        field = sku(spu, only=True).stock
+        print(field)
+    if field == 'sales':
+        field = sku(spu, only=True).sales   
+    if field == 'price':
+        field = sku(spu, only=True).price
+    return field
 
 
 def paginator(request, queryset, per_page=24, orphans=4):
