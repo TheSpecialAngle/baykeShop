@@ -1,10 +1,10 @@
-<div id="seckill" class="container seckill mt-3 mb-3 box is-paddingless">
+<div id="seckill" class="container seckill mt-3 mb-3 box is-radiusless is-paddingless">
 
     <template>
         <b-carousel-list v-model="test" :data="items" :items-to-show="5">
             <template #item="list">
-                <div class="card">
-                    <div class="card-image">
+                <div class="card is-radiusless">
+                    <div class="card-image is-radiusless">
                         <figure class="image is-5by4">
                             <a @click="info(list.index)"><img :src="list.image"></a>
                         </figure>

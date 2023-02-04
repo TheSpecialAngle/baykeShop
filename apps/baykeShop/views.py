@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import View
+from django.views.generic import View, DetailView
 
 # Create your views here.
 from baykeShop.models import BaykeShopSPU, BaykeShopCategory, BaykeShopSKU
@@ -32,7 +32,7 @@ class HomeView(CategoryGoods, View):
 
 
 class GoodsView(CategoryGoods, View):
-    
+    # 商品列表页
     def get(self, request, cate_id, *args, **kwargs):
         category_qs = self.category_goods()
         try:
@@ -52,7 +52,6 @@ class GoodsView(CategoryGoods, View):
         order = self.request.GET.get('order')
         field = self.request.GET.get('field')
         
-
         if order == 'esc' and field:
             goods_queryset = goods_queryset.order_by(f'-baykeshopsku__{field}')
         elif order == 'asc' and field:
@@ -72,12 +71,54 @@ class GoodsView(CategoryGoods, View):
     def cate_goods(self, cate):
         """按分类筛选商品数据
         cate 商品分类对象
-        is_paginator 是否开启分页，默认开启
         """ 
-        # goods_queryset = None
         goods_queryset = BaykeShopSPU.objects.show().filter(category=cate).order_by('-pub_date')
         if cate.parent is None:
             subcate_ids = cate.baykeshopcategory_set.show().values_list('id', flat=True)
-            goods_queryset = BaykeShopSPU.objects.show().filter(category__id__in=list(subcate_ids)).order_by('-pub_date').distinct()
-        
+            goods_queryset = BaykeShopSPU.objects.show().filter(
+                category__id__in=list(subcate_ids)
+            ).order_by('-pub_date').distinct()
         return goods_queryset
+    
+
+class GoodDetailView(DetailView):
+    
+    template_name = "baykeShop/detail.html"
+    queryset = BaykeShopSPU.objects.show()
+    context_object_name = "good"
+    
+    def get_context_data(self, **kwargs):
+        self.get_options_skus()
+        self.get_specs()
+        return super().get_context_data(**kwargs)
+    
+    def get_sku_queryset(self):
+        good = self.get_object()
+        skus_queryset = good.baykeshopsku_set.show()
+        return skus_queryset
+    
+    def get_specs(self):
+        skus_queryset = self.get_sku_queryset()
+        specs = [
+            {
+                'spec': op.spec.name, 
+                'options': list(sku.options.show().values_list('name', flat=True))
+            } 
+            for sku in skus_queryset 
+            for op in sku.options.show()
+        ]
+        return specs
+    
+    def get_options_skus(self):
+        skus_queryset = self.get_sku_queryset()
+        skus = []
+        for sku in skus_queryset:
+            sku_dict = {}
+            options = tuple(sku.options.show().values_list('name', flat=True))
+            sku_dict[options] = {
+                'price': str(sku.price),
+                'org_price': str(sku.org_price),
+            }
+            skus.append(sku_dict)
+        return skus
+    

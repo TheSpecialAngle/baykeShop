@@ -1,0 +1,110 @@
+{% extends 'baykeShop/goods.html' %}
+
+{% load static shop_tags %}
+
+{% block title %}
+    {{ good.title }} - {{ good.category.all|join:'-' }}
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .is-active .al img {
+        filter: grayscale(0%);
+    }
+    .al img {
+        filter: grayscale(100%);
+    }
+    .carousel .carousel-indicator {
+        padding: .5rem 0 0 0;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs pt-3 pb-3">
+        <a class=" has-text-grey-dark" href="">首页</a>
+        &rsaquo; <a class=" has-text-grey-dark" href="{% url 'baykeShop:goods' good.category.first.id %} ">{{ good.category.all|join:'&' }}</a>
+        &rsaquo; <span class=" has-text-grey">{{ good.title }}</span> 
+    </div>
+{% endblock %}
+
+{% block content %} 
+<div id="goodDetail" class="mb-3 mt-3">
+    <div class="columns">
+        <div class="column is-4">
+            <div class="box1">
+                <template>
+                    <b-carousel :indicator-inside="false">
+                        <b-carousel-item v-for="(item, i) in 4" :key="i">
+                            <b-image class="image" ratio="1by1" :src="getImgUrl(i)"></b-image>
+                        </b-carousel-item>
+                        <template #indicators="props">
+                            <b-image class="al image" :src="getImgUrl(props.i)" :title="props.i"></b-image>
+                        </template>
+                    </b-carousel>
+                </template>
+            </div>
+        </div>
+        <div class="column">
+            <div class=" is-flex is-flex-direction-column">
+                <h1 class=" is-size-4 mb-3">{{ good.title }}</h1>
+                <div class="goodPrice box is-radiusless is-shadowless has-background-primary-dark is-marginless">
+                    <div class="is-flex is-align-items-center">
+                        <div class="is-flex is-flex-direction-column is-align-items-start">
+                            <div class="has-text-grey-lighter">原价:¥ {$ org_price $}</div>
+                            <div class="is-size-3 has-text-grey-lighter has-text-weight-bold">¥{$ price $}</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <div class="is-flex is-flex-direction-column is-align-items-center has-text-grey-lighter pl-5" style="border-left: solid 1px #a9a9a9;">
+                                <div class="is-size-4 has-text-weight-bold">219</div>
+                                <div class="">销量</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- 优惠券预留 -->
+                <div class="box is-marginless is-radiusless" style="display: none;">
+                    优惠券领取
+                    <b-collapse 
+                        :open="false" 
+                        position="is-bottom" 
+                        aria-id="contentIdForA11y4">
+                        <template #trigger="props">
+                            <a
+                                aria-controls="contentIdForA11y4"
+                                :aria-expanded="props.open">
+                                {$ !props.open ? '更多优惠' : '收起' $}
+                                <b-icon :icon="!props.open ? 'chevron-down' : 'chevron-up'"></b-icon>
+                            </a>
+                        </template>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. <br/>
+                            Nulla accumsan, metus ultrices eleifend gravida, nulla nunc varius lectus, nec rutrum justo nibh eu lectus. <br/>
+                            Ut vulputate semper dui. Fusce erat odio, sollicitudin vel erat vel, interdum mattis neque.
+                        </p>
+                    </b-collapse>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>   
+{% endblock %}
+
+{% block vuescript %}
+    <script>
+        var goodDetail = new Vue({
+            el: '#goodDetail',
+            delimiters: ['{$', '$}'],
+            data: {
+                price: '{{ good|sku_price }}',
+                org_price: "{{ good|sku_price:'org_price' }}"
+            },
+            methods: {
+                getImgUrl(value) {
+                    return `https://picsum.photos/id/43${value}/1230/500`
+                }
+            }
+        })
+    </script>
+{% endblock %}

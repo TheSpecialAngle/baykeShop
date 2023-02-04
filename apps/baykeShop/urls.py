@@ -6,5 +6,6 @@ app_name = "baykeShop"
 
 urlpatterns = [
     path('', views.HomeView.as_view(), name='home'),
-    path('goods/<int:cate_id>/', views.GoodsView.as_view(), name='goods')
+    path('goods/<int:cate_id>/', views.GoodsView.as_view(), name='goods'),
+    path('goods/detail-<int:pk>/', views.GoodDetailView.as_view(), name='detail')
 ]
