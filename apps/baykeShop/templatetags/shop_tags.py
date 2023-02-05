@@ -84,7 +84,7 @@ def paginator(request, queryset, per_page=24, orphans=4):
 @register.simple_tag
 def page_obj(request, queryset, per_page=24, orphans=4):
     return paginator(request, queryset, per_page=per_page, orphans=orphans)
- 
+
 @register.inclusion_tag('baykeShop/paginator.html', takes_context=True)
 def paginator_result(context, queryset, per_page=24, orphans=4, **kwargs):
     request = context['request']
@@ -99,4 +99,21 @@ def paginator_result(context, queryset, per_page=24, orphans=4, **kwargs):
         'queryset': page_obj,
         'MEDIA_URL': settings.MEDIA_URL,
         'show': kwargs.get('show', None)
+    }
+
+
+@register.inclusion_tag('baykeShop/page.html', takes_context=True)
+def page_result(context, page_obj):
+    request = context['request']
+    current = request.GET.get('page', 1)
+    print(page_obj.paginator.per_page)
+    print(page_obj.paginator.num_pages)
+    return {
+        'paginator': page_obj.paginator,
+        'total': page_obj.paginator.num_pages,
+        'current': current,
+        'per_page': page_obj.paginator.per_page,
+        'request': request,
+        'queryset': page_obj,
+        'MEDIA_URL': settings.MEDIA_URL,
     }

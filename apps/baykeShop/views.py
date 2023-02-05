@@ -1,11 +1,14 @@
 from django.shortcuts import render
-from django.views.generic import View, DetailView
+from django.views.generic import View, DetailView, ListView
+from django.views.generic.detail import SingleObjectMixin
 
 # Create your views here.
 from baykeShop.models import (
     BaykeShopSPU, BaykeShopCategory, BaykeShopSKU, BaykeShopSpecOption,
     BaykeShopSpec
 )
+from .forms import OrderSPUForm
+
 from baykeShop.templatetags.shop_tags import category_queryset
 
 
@@ -82,8 +85,87 @@ class GoodsView(CategoryGoods, View):
                 category__id__in=list(subcate_ids)
             ).order_by('-pub_date').distinct()
         return goods_queryset
-    
 
+
+class GoodsListView(SingleObjectMixin, ListView):
+    
+    paginate_by = 24
+    paginate_orphans = 4
+    template_name = "baykeShop/category_spus.html"
+    
+    def get(self, request, *args, **kwargs):
+        self.form = OrderSPUForm(request.GET)
+        self.object = self.get_object(queryset=BaykeShopCategory.objects.show())
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = self.object
+        context['parent_cates'] = self.get_category()
+        context['sub_cates'] = self.get_category(self.object)
+        context['form'] = self.form
+        context['order'] = self.request.GET.get('order' )
+        context['field'] = self.request.GET.get('field')
+        return context
+
+    def get_queryset(self):
+        category = self.object
+        queryset = category.baykeshopspu_set.order_by('-add_date').distinct()
+        if category.parent is None:
+            sub_cates = category.baykeshopcategory_set.values_list('id', flat=True)
+            print(sub_cates)
+            queryset = BaykeShopSPU.objects.show().filter(
+                category__id__in=list(sub_cates)).order_by('-add_date').distinct()
+
+            print(queryset)
+           
+        if self.form.is_valid():
+            field = self.form.cleaned_data['field']
+            order = self.form.cleaned_data['order']
+            field_name = f'-baykeshopsku__{field}' if order == 'asc' else f'baykeshopsku__{field}'
+            queryset = queryset.order_by(f"{field_name}").distinct()
+            
+        # queryset = queryset.values(
+        #         'id', 'title', 'category', 
+        #         'cover_pic', 'baykeshopsku__price', 
+        #         'baykeshopsku__cover_pic'
+        #     )
+        return queryset
+    
+    def get_category(self, object=None):
+        """获取分类信息
+            object为当前分类对象
+            - 如果为None则返回一级分类
+            - 如果传入对象父级不存在则返回所有的下级
+            - 如果传入对象父级存在则返回该父级所有的下级
+        """
+        cates = BaykeShopCategory.objects.show().filter(parent__isnull=True)
+        if object is not None and object.parent is None:
+            cates = object.baykeshopcategory_set.show()
+        elif object is not None and object.parent:
+            cates = BaykeShopCategory.objects.show().filter(parent=object.parent)
+        return cates
+    
+    def get_filter_queryset(self, queryset):
+        form = self.form
+        if form.is_valid():
+            field = form.cleaned_data['field']
+            order = form.cleaned_data['order']
+            
+            for spu in queryset:
+                sku = spu.baykeshopsku_set.show().first()
+                if order == 'asc':
+                    sku = spu.baykeshopsku_set.show().order_by(f'-{field}').first()
+                elif order == 'esc':
+                    sku = spu.baykeshopsku_set.show().order_by(f'{field}').first()
+                spu.price = sku.price
+                spu.cost_price = sku.cost_price
+                spu.org_price = sku.org_price
+                spu.stock = sku.stock
+                spu.sales = sku.sales
+        return queryset
+        
+        
 class GoodDetailView(DetailView):
     
     template_name = "baykeShop/detail.html"
@@ -140,7 +222,6 @@ class GoodDetailView(DetailView):
         banners = banners_queryset.values(
             'img', 'target_url', 'desc'
         )
-        
         if not banners_queryset:
             banners = [{'img': str(spu.cover_pic), 'desc': spu.title}]
         

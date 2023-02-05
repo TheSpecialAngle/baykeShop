@@ -16,8 +16,8 @@ class SearchForm(forms.Form):
 
 class OrderSPUForm(forms.Form):
     # 筛选框
-    a = forms.CharField(max_length=30)
-    b = forms.CharField(max_length=10)
+    field = forms.CharField(max_length=30)
+    order = forms.CharField(max_length=10)
     
     def clean(self):
         print(super().clean())
