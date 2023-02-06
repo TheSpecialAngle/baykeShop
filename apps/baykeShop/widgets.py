@@ -1,7 +1,19 @@
-from django.forms.widgets import TextInput
+from django.forms.widgets import TextInput as BaseTextInput
 
 
-class SearchTextInput(TextInput):
+class SearchTextInput(BaseTextInput):
     
     input_type = "search"
-    template_name = "baykeShop/widgets/search_form.html"
+    template_name = "baykeShop/widgets/input.html"
+    
+
+class TextInput(BaseTextInput):
+    
+    input_type = "text"
+    template_name = "baykeShop/widgets/input.html"
+
+
+class PasswordInput(BaseTextInput):
+    
+    input_type = "password"
+    template_name = "baykeShop/widgets/input.html"

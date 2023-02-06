@@ -141,8 +141,18 @@
                 </div>
                 <!-- 操作 -->
                 <div class="buttons" style="margin-top: auto;">
-                    <a class="button is-primary is-large">加入购物车</a>
-                    <a class="button is-primary is-outlined is-large">立即购买</a>
+                    <b-button 
+                        type="is-primary" 
+                        size="is-large" 
+                        :disabled="stock ? false : true ">加入购物车
+                    </b-button>
+                    <b-button 
+                        type="is-primary" 
+                        size="is-large"
+                        :disabled="stock ? false : true " 
+                        outlined>
+                        立即购买
+                    </b-button>
                 </div>
             </div>
         </div>

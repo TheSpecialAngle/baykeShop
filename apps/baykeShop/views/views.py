@@ -5,34 +5,14 @@ from django.template.response import TemplateResponse
 
 # Create your views here.
 from baykeShop.models import (
-    BaykeShopSPU, BaykeShopCategory, BaykeShopSKU, BaykeShopSpecOption,
-    BaykeShopSpec
+    BaykeShopSPU, BaykeShopCategory, BaykeShopSKU,
+    BaykeShopSpecOption
 )
-from .forms import OrderSPUForm
+from ..forms import OrderSPUForm
 
-from baykeShop.templatetags.shop_tags import category_queryset
-
-
-class CategoryGoods:
-    
-    def category_goods(self, is_home=False, count=None):
-        """
-        is_home为True BaykeShopCategory仅查询is_home字段为True的值，否则查询全部
-        """
-        category_qs = category_queryset()
-        if is_home is True:
-            category_qs = category_queryset(is_home=True)
-        subcate_ids = category_qs.exclude(parent__isnull=True).values_list('id', flat=True)
-        for cate in category_qs:
-            if cate.parent is None and count is None:
-                cate.goods = BaykeShopSPU.objects.filter(category__in=subcate_ids).distinct()
-            if cate.parent is None and count:
-                cate.goods = BaykeShopSPU.objects.filter(category__in=subcate_ids).distinct()[:count]
-        return category_qs
-        
         
 class HomeView(View):
-    
+    # 首页视图
     goods_count = 10
     template_name = None
     
@@ -47,7 +27,7 @@ class HomeView(View):
 
 
 class GoodsListView(SingleObjectMixin, ListView):
-    
+    # 商品列表页
     paginate_by = 24
     paginate_orphans = 4
     template_name = "baykeShop/goods.html"
@@ -74,7 +54,7 @@ class GoodsListView(SingleObjectMixin, ListView):
             sub_cates = category.baykeshopcategory_set.values_list('id', flat=True)
             queryset = BaykeShopSKU.objects.filter(
                 spu__category__id__in=sub_cates).order_by('-add_date').distinct()
-           
+        # 筛选
         if self.form.is_valid():
             field = self.form.cleaned_data['field']
             order = self.form.cleaned_data['order']
@@ -98,7 +78,7 @@ class GoodsListView(SingleObjectMixin, ListView):
         
         
 class GoodDetailView(DetailView):
-    
+    # 商品详情页
     template_name = "baykeShop/detail.html"
     queryset = BaykeShopSPU.objects.show()
     context_object_name = "good"
@@ -112,11 +92,13 @@ class GoodDetailView(DetailView):
         return context
     
     def get_sku_queryset(self):
+        # 当前spu下的sku queryset数据
         good = self.get_object()
         skus_queryset = good.baykeshopsku_set.show()
         return skus_queryset
     
     def get_current_sku(self):
+        # spu进入后显示的sku
         sku = get_object_or_404(BaykeShopSKU, pk=self.kwargs.get('sku_id'))
         return sku
     
@@ -153,6 +135,7 @@ class GoodDetailView(DetailView):
         return skus, specs
     
     def get_spu_banners(self):
+        # 商品轮播图
         spu = self.get_object()
         banners_queryset = spu.baykespucarousel_set.show()
         banners = banners_queryset.values(
@@ -162,3 +145,4 @@ class GoodDetailView(DetailView):
             banners = [{'img': str(spu.cover_pic), 'desc': spu.title}]
         
         return list(banners)
+    

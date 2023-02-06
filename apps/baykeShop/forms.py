@@ -1,5 +1,10 @@
 from django import forms
-from baykeShop.widgets import SearchTextInput
+from django.contrib.auth.forms import AuthenticationForm, UsernameField
+from django.utils.translation import gettext_lazy as _
+
+from baykeShop.widgets import SearchTextInput, TextInput, PasswordInput
+
+
 
 class SearchForm(forms.Form):
     # 搜索框
@@ -19,6 +24,12 @@ class OrderSPUForm(forms.Form):
     field = forms.CharField(max_length=30)
     order = forms.CharField(max_length=10)
     
-    def clean(self):
-        print(super().clean())
-        return super().clean()
+
+class LoginForm(AuthenticationForm):
+    username = UsernameField(
+        widget=forms.TextInput(attrs={"autofocus": True, "class": "input"}))
+    password = forms.CharField(
+        label=_("Password"),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "class": "input"}),
+    )

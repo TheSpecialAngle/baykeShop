@@ -32,12 +32,15 @@
 
             <template #end>
                 <b-navbar-item tag="div" class="is-align-items-center">
+                    <form action="" method="get">
                     <b-field>
+                        {% csrf_token %}
                         {{ form.words }}
                         <p class="control">
-                            <b-button type="is-primary" label="Search" />
+                            <b-button type="is-primary" native-type="submit" label="Search" />
                         </p>
                     </b-field>
+                    </form>
                 </b-navbar-item>
             </template>
         </b-navbar>
