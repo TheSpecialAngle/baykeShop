@@ -10,9 +10,13 @@
 <div class="columns is-centered is-align-items-center" style="min-height: 600px;">
   <div class="column is-3-fullhd is-7-tablet is-5-desktop is-6-widescreen">
     <div class="box p-6">
-      <p class="subtitle has-text-centered">登录</p>
+      <p class="subtitle has-text-centered">
+      {% block login_title %}登录{% endblock %}
+      </p>
       <h1 class="title is-size-3 has-text-centered">baykeShop</h1>
       <div class="dropdown-divider"></div>
+      
+      {% block form %}
       <form action="" method="post">
         {% if form.errors and not form.non_field_errors %}
         <article class="message is-danger">
@@ -54,7 +58,7 @@
         </div>
         <div class="field">
           <p class="control">
-            <a href=" " class=" is-size-7">还没有账号？立即注册！</a>
+            <a href="{% url 'baykeShop:register' %}" class="is-size-7">还没有账号？立即注册！</a>
           </p>
         </div>
         <div class="field">
@@ -63,6 +67,7 @@
           </p>
         </div>
       </form>
+      {% endblock %}
     </div>
   </div>
 </div>

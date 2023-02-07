@@ -13,4 +13,6 @@ class LoginView(BaseLoginView):
     form_class = LoginForm
     template_name = "baykeShop/user/login.html"
     
-    
+
+class LogoutView(BaseLogoutView):
+    pass
