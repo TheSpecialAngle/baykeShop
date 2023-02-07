@@ -2,80 +2,68 @@
 
 {% load i18n static %}
 
-{% block title %}
-登录页
-{% endblock %}
+{% block title %}登录页{% endblock %}
 
-{% block carousel %}{% endblock %}
-
-{% block seckill %}{% endblock %}
+{% block banner %}{% endblock %}
 
 {% block section %}
-
-<div class="container1">
-  <div class="columns is-centered">
-    <div class="column is-3-fullhd is-7-tablet">
-      <div class="box p-6" style="margin: 40% 0 45% 0;">
-        <p class="subtitle has-text-centered">登录</p>
-        <h1 class="title is-size-3 has-text-centered">baykeShop</h1>
-        <div class="dropdown-divider"></div>
-        <form action="" method="post">
-          {% if form.errors and not form.non_field_errors %}
-          <article class="message is-danger">
-            <div class="message-body">
-              {% if form.errors.items|length == 1 %}{% translate "Please correct the error below." %}{% else %}{%
-              translate "Please correct the errors below." %}{% endif %}
-            </div>
-          </article>
-          {% endif %}
-          
-          {% if form.non_field_errors %}
-          <article class="message is-danger">
-            <div class="message-body">
-              {% for error in form.non_field_errors %}
-              <p> {{ error }}</p>
-              {% endfor %}
-            </div>
-          </article>
-          {% endif %}
-          {% csrf_token %}
-          <div class="field">
-            <p class="control has-icons-left has-icons-right">
-              {{ form.username }}
-              <span class="icon is-small is-left">
-                <i class="mdi mdi-account"></i>
-              </span>
-              <span class="icon is-small is-right">
-                <i class="mdi mdi-check"></i>
-              </span>
-            </p>
+<div class="columns is-centered is-align-items-center" style="min-height: 600px;">
+  <div class="column is-3-fullhd is-7-tablet is-5-desktop is-6-widescreen">
+    <div class="box p-6">
+      <p class="subtitle has-text-centered">登录</p>
+      <h1 class="title is-size-3 has-text-centered">baykeShop</h1>
+      <div class="dropdown-divider"></div>
+      <form action="" method="post">
+        {% if form.errors and not form.non_field_errors %}
+        <article class="message is-danger">
+          <div class="message-body">
+            {% if form.errors.items|length == 1 %}{% translate "Please correct the error below." %}{% else %}{%
+            translate "Please correct the errors below." %}{% endif %}
           </div>
-          <div class="field">
-            <p class="control has-icons-left">
-              {{ form.password }}
-              <span class="icon is-small is-left">
-                <i class="mdi mdi-lock"></i>
-              </span>
-            </p>
+        </article>
+        {% endif %}
+        
+        {% if form.non_field_errors %}
+        <article class="message is-danger">
+          <div class="message-body">
+            {% for error in form.non_field_errors %}
+            <p> {{ error }}</p>
+            {% endfor %}
           </div>
-          <div class="field">
-            <p class="control">
-              <a href=" " class=" is-size-7">还没有账号？立即注册！</a>
-            </p>
-          </div>
-          <div class="field">
-            <p class="control">
-              <input class="button is-success is-fullwidth" type="submit" value="登录">
-            </p>
-          </div>
-
-        </form>
-      </div>
+        </article>
+        {% endif %}
+        {% csrf_token %}
+        <div class="field">
+          <p class="control has-icons-left has-icons-right">
+            {{ form.username }}
+            <span class="icon is-small is-left">
+              <i class="mdi mdi-account"></i>
+            </span>
+            <span class="icon is-small is-right">
+              <i class="mdi mdi-check"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control has-icons-left">
+            {{ form.password }}
+            <span class="icon is-small is-left">
+              <i class="mdi mdi-lock"></i>
+            </span>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control">
+            <a href=" " class=" is-size-7">还没有账号？立即注册！</a>
+          </p>
+        </div>
+        <div class="field">
+          <p class="control">
+            <input class="button is-success is-fullwidth" type="submit" value="登录">
+          </p>
+        </div>
+      </form>
     </div>
   </div>
-
-
 </div>
-
-
 {% endblock %}

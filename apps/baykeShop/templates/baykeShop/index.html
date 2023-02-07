@@ -24,7 +24,6 @@
         <div class="columns is-multiline">
             <div class="column is-4">
                 <figure class="image is-5by4">
-                    <!-- <img src="https://bulma.io/images/placeholders/600x480.png"> -->
                     <a href="{% url 'baykeShop:goods' cate.id %}">
                         <img src="{{ MEDIA_URL }}{{ cate.img_map }}" alt="{{ cate.name }}">
                     </a>
@@ -35,7 +34,6 @@
                 <a href="{% url 'baykeShop:detail' good.spu.id good.id %}">
                 <div class="is-flex is-flex-direction-column has-background-white p-2" style="height: 100%;">
                     <figure class="image is-1by1">
-                        <!-- <img src="https://bulma.io/images/placeholders/480x480.png"> -->
                         <img src="{{ MEDIA_URL }}{{ good.cover_pic }}">
                     </figure>
                     <div class="is-flex is-align-items-center mt-2">

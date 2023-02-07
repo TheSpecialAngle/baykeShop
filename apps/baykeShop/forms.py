@@ -27,9 +27,9 @@ class OrderSPUForm(forms.Form):
 
 class LoginForm(AuthenticationForm):
     username = UsernameField(
-        widget=forms.TextInput(attrs={"autofocus": True, "class": "input"}))
+        widget=forms.TextInput(attrs={"autofocus": True, "class": "input", "placeholder":" 请输入用户名..."}))
     password = forms.CharField(
         label=_("Password"),
         strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "class": "input"}),
+        widget=forms.PasswordInput(attrs={"autocomplete": "current-password", "class": "input", "placeholder":" 请输入密码..."}),
     )
