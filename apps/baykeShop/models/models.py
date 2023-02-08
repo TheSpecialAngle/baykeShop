@@ -11,7 +11,7 @@ class BaykeShopCategory(BaykeCategoryMixin):
     """
     parent = models.ForeignKey(
         'self', 
-        on_delete=models.CASCADE, 
+        on_delete=models.PROTECT, 
         blank=True, 
         null=True
     )
@@ -58,7 +58,7 @@ class BaykeShopSPU(BaykeModelMixin):
 class BaykeShopSKU(BaykeModelMixin):
     """sku
     """
-    spu = models.ForeignKey(BaykeShopSPU, on_delete=models.CASCADE, verbose_name="商品")
+    spu = models.ForeignKey(BaykeShopSPU, on_delete=models.PROTECT, verbose_name="商品")
     options = models.ManyToManyField(BaykeShopSpecOption, blank=True, verbose_name="商品规格")
     cover_pic = models.ImageField(
         "封面图", 
@@ -90,7 +90,7 @@ class BaykeSPUCarousel(BaykeCarouselMixin):
     """
     spu轮播图
     """
-    product = models.ForeignKey(BaykeShopSPU, on_delete=models.CASCADE)
+    product = models.ForeignKey(BaykeShopSPU, on_delete=models.PROTECT)
     # TODO: Define fields here
 
     class Meta:
