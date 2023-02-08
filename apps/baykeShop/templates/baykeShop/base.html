@@ -22,7 +22,7 @@
     {% block extrastyle %}{% endblock %}
 </head>
 <body>
-    <div class="is-flex is-flex-direction-column" style="height: 100%;">
+    <div class="is-flex is-flex-direction-column">
         <header class="header">
             {% block header %}
             <div id="headTop" class="head-top-box has-background-black-bis">
@@ -31,8 +31,8 @@
             {% block navbar %}{% navbar_result %}{% endblock %}
             {% endblock %}
         </header>
-        <div class="main" style="height:100%">
-            <div class="container" style="height:100%">
+        <div class="main">
+            <div class="container">
                 {% block banner %}
                 {% carousel_result %}
                 {% endblock %}
@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <footer class="footer has-background-black-ter" style="margin-top: auto;">
+        <footer class="footer has-background-black-ter" style="margin-top:auto">
             <nav class=" container level is-mobile">
                 <div class="level-item ">
                     <span class="icon is-large has-text-grey-light mr-1" style="font-size: 3em;">
