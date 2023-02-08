@@ -30,6 +30,8 @@
     {% endblock %}
 
     {% block content %}
+    
+        {% block filter %}
         <div id="cateFilter" class="mb-3">
             <div class="is-flex is-align-items-center has-background-white pl-3">
                 {% for cate in parent_cates %}
@@ -115,35 +117,12 @@
             </div>
 
         </div>
+        {% endblock %}
+        
         <div class="columns">
             {% for good in page_obj %}
-            <div class="column is-3 spu">
-                <a href="{% url 'baykeShop:detail' good.spu.id good.id %}">
-                    <div class="is-flex is-flex-direction-column has-background-white p-2" style="height: 100%;">
-                        <figure class="image is-1by1">
-                            <img src="{{ MEDIA_URL }}{{ good.cover_pic }}">
-                        </figure>
-                        <div class="is-flex is-align-items-center mt-2">
-                            <div>
-                                <h1 class="is-size-5 has-text-weight-bold has-text-primary-dark">
-                                    ¥{{ good.price }}
-                                </h1>
-                            </div>
-                            <div class="tag is-primary is-light" style="margin-left:auto">
-                                券
-                            </div>
-                        </div>
-                        <p class="has-text-grey-dark mt-2">
-                            {{ good.spu.title|truncatechars:50 }} ...
-                        </p>
-                        <div style="margin-top: auto;">
-                            <div class="is-flex is-align-items-center has-text-grey-light mt-2">
-                                <span class=" is-size-7">{{ good.sales }}人付款</span>
-                                <span class=" is-size-7" style="margin-left:auto">4.6分</span>
-                            </div>
-                        </div>
-                    </div>
-                </a>
+            <div class="column is-3">
+                {% include 'baykeShop/sku_box.html' %}
             </div>
             {% empty %}
             <div class="has-text-centered has-text-danger is-flex-grow-1 p-5">该分类下暂未发布任何产品...</div>

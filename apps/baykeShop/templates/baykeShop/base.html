@@ -15,6 +15,9 @@
             height: 100%;
             background-color: #f9f9f9;
         }
+        .dropdown-trigger navbar-item span:hover{
+            color: black;
+        }
     </style>
     {% block extrastyle %}{% endblock %}
 </head>
@@ -23,36 +26,13 @@
         <header class="header">
             {% block header %}
             <div id="headTop" class="head-top-box has-background-black-bis">
-                <div class="container">
-                    <div class="is-flex">
-                        <div class="is-flex">
-                            {% block head_top_start %}
-                            <a><span class="mdi mdi-star-outline"></span>收藏本站</a>
-                            {% block head_top_start_add %}{% endblock %}
-                            {% endblock %}
-                        </div>
-                        <div style="margin-left: auto;">
-                            {% block head_top_end %}
-                            <div class="is-flex is-align-content-center">
-                                <a class="mr-3" href="{% url 'baykeShop:login' %}">登录/注册</a>
-                                <span class="is-size-7">|</span>
-                                <a class="ml-3 mr-3" href="">我的订单</a>
-                                <a class="pl-3 pr-3 user-cart" href="">
-                                    <span class="mdi mdi-cart-variant"></span>
-                                    购物车(0)
-                                </a>
-                            </div>
-                            {% block head_top_end_add %}{% endblock %}
-                            {% endblock %}
-                        </div>
-                    </div>
-                </div>
+                {% include 'baykeShop/headTop.html' %}
             </div>
             {% block navbar %}{% navbar_result %}{% endblock %}
             {% endblock %}
         </header>
-        <div class="main">
-            <div class="container">
+        <div class="main" style="height:100%">
+            <div class="container" style="height:100%">
                 {% block banner %}
                 {% carousel_result %}
                 {% endblock %}
@@ -135,5 +115,13 @@
         </footer>
     </div>
     {% block vuescript %}{% endblock %}
+
+    <script>
+        var headTop = new Vue({
+            el: '#headTop',
+            delimiters: ['{$', '$}'],
+            data: {}
+        })
+    </script>
 </body>
 </html>

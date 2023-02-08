@@ -1,8 +1,6 @@
 from django.template import Library
-from django.conf import settings
-from django.core.paginator import Paginator
 from baykeShop.models import BaykeShopCategory
-from baykeShop.forms import SearchForm, LoginForm
+from baykeShop.forms import SearchForm
 
 
 register = Library()
@@ -55,10 +53,3 @@ def page_result(context, page_obj):
         'per_page': page_obj.paginator.per_page,
     }
     
-
-@register.inclusion_tag('baykeShop/user/loginForm.html', takes_context=True)
-def login_form(context):
-    request = context['request']
-    return {
-        'form' : LoginForm(request.POST)
-    }

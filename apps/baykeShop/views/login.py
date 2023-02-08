@@ -15,4 +15,5 @@ class LoginView(BaseLoginView):
     
 
 class LogoutView(BaseLogoutView):
-    pass
+    
+    template_name = 'baykeShop/user/logout.html'

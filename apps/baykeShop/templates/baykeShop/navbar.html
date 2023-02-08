@@ -1,4 +1,4 @@
-<div id="navbar">
+<div id="navbar" style="z-index:1">
     <template>
         <b-navbar 
             wrapper-class="{% block navclass %}container{% endblock %}" 
@@ -32,7 +32,7 @@
 
             <template #end>
                 <b-navbar-item tag="div" class="is-align-items-center">
-                    <form action="" method="get">
+                    <form action="{% url 'baykeShop:search' %}" method="get">
                     <b-field>
                         {% csrf_token %}
                         {{ form.words }}

@@ -1,20 +1,27 @@
 .head-top-box {
     line-height: 40px;
     color: #b4b4b4;
+    height: 40px;
 }
 .head-top-box a{
     font-size: 12px;
     color: #b4b4b4;
+    height: 40px;
 }
 
 .head-top-box a:hover{
     color: #e8e8e8;
+    height: 40px;
+}
+.dropdown-item{
+    color: #3c3c3c;
 }
 .head-top-box .user-right-bored{
     border-right: #3c3c3c solid 1px;
 }
 .head-top-box .user-cart {
     background: #3c3c3c !important;
+    line-height: 100%;
 }
 
 /* seckill */

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import View, DetailView, ListView
 from django.views.generic.detail import SingleObjectMixin
@@ -128,7 +129,11 @@ class GoodDetailView(DetailView):
             for op in sku_options:
                 spec_dict = {
                     'spec': op.spec.name, 
-                    'options': list(BaykeShopSpecOption.objects.filter(spec=op.spec).values_list('name', flat=True))
+                    'options': list(
+                        BaykeShopSpecOption.objects.filter(
+                            spec=op.spec
+                            ).values_list('name', flat=True)
+                        )
                 }
                 if spec_dict not in specs:
                     specs.append(spec_dict)
@@ -145,4 +150,28 @@ class GoodDetailView(DetailView):
             banners = [{'img': str(spu.cover_pic), 'desc': spu.title}]
         
         return list(banners)
+
+
+class SearchView(ListView):
+    # 搜索功能
+    paginate_by = 24
+    paginate_orphans = 4
+    template_name = "baykeShop/search.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['words'] = self.request.GET.get('words')
+        return context
+    
+    def get_queryset(self):
+        queryset = BaykeShopSKU.objects.show()
+        words = self.request.GET.get('words')
+        if words:
+            queryset = queryset.filter(
+                Q(spu__title__icontains=f'{words}')|
+                Q(spu__desc__icontains=f'{words}')|
+                Q(spu__content__icontains=f'{words}')
+            )
+        return queryset
+    
     
