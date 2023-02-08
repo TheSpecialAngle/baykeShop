@@ -31,6 +31,10 @@
 
 /* spu */
 
-.spu p, .breadcrumbs, .breadcrumbs a{
-    font-size: 14px;
+.spu-title, .breadcrumbs, .breadcrumbs a{
+    font-size: 12px;
 }
+/* a.spu:hover{
+    box-shadow: 10px 5px 5px rgb(81, 81, 81);
+    border: #3c3c3c solid 1px;
+} */
