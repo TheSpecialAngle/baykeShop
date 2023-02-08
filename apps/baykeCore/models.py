@@ -73,3 +73,4 @@ class BaykeCarouselMixin(BaykeModelMixin):
 
     class Meta:
         abstract = True
+        

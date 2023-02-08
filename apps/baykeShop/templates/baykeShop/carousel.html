@@ -3,10 +3,10 @@
     <template>
         <b-carousel>
             <b-carousel-item v-for="(carousel, i) in carousels" :key="i">
-                <section :class="`hero is-medium is-${carousel.color}`">
-                    <div class="hero-body has-text-centered">
-                        <h1 class="title">{$ carousel.text $}</h1>
-                    </div>
+                <section :class="`hero is-medium`">
+                    <a class="image" :href="carousel.target_url">
+                        <img :src="`/media/${carousel.img}`" :alt="carousel.desc"> 
+                    </a>
                 </section>
             </b-carousel-item>
         </b-carousel>

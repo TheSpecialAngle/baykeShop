@@ -1,13 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.utils.html import format_html
 # Register your models here.
 from baykeAdmin.admin import BaseModelAdmin
 from .models import (
     BaykeShopCategory, BaykeShopSPU, 
     BaykeSPUCarousel, BaykeShopSKU, 
-    BaykeShopSpec, 
-    # BaykeShopSpecGroup, 
-    BaykeShopSpecOption
+    BaykeShopSpec, BaykeShopSpecOption,
+    BaykeShopBanner
 )
 
 class BaykeShopCategoryInline(admin.TabularInline):
@@ -91,6 +90,16 @@ class BaykeShopSpecAdmin(BaseModelAdmin):
     list_display = ('id', 'name', 'operate')
     # search_fields = ('name',)
     inlines = (BaykeShopSpecOptionInline, )
+
+
+@admin.register(BaykeShopBanner)
+class BaykeShopBannerAdmin(BaseModelAdmin):
+    list_display = ('id', 'imgformat', 'target_url', 'operate')
+    
+    @admin.display(description="轮播图")
+    def imgformat(self, obj):
+        if obj.img:
+            return format_html(f'<img src="{obj.img.url}" width="auto" height="100px" />')
 
 
 # admin.site.register(BaykeShopSKU)

@@ -1,5 +1,5 @@
 from django.template import Library
-from baykeShop.models import BaykeShopCategory
+from baykeShop.models import BaykeShopCategory, BaykeShopBanner
 from baykeShop.forms import SearchForm
 
 
@@ -31,14 +31,9 @@ def navbar_result(context):
 @register.inclusion_tag('baykeShop/carousel.html')
 def carousel_result():
     # 轮播图模块
+    queryset = BaykeShopBanner.objects.show().values('id', 'img', 'desc', 'target_url')
     return {
-        'carousels': [
-            { 'text': 'Slide 1', 'color': 'primary' },
-            { 'text': 'Slide 2', 'color': 'info' },
-            { 'text': 'Slide 3', 'color': 'success' },
-            { 'text': 'Slide 4', 'color': 'warning' },
-            { 'text': 'Slide 5', 'color': 'danger' }
-        ]
+        'carousels': list(queryset)
     }
 
 

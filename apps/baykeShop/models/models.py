@@ -101,3 +101,13 @@ class BaykeSPUCarousel(BaykeCarouselMixin):
         return f"{self.img.name}"
 
     # TODO: Define custom methods here
+
+
+class BaykeShopBanner(BaykeCarouselMixin):
+    
+    class Meta:
+        verbose_name = '轮播图管理'
+        verbose_name_plural = verbose_name
+        
+    def __str__(self):
+        return f"{self.img.name}"
