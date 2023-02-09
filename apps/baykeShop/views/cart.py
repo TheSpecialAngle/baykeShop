@@ -21,11 +21,27 @@ class BaykeShopCartView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         # 查询出当前用户的购物车商品
         cart_queryset = BaykeShopingCart.objects.show().filter(owner=request.user, sku__stock__gte=1)
-        print(cart_queryset)
+        total = 0
+        carts = []
+        for cart in cart_queryset:
+            cart_dict = {}
+            cart_dict['id'] = cart.id
+            cart_dict['title'] = cart.sku.spu.title
+            cart_dict['sku_id'] = cart.sku.id
+            cart_dict['cover_pic'] = cart.sku.cover_pic.name
+            cart_dict['options'] = list(cart.sku.options.show().values('name', 'spec__name'))
+            cart_dict['price'] = cart.sku.price
+            cart_dict['stock'] = cart.sku.stock
+            cart_dict['sales'] = cart.num
+            cart_dict['total_price'] = cart.num * cart.sku.price
+            carts.append(cart_dict)
+            total += cart.num * cart.sku.price
+        
         context = {
-            'carts': cart_queryset,
+            'carts': carts,
+            'total': total,
             **kwargs,
-        }
+        } 
         
         return TemplateResponse(
             request, 
@@ -67,4 +83,18 @@ class BaykeShopCartView(LoginRequiredMixin, View):
             **kwargs,
         }
         return JsonResponse(context)
+    
+    def put(self, request, *args, **kwargs):
+        from django.http import QueryDict
+        data = QueryDict(request.body)
+        cart_id = data.get('cart_id')
+        cart = BaykeShopingCart.objects.filter(id=int(cart_id))
+        if not cart.exists():
+            return JsonResponse({'code': 'error', 'message': '购物车不存在！'})
+        cart.update(is_del=True)
+        return JsonResponse({'code': 'ok', 'message': '删除成功！'})
+ 
 
+class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
+    
+    pass
