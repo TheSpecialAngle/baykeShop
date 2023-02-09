@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block extrastyle %}{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <style>
     [v-cloak] {
         display: none !important;
@@ -143,7 +144,8 @@
                 <div class="buttons" style="margin-top: auto;">
                     <b-button 
                         type="is-primary" 
-                        size="is-large" 
+                        size="is-large"
+                        @click="addCart" 
                         :disabled="stock ? false : true ">加入购物车
                     </b-button>
                     <b-button 
@@ -194,12 +196,45 @@
                 options: options,
                 radioButton: currentSkuOptions,
                 num: 1,
+                sku_id: '{{ sku_id }}',
                 banners: banners
             },
             methods: {
                 getImgUrl(value) {
                     return `/media/${value}`
                 },
+                getCookie(name) {
+                    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+                    return r ? r[1] : undefined;
+                },
+                toastMessage(type, message){
+                    return this.$buefy.toast.open({
+                        message: message,
+                        type: type
+                    })
+                },
+                addCart(){
+                    const sendData = new URLSearchParams()
+                    sendData.append('sku_id', this.sku_id)
+                    sendData.append('sales', this.num)
+                    axios({
+                        method: 'post',
+                        url: '{% url "baykeShop:cart" %}',
+                        data: sendData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'X-CSRFToken': this.getCookie('csrftoken'),
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        }
+                    }).then(res => {
+                        console.log(res.data)
+                        if (res.data.code == 'ok'){
+                            this.toastMessage('is-success', res.data.message)
+                        }else{
+                            this.toastMessage('is-danger', res.data.message)
+                        }
+                    })
+                }
             },
             
             watch:{
@@ -208,6 +243,7 @@
                         let strVal = val.join()
                         sku = this.options[strVal]
                         if (sku) {
+                            this.sku_id = sku.sku_id
                             this.price = sku.price
                             this.org_price = sku.org_price
                             this.sales = sku.sales

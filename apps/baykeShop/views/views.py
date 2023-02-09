@@ -90,6 +90,7 @@ class GoodDetailView(DetailView):
         context['current_sku_options'] = self.get_current_sku_options()
         context['banners'] = self.get_spu_banners()
         context['sku'] = self.get_current_sku()
+        context['sku_id'] = self.kwargs.get('sku_id')
         return context
     
     def get_sku_queryset(self):
@@ -120,6 +121,7 @@ class GoodDetailView(DetailView):
             # sku_dict = {}
             options = ','.join(sku_options_names)
             skus[options] = {
+                'sku_id': sku.id,
                 'price': str(sku.price),
                 'org_price': str(sku.org_price),
                 'stock': sku.stock,
@@ -171,7 +173,7 @@ class SearchView(ListView):
                 Q(spu__title__icontains=f'{words}')|
                 Q(spu__desc__icontains=f'{words}')|
                 Q(spu__content__icontains=f'{words}')
-            )
+            ).order_by('-add_date')
         return queryset
     
     

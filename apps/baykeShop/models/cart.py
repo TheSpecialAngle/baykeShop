@@ -22,7 +22,7 @@ class BaykeShopingCart(BaykeModelMixin):
     # 购物车数据模型
     owner = models.ForeignKey(User, on_delete=models.PROTECT, verbose_name="用户")
     sku = models.ForeignKey(BaykeShopSKU, on_delete=models.PROTECT, verbose_name="商品sku")
-    num = models.PositiveIntegerField(default=1, verbose_name="数量")
+    num = models.PositiveIntegerField(default=0, verbose_name="数量")
     
     class Meta:
         verbose_name = '购物车'
