@@ -227,8 +227,8 @@
                             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                         }
                     }).then(res => {
-                        console.log(res.data)
                         if (res.data.code == 'ok'){
+                            headTop._data.cartNum = res.data.total
                             this.toastMessage('is-success', res.data.message)
                         }else{
                             this.toastMessage('is-danger', res.data.message)

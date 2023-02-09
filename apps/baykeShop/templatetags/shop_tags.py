@@ -1,5 +1,5 @@
 from django.template import Library
-from baykeShop.models import BaykeShopCategory, BaykeShopBanner
+from baykeShop.models import BaykeShopCategory, BaykeShopBanner, BaykeShopingCart
 from baykeShop.forms import SearchForm
 
 
@@ -48,3 +48,7 @@ def page_result(context, page_obj):
         'per_page': page_obj.paginator.per_page,
     }
     
+
+@register.simple_tag
+def cart_num(user):
+    return BaykeShopingCart.get_cart_count(user)

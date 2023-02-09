@@ -16,16 +16,19 @@
 {% block banner %}{% endblock %}
 
 {% block breadcrumbs %}
-    <div class="breadcrumbs pt-3 pb-3">
-        <a class="has-text-grey-dark" href="{% url 'baykeShop:home' %}">首页</a>
-        &rsaquo; <span class=" has-text-grey-lighter">购物车</span> 
-    </div>
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+          <li><a href="#">用户中心</a></li>
+          <li class="is-active"><a href="#" aria-current="page">购物车</a></li>
+        </ul>
+    </nav>
 {% endblock %}
 
 {% block content %}
 {{ carts|json_script:"carts-data" }}
 <div id="cart" class="mb-5" style="min-height: 60vh;">
-    <div class="box">
+    <div class="box is-marginless" v-if="carts.length > 0">
         <template>
             <b-table
                 checkable
@@ -104,6 +107,11 @@
             </b-table>
         </template>
     </div>
+    <div class="has-text-centered has-text-danger is-size-5" v-else> 
+        <img src="{% static 'baykeShop/img/noCart1.png' %}">
+        <p> 亲，购物车还是空的哟~ </p>
+        <a class=" button is-primary is-outlined mt-4" href="{% url 'baykeShop:home' %}">继 续 逛</a>
+    </div>
 </div>
 {% endblock %}
 
@@ -121,6 +129,7 @@
                 total: 0,
             },
             created(){
+                // 第一次加载时处理库存不足的选中数据
                 carts.forEach(row => {
                     if (Number(row.stock) > Number(row.sales)){
                         this.checkedRows.push(row)
@@ -129,10 +138,12 @@
                 })
             },
             methods: {
+                // 获取cookie
                 getCookie(name) {
                     var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
                     return r ? r[1] : undefined;
                 },
+                // 消息提示
                 toastMessage(type, message){
                     return this.$buefy.toast.open({
                         message: message,
@@ -142,11 +153,11 @@
                 // 数量变化时价格跟随变化
                 salesActions(data){
                     data.total_price = parseFloat(data.sales * data.price).toFixed(2)
-                },
-                // 删除购物车
-                updateCart(cart_id){
+                    // 更改数据库
                     const sendData = new URLSearchParams();
-                    sendData.append('cart_id', cart_id)
+                    sendData.append('sales', Number(data.sales));
+                    sendData.append('cart_id', Number(data.id));
+                    sendData.append('actions', 'update_num')
                     axios({
                         method: 'put',
                         url: '{% url "baykeShop:cart" %}',
@@ -157,8 +168,59 @@
                             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                         }
                     }).then(res => {
-                        console.log(res)
+                        if (res.data.code == 'ok'){
+                            this.toastMessage('is-success', res.data.message)
+                        }else{
+                            this.toastMessage('is-danger', res.data.message)
+                        }
                     })
+                },
+                // 删除购物车
+                updateCart(cart_id){
+                    const sendData = new URLSearchParams();
+                    sendData.append('cart_id', cart_id)
+                    sendData.append('actions', 'delete')
+
+                    this.$buefy.dialog.confirm({
+                        message: '是否确认删除该购物车商品！',
+                        cancelText: '取消',
+                        onConfirm: () => {
+                            axios({
+                                method: 'put',
+                                url: '{% url "baykeShop:cart" %}',
+                                data: sendData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'X-CSRFToken': this.getCookie('csrftoken'),
+                                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                                }
+                            }).then(res => {
+                                if (res.data.code == 'ok'){
+
+                                    // 修改头部购物车数量
+                                    let cartNum = Number(headTop._data.cartNum)
+                                    headTop._data.cartNum = cartNum - 1
+
+                                    // 删除购物车列表中的显示数据
+                                    this.carts.forEach(row => {
+                                        if (Number(cart_id) == Number(row.id)){
+                                            this.carts.splice(this.carts.indexOf(row), 1);
+                                            this.checkedRows.splice(this.checkedRows.indexOf(row), 1);
+                                        }
+                                    })
+
+                                    // 弹出提示
+                                    this.toastMessage('is-success', res.data.message)
+
+                                }else{
+                                    this.toastMessage('is-danger', res.data.message)
+                                }
+                            })
+                        }
+                    })
+
+
+                    
                 }
             },
             watch: {

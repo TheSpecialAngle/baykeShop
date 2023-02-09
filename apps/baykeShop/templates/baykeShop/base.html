@@ -114,14 +114,16 @@
             </div>
         </footer>
     </div>
-    {% block vuescript %}{% endblock %}
-
     <script>
         var headTop = new Vue({
             el: '#headTop',
             delimiters: ['{$', '$}'],
-            data: {}
+            data: {
+                cartNum: '{% cart_num request.user %}'
+            }
         })
     </script>
+
+    {% block vuescript %}{% endblock %}
 </body>
 </html>

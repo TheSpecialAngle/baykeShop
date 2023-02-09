@@ -58,7 +58,7 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         
         # 数据校验
         try:
-            sku = BaykeShopSKU.objects.get(id=int(sku_id)) 
+            sku = BaykeShopSKU.objects.get(id=int(sku_id))
         except BaykeShopSKU.DoesNotExist:
             return JsonResponse({'code': 'error', 'message': '该商品不存在！'})
         if not sales.isdigit() or not int(sales) > 0:
@@ -71,12 +71,11 @@ class BaykeShopCartView(LoginRequiredMixin, View):
             total += 1
         except IntegrityError:
             # 这里处理重复加入购物车的问题
-            sku.num = F('num')+int(sales)
-            sku.save()
+            BaykeShopingCart.objects.show().filter(sku=sku, owner=request.user).update(num=F('num')+int(sales))
         
         context = {
             'code': 'ok',
-            'message': '加入成功！',
+            'message': '加入购物车成功！',
             'sku_id': sku_id,
             'spu_id': sku.spu.id,
             'total': total,
@@ -88,11 +87,24 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         from django.http import QueryDict
         data = QueryDict(request.body)
         cart_id = data.get('cart_id')
-        cart = BaykeShopingCart.objects.filter(id=int(cart_id))
+        sales = data.get('sales')
+        actions = data.get('actions')
+        cart = BaykeShopingCart.objects.show().filter(id=int(cart_id), owner=request.user)
+        
+        # 验证传入的购物车id
         if not cart.exists():
-            return JsonResponse({'code': 'error', 'message': '购物车不存在！'})
-        cart.update(is_del=True)
-        return JsonResponse({'code': 'ok', 'message': '删除成功！'})
+            return JsonResponse({'code': 'error', 'message': '购物车不存在！', **kwargs})
+        
+        # 如果购物车和数量都传入则修改数量
+        if cart and sales and actions == 'update_num':
+            cart.update(num=sales)
+            return JsonResponse({'code': 'ok', 'message': '购物车数量修改成功！', **kwargs})
+        
+        # 删除购物车
+        if cart and actions == 'delete':
+            # cart.update(is_del=True)
+            cart.delete()
+            return JsonResponse({'code': 'ok', 'message': '删除成功！', **kwargs})
  
 
 class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
