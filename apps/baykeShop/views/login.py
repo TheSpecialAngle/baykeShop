@@ -8,6 +8,7 @@ from ..forms import LoginForm
 
 
 class LoginView(BaseLoginView):
+    # 登录
     next_page = 'baykeShop:home'
     form_class = LoginForm
     redirect_field_name = 'redirect_to'
@@ -15,5 +16,5 @@ class LoginView(BaseLoginView):
 
 
 class LogoutView(BaseLogoutView):
-    
+    # 退出
     template_name = 'baykeShop/user/logout.html'

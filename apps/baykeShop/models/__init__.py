@@ -4,4 +4,5 @@ from .models import (
     BaykeShopBanner
 )
 from .spec import BaykeShopSpec, BaykeShopSpecOption
-from .cart import BaykeShopingCart
+from .cart import BaykeShopingCart, BaykeShopAddress
+from .user import BaykeUserInfo

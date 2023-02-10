@@ -97,9 +97,9 @@
                         <div class="has-text-danger-dark ml-3">
                             已选<span class="is-size-4 pl-2 pr-2">{$ checkedRows.length $}</span>件商品 
                         </div>
-                        <div class=" is-flex is-align-items-center">
-                            <span>合计：</span> <span class="is-size-4 pr-5">¥ {$ total $}</span>
-                            <a class="button is-primary is-radiusless is-large pl-6 pr-6" href="">去结算</a>
+                        <div class=" is-flex is-align-items-center has-text-danger-dark ">
+                            <span class="is-size-5">合计：</span> <span class="is-size-3 pr-5">¥ {$ total $}</span>
+                            <a class="button is-primary is-radiusless is-large pl-6 pr-6" href="{% url 'baykeShop:order_confirm' %}">去结算</a>
                         </div>
                         <!-- <div>{$ checkedRows $}</div> -->
                     </div>

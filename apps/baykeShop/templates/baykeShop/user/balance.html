@@ -1,0 +1,20 @@
+{% extends 'baykeShop/user/profile.html' %}
+
+
+{% block title %}
+我的余额 - {{ request.user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+          <li><a href="{% url 'baykeShop:user_profile' %}">个人中心</a></li>
+          <li class="is-active"><a href="#" aria-current="page">我的余额</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block profile %}
+阿达撒奥所多
+{% endblock %}

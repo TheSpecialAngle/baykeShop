@@ -51,4 +51,4 @@ def page_result(context, page_obj):
 
 @register.simple_tag
 def cart_num(user):
-    return BaykeShopingCart.get_cart_count(user)
+    return BaykeShopingCart.get_cart_count(user) if user.is_authenticated else 0

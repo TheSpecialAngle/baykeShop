@@ -1,0 +1,119 @@
+{% extends 'baykeShop/cart.html' %}
+
+{% block title %}
+    个人中心 - {{ request.user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+          <li class="is-active"><a href="#" aria-current="page">个人中心</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div class="columns mb-3">
+        <div class="column is-2-fullhd is-3-desktop">
+            <div class="box is-radiusless is-marginless is-flex is-flex-direction-column is-align-items-center">
+                <figure class="image is-64x64">
+                    <img class="is-rounded" src="{{ MEDIA_URL }}{{ request.user.baykeuserinfo.avatar }}" >
+                </figure>
+                <p class="mt-2">
+                    {% if request.user.baykeuserinfo %}
+                    {{ request.user.baykeuserinfo.nickname }}
+                    {% else %}
+                    {{ request.user.username }}
+                    {% endif %}
+                </p>
+            </div>
+            <div class="box is-marginless is-radiusless">
+                <aside class="menu">
+                    <p class="menu-label">
+                        账户管理
+                    </p>
+                    <ul class="menu-list">
+                      <li><a class="{% if '/user/profile/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_profile' %}">个人信息</a></li>
+                      <li><a class="{% if '/user/balance/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_balance' %}">我的余额</a></li>
+                      <li><a>地址管理</a></li>
+                    </ul>
+                    <p class="menu-label">
+                      我的订单
+                    </p>
+                    <ul class="menu-list">
+                      <li><a>全部订单</a></li>
+                      <li><a>待支付</a></li>
+                      <li><a>已支付</a></li>
+                      <li><a>待评价</a></li>
+                      <li><a>售后订单</a></li>
+                    </ul>
+                    
+                </aside>
+            </div>
+        </div>
+        <div class="column">
+            <div class="box is-radiusless p-5" style="height: 100%;">
+                {% block profile %}
+                <h1 class="is-size-5 pl-2">个人信息</h1>
+                <div class="dropdown-divider"></div>
+                <div class="is-flex is-flex-direction-column p-4">
+                    <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap is-align-items-center p-3">
+                        <div class="is-flex is-align-items-center">
+                            <span class="has-text-grey is-size-7">我的头像：</span> 
+                            <figure class="image is-64x64">
+                                <img class="is-rounded" src="{{ MEDIA_URL }}{{ request.user.baykeuserinfo.avatar }}" >
+                            </figure>
+                        </div>
+                        <div><a href="" class="button is-danger is-inverted">修改</a></div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap is-align-items-center p-3">
+                        <div class=" is-flex is-align-items-center">
+                            <span class="has-text-grey is-size-7">我的昵称：</span> 
+                            <span>{{ request.user.baykeuserinfo.nickname }}</span>
+                        </div>
+                        <div><a href="" class="button is-danger is-inverted">修改</a></div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap is-align-items-center p-3">
+                        <div class=" is-flex is-align-items-center">
+                            <span class="has-text-grey is-size-7">手机号：&nbsp;&nbsp;</span> 
+                            <span>{{ request.user.baykeuserinfo.phone }}</span>
+                        </div>
+                        <div><a href="" class="button is-danger is-inverted">修改</a></div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap is-align-items-center p-3">
+                        <div class=" is-flex is-align-items-center">
+                            <span class="has-text-grey is-size-7">我的ID：&nbsp;&nbsp;</span> 
+                            <span>{{ request.user.id }}</span>
+                        </div>
+                        <div></div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap is-align-items-center p-3">
+                        <div class="is-flex is-align-items-center">
+                            <span class="has-text-grey is-size-7">密码设置：</span> 
+                            <span>*********</span>
+                        </div>
+                        <div><a href="" class="button is-danger is-inverted">修改密码</a></div>
+                    </div>
+                    <div class="dropdown-divider"></div>
+                    <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap is-align-items-center p-3">
+                        <div class=" is-flex is-align-items-center">
+                            <!-- <span class=" has-text-grey">密码设置：</span> 
+                            <span>*********</span> -->
+                        </div>
+                        <div><a href="{% url 'baykeShop:logout' %}" class=" button is-primary">退出登录</a></div>
+                    </div>
+
+                </div>
+                {% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block vuescript %}{% endblock %}
+    

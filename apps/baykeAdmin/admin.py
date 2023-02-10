@@ -6,6 +6,7 @@ from django.contrib.auth.admin import (
     GroupAdmin as BaseGroupAdmin
 )
 # Register your models here.
+from baykeShop.models import BaykeUserInfo
 from .models import BaykeMenu, BaykePermission
 from .custom import CustomActions, CustomColumns
 
@@ -47,9 +48,13 @@ class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
         return super().change_view(request, object_id, form_url, extra_context)
 
 
+class BaykeUserInfoInline(admin.StackedInline):
+    '''Tabular Inline View for BaykeUserInfo'''
+    model = BaykeUserInfo
+
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, BaseModelAdmin):
-    pass
+    inlines = (BaykeUserInfoInline, )
 
 @admin.register(Group)
 class GroupAdmin(BaseGroupAdmin, BaseModelAdmin):

@@ -1,0 +1,71 @@
+{% extends 'baykeShop/cart.html' %}
+
+{% block title %}
+    购物车-订单确认
+{% endblock %}
+    
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .address-box{
+        border: solid 1px #eee;
+        padding: 2em 2.5em 2em 2.5em;
+        cursor: pointer;
+        margin-top: 1em;
+        line-height: 1.5em;
+        position: relative;
+    }
+    .btn-default{
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    #cartAddress .is-active{
+        border: #f32020 1px solid;
+    }
+    .address-box:hover{
+        border: #f32020 1px solid;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+          <li><a href="#">购物车</a></li>
+          <li class="is-active"><a href="#" aria-current="page">提交订单</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div id="cartAddress" class="box mb-3 is-radiusless">
+        <h1 class=" is-size-4 pl-2">收货地址</h1> 
+        <img width="100%" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAAECAYAAACeNca/AAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAEsKADAAQAAAABAAAABAAAAAAdekyeAAABbUlEQVR4Ae2asW3DMBBFSWqGACkzRHprgyCbZASPEHiRjJC4TlYIkD4zWIyPd8WXzcZKw+KpkSCIBPHw+HWimNP5eHj5nae6vNv1pqPW4/fhfr5sW98e51TK9n5TPeanz6t+Ga+Thq9zwAd8cAL4oBzIB3zAB+qHRH0W04B6soHAB3xYvRj4fnMc5AP5sJoYrD8YjoHfF8XGNy2nvZ23Hqcy7bttS+7f7z7cubnUbnvGG6zg20DgAz4EAXxQEOQDPuCDEsAHpUE+4AM+KAF8UBrkAz7ggxLAB6UxQD4U272Sct7puG66Pq/O/bzefVy2aX//0z/6td1Xz19X/TJeJw1f54AP+OAE8EE5kA/4gA/UD/b3lPrMZgL1ZMsDfIhYxAd8CBUcBN+bxoF8CCnIB58WY9cPhd0r4esAq4kxktWJ3W2Bg914DQQ+4IMGBD7gAz4oAXxQGuQDPuCDEsAHpUE+4AM+KAF8UBqj58MfRyl5tp+pqv4AAAAASUVORK5CYII=">
+        
+        <div class="columns is-multiline">
+            <div class="column is-3">
+                <div class="address-box is-active">
+                    <span class="tag is-danger btn-default is-radiusless">默认</span>
+                    <h1 class="has-text-weight-bold">郑振</h1>
+                    <p>17609206698</p>
+                    <p class="has-text-grey">北京市北京市东城区陕西省咸阳市秦都区世纪大道怡水花园</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block vuescript %}
+<script>
+    var cartAddress = new Vue({
+        el: "#cartAddress",
+        delimiters: ['{$', '$}'],
+        data: {
+            
+        }
+    })
+</script>
+{% endblock %}

@@ -108,5 +108,18 @@ class BaykeShopCartView(LoginRequiredMixin, View):
  
 
 class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
+    """购物车订单确认页面
+    """
+    template_name = None
     
-    pass
+    def get(self, request, *args, **kwargs):
+        
+        
+        context = {
+            **kwargs
+        }
+        return TemplateResponse(
+            request, 
+            [self.template_name or 'baykeShop/order_confirm.html'], 
+            context
+        )
