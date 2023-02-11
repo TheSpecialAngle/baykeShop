@@ -15,7 +15,8 @@ from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 
-from baykeShop.models import BaykeUserInfo
+from baykeShop.models import BaykeUserInfo, BaykeShopAddress
+from baykeShop.forms import BaykeShopAddressForm
 
 User = get_user_model()
 
@@ -67,9 +68,10 @@ class BaykeAddressView(LoginRequiredMixin, View):
     template_name = None
     
     def get(self, request, *args, **kwargs):
-        
+        address_queryset = BaykeShopAddress.objects.show()
         
         context = {
+            "addr_list": address_queryset,
             **kwargs,
         }
         
@@ -78,3 +80,22 @@ class BaykeAddressView(LoginRequiredMixin, View):
             [self.template_name or 'baykeShop/user/address.html'],
             context
         )
+        
+    def post(self, request, *args, **kwargs):
+        form = BaykeShopAddressForm(request.POST)
+        addr_default = BaykeShopAddress.objects.show().filter(is_default=True)
+        if form.is_valid():
+            if form.cleaned_data['is_default']:
+                addr_default.update(is_default=False)
+            new_addr = form.save(commit=False)
+            new_addr.owner = request.user
+            new_addr.save()
+        return JsonResponse({'code': 'ok', 'message': '保存成功！'})
+    
+    def put(self, request, *args, **kwargs):
+        from django.http import QueryDict
+        data = QueryDict(request.body)
+        addr_default = BaykeShopAddress.objects.show().filter(is_default=True)
+        addr_default.update(is_default=False)
+        BaykeShopAddress.objects.filter(id=int(data.get('addr_id'))).update(is_default=True)
+        return JsonResponse({'code': 'ok', 'message': '设置默认成功！'})

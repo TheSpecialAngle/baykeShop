@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UsernameField
 from django.contrib.auth.forms import UserCreationForm
@@ -6,7 +8,9 @@ from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 from django.utils.html import format_html_join, format_html
+from django.core.exceptions import ValidationError
 
+from baykeShop.models import BaykeShopAddress
 from baykeShop.widgets import SearchTextInput
 
 
@@ -96,3 +100,21 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ("username",)
         field_classes = {'username': BaykeShopUsernameField}
+        
+
+class BaykeShopAddressForm(forms.ModelForm):
+    # 地址表单
+    class Meta:
+        model = BaykeShopAddress
+        exclude = ('email', 'owner')
+        
+    def clean(self):
+        # print(self.cleaned_data)
+        return super().clean()
+    
+    def clean_phone(self):
+        phone = self.cleaned_data['phone']
+        ret = re.match(r"^1[35678]\d{9}$", phone)
+        if not ret:
+            raise ValidationError("手机号格式不正确！")
+        return phone

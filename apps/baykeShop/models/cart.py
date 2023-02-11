@@ -56,10 +56,6 @@ class BaykeShopAddress(BaykeModelMixin):
     class Meta:
         verbose_name = "收货地址"
         verbose_name_plural = verbose_name
-        constraints = [
-            # 默认地址唯一约束
-            models.UniqueConstraint(fields=('owner', 'is_default'), name="unique_happy_addr")
-        ]
-
+       
     def __str__(self):
         return f'{self.name} {self.address}'
