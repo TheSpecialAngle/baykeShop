@@ -17,9 +17,140 @@
 {% endblock %}
 
 {% block profile %}
-<h1 class="is-size-5 pl-2">地址管理</h1>
+<div id="userAddress">
+<div class="is-flex is-justify-content-space-between is-align-items-center">
+  <h1 class="is-size-5 pl-2">
+    <span class="mdi mdi-map-marker-multiple-outline"></span> 
+    地址管理
+  </h1>
+  <div>
+    <b-button type="is-primary is-light"  icon-left="map-plus" @click="cardModal">添加地址</b-button>
+  </div>
+</div>
+
 <div class="dropdown-divider"></div>
-阿达撒
+<div class="columns">
+  <div class="column is-4">
+    <div class="card">
+      <div class="card-content">
+        <span class="tag is-primary">默认</span>
+        <span>张真</span> <span>17609206698</span>
+        <p class=" has-text-grey mt-2">陕西省咸阳市秦都区世纪大道怡水花园</p>
+      </div>
+      <footer class="card-footer is-size-7">
+        <p class="card-footer-item">
+          <span>
+            <a href=""><span class="mdi mdi-human-edit"></span>
+              修改
+            </a>
+          </span>
+        </p>
+        <p class="card-footer-item">
+          <span>
+            <a href=""><span class="mdi mdi-trash-can-outline"></span>
+              删除</a>
+          </span>
+        </p>
+        <p class="card-footer-item">
+          <span>
+            <a href=""><span class=" mdi mdi-map-marker-check-outline"></span>
+              设为默认</a>
+          </span>
+        </p>
+      </footer>
+    </div>
+  </div>
+</div>
+</div>
 {% endblock %}
 
-{% block vuescript %}{% endblock %}
+{% block vuescript %}
+<script>
+  const ModalForm = {
+    props: ['email', 'password'],
+    data(){
+      return {
+        formProps:{
+          email: 'asdas@qq.com',
+          password: 'asdasas'
+        }
+        
+      }
+    },
+    template: `
+        <form action="">
+            <div class="modal-card" style="width: auto">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Login</p>
+                    <button
+                        type="button"
+                        class="delete"
+                        @click="$emit('close')"/>
+                </header>
+                <section class="modal-card-body">
+                    <b-field label="Email">
+                        <b-input
+                            v-model="formProps.email"
+                            @input="$emit('updateModel', formProps.email)"
+                            type="email"
+                            :value="email"
+                            placeholder="Your email"
+                            required>
+                        </b-input>
+                    </b-field>
+
+                    <b-field label="Password">
+                        <b-input
+                            v-model="formProps.password"
+                            @input="$emit('updateModel', formProps.password)"
+                            type="password"
+                            :value="password"
+                            password-reveal
+                            placeholder="Your password"
+                            required>
+                        </b-input>
+                    </b-field>
+
+                    <b-checkbox>Remember me</b-checkbox>
+                </section>
+                <footer class="modal-card-foot">
+                    <b-button
+                        label="Close"
+                        @click="$emit('close')" />
+                    <b-button
+                        label="Login"
+                        @click="$emit('addressPuls', formProps)"
+                        type="is-primary" />
+                </footer>
+            </div>
+        </form>
+    `
+    }
+
+  var userAddress = new Vue({
+    el: '#userAddress',
+    delimiters: ['{$', '$}'],
+    data: {},
+    methods: {
+      cardModal() {
+        this.$buefy.modal.open({
+            parent: this,
+            component: ModalForm,
+            hasModalCard: true,
+            customClass: 'custom-class custom-class-2',
+            trapFocus: true,
+            active: true,
+            ariaModal: true,
+            events: {'addressPuls': this.addressPuls, 'updateModel': this.updateModel}
+        })
+      },
+      addressPuls(props){
+        console.log(props)
+      },
+      updateModel(value){
+        console.log(value)
+      },
+    }
+  })
+</script>
+{% endblock %}

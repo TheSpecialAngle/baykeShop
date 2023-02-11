@@ -21,7 +21,8 @@ User = get_user_model()
 
 
 class BaykeUserProfileView(LoginRequiredMixin, View):
-    
+    """用户信息管理
+    """
     template_name = None
     
     def get(self, request, *args, **kwargs):
@@ -39,6 +40,8 @@ class BaykeUserProfileView(LoginRequiredMixin, View):
     
 
 class BaykeUserBalanceView(LoginRequiredMixin, View):
+    """余额管理
+    """
     
     template_name = None
     
@@ -57,6 +60,9 @@ class BaykeUserBalanceView(LoginRequiredMixin, View):
         
 
 class BaykeAddressView(LoginRequiredMixin, View):
+    
+    """地址管理
+    """
     
     template_name = None
     
