@@ -36,16 +36,13 @@
                     <ul class="menu-list">
                       <li><a class="{% if '/user/profile/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_profile' %}">个人信息</a></li>
                       <li><a class="{% if '/user/balance/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_balance' %}">我的余额</a></li>
-                      <li><a>地址管理</a></li>
+                      <li><a class="{% if '/user/address/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_address' %}">地址管理</a></li>
                     </ul>
                     <p class="menu-label">
                       我的订单
                     </p>
                     <ul class="menu-list">
                       <li><a>全部订单</a></li>
-                      <li><a>待支付</a></li>
-                      <li><a>已支付</a></li>
-                      <li><a>待评价</a></li>
                       <li><a>售后订单</a></li>
                     </ul>
                     

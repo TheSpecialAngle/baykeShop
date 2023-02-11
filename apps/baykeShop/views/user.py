@@ -54,3 +54,21 @@ class BaykeUserBalanceView(LoginRequiredMixin, View):
             [self.template_name or 'baykeShop/user/balance.html'],
             context
         )
+        
+
+class BaykeAddressView(LoginRequiredMixin, View):
+    
+    template_name = None
+    
+    def get(self, request, *args, **kwargs):
+        
+        
+        context = {
+            **kwargs,
+        }
+        
+        return TemplateResponse(
+            request, 
+            [self.template_name or 'baykeShop/user/address.html'],
+            context
+        )

@@ -1,5 +1,6 @@
 {% extends 'baykeShop/user/profile.html' %}
 
+{% load static %}
 
 {% block title %}
 我的余额 - {{ request.user }}
@@ -16,5 +17,45 @@
 {% endblock %}
 
 {% block profile %}
-阿达撒奥所多
+<h1 class="is-size-5 pl-2">我的余额</h1>
+<div class="dropdown-divider"></div>
+<div class="columns pl-5 pr-5 pt-5">
+  <div class="column">
+    <div class=" has-text-grey">账户可用余额（元）</div>
+    <div class="is-size-2">0.00</div>
+  </div>
+  <div class="column">
+    <div class=" has-text-grey">累计充值（元）</div>
+    <div class="is-size-2">0.00</div>
+  </div>
+  <div class="column">
+    <div class=" has-text-grey">累计消费（元）</div>
+    <div class="is-size-2">0.00</div>
+  </div>
+</div>
+
+<div id="balanceTabs" class="pl-4 pr-4">
+  <b-tabs class="block">
+    <b-tab-item label="账单明细">
+      <div class="has-text-centered is-size-5 pt-6"> 
+        <img src="{% static 'baykeShop/img/noyue.png' %}">
+        <p class="has-text-grey-light is-size-7"> 亲，暂无账单明细哟~ </p>
+      </div>
+    </b-tab-item>
+    <b-tab-item label="收入明细">asdasd</b-tab-item>
+    <b-tab-item label="支出明细">asdasd</b-tab-item>
+    
+  </b-tabs>
+</div>
+
+{% endblock %}
+
+{% block vuescript %}
+<script>
+  var balanceTabs = new Vue({
+    el: '#balanceTabs',
+    delimiters: ['{$', '$}'],
+    data: {}
+  })
+</script>
 {% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'baykeShop/user/profile.html' %}
+
+{% load static %}
+
+{% block title %}
+地址管理 - {{ request.user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+          <li><a href="{% url 'baykeShop:user_profile' %}">个人中心</a></li>
+          <li class="is-active"><a href="#" aria-current="page">地址管理</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block profile %}
+<h1 class="is-size-5 pl-2">地址管理</h1>
+<div class="dropdown-divider"></div>
+阿达撒
+{% endblock %}
+
+{% block vuescript %}{% endblock %}

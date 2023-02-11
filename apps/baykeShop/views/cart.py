@@ -114,7 +114,6 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
     
     def get(self, request, *args, **kwargs):
         
-        
         context = {
             **kwargs
         }

@@ -17,6 +17,7 @@ urlpatterns = [
     
     path("user/profile/", views.BaykeUserProfileView.as_view(), name="user_profile"),
     path("user/balance/", views.BaykeUserBalanceView.as_view(), name="user_balance"),
+    path("user/address/", views.BaykeAddressView.as_view(), name="user_address"),
     
     path("search/", views.SearchView.as_view(), name="search"),
     
