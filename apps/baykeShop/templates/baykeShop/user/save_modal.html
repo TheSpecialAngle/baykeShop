@@ -1,0 +1,22 @@
+<b-modal
+        v-model="isComponentModalActive"
+        has-modal-card
+        trap-focus
+        :destroy-on-hide="true"
+        aria-role="dialog"
+        aria-label="Example Modal"
+        close-button-aria-label="Close"
+        :events="events"
+        :parent="true"
+        ref="testdata"
+        aria-modal>
+        <template #default="props">
+            <modal-form 
+                v-bind="formProps" 
+                @close="props.close" 
+                @save="save" 
+                @update="update"
+                >
+            </modal-form>
+        </template>
+</b-modal>

@@ -17,99 +17,91 @@
 {% endblock %}
 
 {% block profile %}
-
 <div id="userAddress">
-    <button @click="add" >点击添加</button>
-    <button @click="edit">点击修改</button>
-    
+
+    <div class="is-flex is-justify-content-space-between is-align-items-center">
+      <h1 class="is-size-5 pl-2">
+        <span class="mdi mdi-map-marker-multiple-outline"></span> 
+        地址管理
+      </h1>
+      <div>
+        <b-button 
+          type="is-primary is-light"  
+          icon-left="map-plus" 
+          @click="isComponentModalActive = true">添加地址
+        </b-button>
+      </div>
+    </div>
+  
+    <div class="dropdown-divider"></div>
+
     <b-modal
-            v-model="isComponentModalActive"
-            has-modal-card
-            trap-focus
-            :destroy-on-hide="false"
-            aria-role="dialog"
-            aria-label="Example Modal"
-            close-button-aria-label="Close"
-            :events="events"
-            aria-modal>
-            <template #default="props">
-                <modal-form v-bind="formProps" @close="props.close" @save="save" @update="update(formProps.email)"></modal-form>
-            </template>
+        v-model="isComponentModalActive"
+        has-modal-card
+        :events="events"
+        :can-cancel="false">
+        <modal-form v-bind="formProps" @save="save"></modal-form>
     </b-modal>
 
 </div>
-
-
 {% endblock %}
 
-
 {% block vuescript %}
-
 <script>
     const ModalForm = {
-        props: ['email', 'password', 'canCancel'],
+        props: ['email', 'password'],
         data(){
             return {
-                formProps:{
-                    'email':'pss',
-                    'password': 'password'
+                formProps: {
+                    email: 'asdaasad'
                 }
-            }
-        },
-        methods:{
-            save(){
-                this.$emit('save', this.formProps)
-            },
-            update(email){
-                this.$emit('update', email)
+                
             }
         },
         template: `
-            <form action="">
-                <div class="modal-card" style="width: auto">
-                    <header class="modal-card-head">
-                        <p class="modal-card-title">Login</p>
-                        <button
-                            type="button"
-                            class="delete"
-                            @click="$emit('close')"/>
-                    </header>
-                    <section class="modal-card-body">
-                        <b-field label="Email">
-                            <b-input
-                                v-model="formProps.email"
-                                @input="update"
-                                type="email"
-                                :value="email"
-                                placeholder="Your email"
-                                required>
-                            </b-input>
-                        </b-field>
+            <div class="modal-card" style="width: auto">
+                <header class="modal-card-head">
+                    <p class="modal-card-title">Login</p>
+                </header>
+                <section class="modal-card-body">
+                    <b-field label="Email">
+                        <b-input
+                            v-model="formProps.email"
+                            type="email"
+                            :value="formProps.email"
+                            placeholder="Your email"
+                            required>
+                        </b-input>
+                    </b-field>
 
-                        <b-field label="Password">
-                            <b-input
-                                type="password"
-                                :value="password"
-                                password-reveal
-                                placeholder="Your password"
-                                required>
-                            </b-input>
-                        </b-field>
+                    <b-field label="Password">
+                        <b-input
+                            type="password"
+                            :value="password"
+                            password-reveal
+                            placeholder="Your password"
+                            required>
+                        </b-input>
+                    </b-field>
 
-                        <b-checkbox>Remember me</b-checkbox>
-                    </section>
-                    <footer class="modal-card-foot">
-                        <b-button
-                            label="Close"
-                            @click="$emit('close')" />
-                        <b-button
-                            label="Login"
-                            @click="save"
-                            type="is-primary" />
-                    </footer>
-                </div>
-            </form>
-        `
+                    <b-checkbox>Remember me</b-checkbox>
+                </section>
+                <footer class="modal-card-foot">
+                    <b-button
+                        label="Close"
+                        @click="$parent.close()" />
+                    <b-button
+                        label="Login"
+                        @click="save"
+                        type="is-primary" />
+                </footer>
+            </div>
+        `,
+        methods: {
+            save(){
+                this.$emit('save', this.$props)
+            }
+        }
     }
 
     var userAddress = new Vue({
@@ -118,38 +110,26 @@
         components: {
             ModalForm
         },
-        data: {
+        data:{
             events:{
                 'save': this.save,
-                'update': this.update
+                'email': this.email
             },
             isComponentModalActive: false,
             formProps: {
-                'email': 'asda',
-                'password:': 'asdasda'
+                email: 'evan@you.com',
+                password: 'testing'
             }
         },
         methods: {
-            add(){
-                
-               this.isComponentModalActive = true
-               
+            save(formProps){
+                console.log(formProps)
             },
-            edit(action){
-               this.isComponentModalActive = true
-               console.log(this.formProps)
-            },
-            save(s){
-                
-                console.log(s)
-            },
-            update(s){
-                console.log(s)
+            email(){
+                console.log('asdasa')
+                return 'asdasda'
             }
         }
-        
     })
 </script>
-    
 {% endblock %}
-    
