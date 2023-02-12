@@ -1,0 +1,257 @@
+{% extends 'baykeShop/user/profile.html' %}
+
+{% load static %}
+
+{% block title %}
+地址管理 - {{ request.user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+          <li><a href="{% url 'baykeShop:user_profile' %}">个人中心</a></li>
+          <li class="is-active"><a href="#" aria-current="page">地址管理</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block profile %}
+<div id="userAddress">
+  <div class="is-flex is-justify-content-space-between is-align-items-center">
+    <h1 class="is-size-5 pl-2">
+      <span class="mdi mdi-map-marker-multiple-outline"></span> 
+      地址管理
+    </h1>
+    <div>
+      <b-button 
+        type="is-primary is-light"  
+        icon-left="map-plus" 
+        @click="addonAddr">添加地址
+      </b-button>
+    </div>
+  </div>
+
+  <div class="dropdown-divider"></div>
+
+  <div class="columns">
+    {% for addr in addr_list %}
+    <div class="column is-4">
+      <div class="card">
+        <div class="card-content">
+          {% if addr.is_default %}
+          <span class="tag is-primary">默认</span>
+          {% endif %}
+          <span>{{ addr.name }}</span> <span>{{ addr.phone }}</span>
+          <p class="has-text-grey mt-2">
+            {{ addr.province }}{{ addr.city }}{{ addr.county }}{{ addr.address }}
+          </p>
+        </div>
+        <footer class="card-footer is-size-7">
+          <p class="card-footer-item">
+            <span>
+              <a @click="updateAddress({{ addr.id }})" >
+                <span class="mdi mdi-human-edit"></span>
+                修改
+              </a>
+            </span>
+          </p>
+          <p class="card-footer-item">
+            <span>
+              <a>
+                <span class="mdi mdi-trash-can-outline"></span>
+                删除
+              </a>
+            </span>
+          </p>
+          {% if not addr.is_default %}
+          <p class="card-footer-item">
+            <span>
+              <a @click="btnDefault({{ addr.id }})"><span class=" mdi mdi-map-marker-check-outline"></span>
+                设为默认</a>
+            </span>
+          </p>
+          {% endif %}
+        </footer>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <b-modal
+    v-model="isComponentModalActive"
+    has-modal-card
+    :events="events"
+    :can-cancel="false">
+    <modal-form v-bind="formProps"></modal-form>
+  </b-modal>
+
+</div>
+{% endblock %}
+
+
+{% block vuescript %}
+
+<script>
+
+  const ModalForm = {
+    delimiters: ['{$', '$}'],
+    props: [
+      'email',  
+      'labelPosition', 
+      'id',
+      'name',
+      'phone',
+      'province',
+      'city',
+      'county',
+      'address',
+      'is_default',
+      'action'
+    ],
+    methods: {
+      saveAddress(){
+        
+        console.log(this.$parent.isActive)
+      }
+    },
+    template: `{% include 'baykeShop/user/addr_form.html' %}`
+  }
+
+  var userAddress = new Vue({
+    el: '#userAddress',
+    delimiters: ['{$', '$}'],
+    components: {ModalForm},
+    data:{
+      isComponentModalActive: false,
+      events: {
+        'saveAddress': this.saveAddress,
+        'updateModel': this.updateModel
+      },
+      formProps: {
+        id: '',
+        name: '',
+        phone: '',
+        email: '',
+        province: '',
+        city:'',
+        county: '',
+        address: '',
+        is_default: false,
+        labelPosition:'on-border',
+        action: 'save'
+      }
+    },
+    methods:{
+      getCookie(name) {
+        var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+        return r ? r[1] : undefined;
+      },
+      toastMessage(type, message){
+          return this.$buefy.toast.open({
+              message: message,
+              type: type
+          })
+      },
+      updateModel(v){
+        console.log(v)
+      },
+      // 增加
+      saveAddress(){
+        console.log('asdadsa')
+        const sendData = new URLSearchParams()
+        sendData.append('name', this.formProps.name)
+        sendData.append('phone', this.formProps.phone)
+        sendData.append('email', this.formProps.email)
+        sendData.append('province', this.formProps.province)
+        sendData.append('city', this.formProps.city)
+        sendData.append('county', this.formProps.county)
+        sendData.append('address', this.formProps.address)
+        sendData.append('is_default', this.formProps.is_default)
+        axios({
+          method: 'post',
+          url: '{% url "baykeShop:user_address" %}',
+          data: sendData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+          }
+        }).then(res => {
+          if (res.data.code == 'ok'){
+            this.toastMessage('is-success', res.data.message)
+            location.reload()
+          }else{
+            this.toastMessage('is-danger', '发生错误！')
+          }
+          
+        })
+      },
+
+      // 修改
+      updateAddress(addr_id){
+        const sendData = new URLSearchParams();
+        sendData.append('addr_id', addr_id);
+        axios({
+          method: 'post',
+          url: '{% url "baykeShop:user_address" %}',
+          data: sendData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+          }
+        }).then(res => {
+          console.log(res)
+          this.formProps = res.data.formProps
+          this.formProps.labelPosition='on-border'
+          this.isComponentModalActive = true;
+        })
+      },
+
+      // 增加
+      addonAddr(){
+        this.isComponentModalActive = true
+        this.formProps = {
+          name: '',
+          phone: '',
+          email: '',
+          province: '',
+          city:'',
+          county: '',
+          address: '',
+          is_default: false,
+          labelPosition:'on-border',
+        }
+      },
+
+      // 设为默认
+      btnDefault(addr_id){
+        const sendData = new URLSearchParams()
+        sendData.append('addr_id', addr_id)
+        sendData.append('is_default', true)
+        axios({
+          method: 'put',
+          url: '{% url "baykeShop:user_address" %}',
+          data: sendData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': this.getCookie('csrftoken'),
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+          }
+        }).then(res => {
+          if (res.data.code == 'ok'){
+            this.toastMessage('is-success', res.data.message)
+            location.reload()
+          }else{
+            this.toastMessage('is-danger', '发生错误！')
+          }
+        })
+      },
+    }
+
+  })
+
+</script>
+
+{% endblock %}

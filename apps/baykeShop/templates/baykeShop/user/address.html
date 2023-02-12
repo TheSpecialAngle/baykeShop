@@ -15,3 +15,141 @@
         </ul>
     </nav>
 {% endblock %}
+
+{% block profile %}
+
+<div id="userAddress">
+    <button @click="add" >点击添加</button>
+    <button @click="edit">点击修改</button>
+    
+    <b-modal
+            v-model="isComponentModalActive"
+            has-modal-card
+            trap-focus
+            :destroy-on-hide="false"
+            aria-role="dialog"
+            aria-label="Example Modal"
+            close-button-aria-label="Close"
+            :events="events"
+            aria-modal>
+            <template #default="props">
+                <modal-form v-bind="formProps" @close="props.close" @save="save" @update="update(formProps.email)"></modal-form>
+            </template>
+    </b-modal>
+
+</div>
+
+
+{% endblock %}
+
+
+{% block vuescript %}
+
+<script>
+    const ModalForm = {
+        props: ['email', 'password', 'canCancel'],
+        data(){
+            return {
+                formProps:{
+                    'email':'pss',
+                    'password': 'password'
+                }
+            }
+        },
+        methods:{
+            save(){
+                this.$emit('save', this.formProps)
+            },
+            update(email){
+                this.$emit('update', email)
+            }
+        },
+        template: `
+            <form action="">
+                <div class="modal-card" style="width: auto">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Login</p>
+                        <button
+                            type="button"
+                            class="delete"
+                            @click="$emit('close')"/>
+                    </header>
+                    <section class="modal-card-body">
+                        <b-field label="Email">
+                            <b-input
+                                v-model="formProps.email"
+                                @input="update"
+                                type="email"
+                                :value="email"
+                                placeholder="Your email"
+                                required>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="Password">
+                            <b-input
+                                type="password"
+                                :value="password"
+                                password-reveal
+                                placeholder="Your password"
+                                required>
+                            </b-input>
+                        </b-field>
+
+                        <b-checkbox>Remember me</b-checkbox>
+                    </section>
+                    <footer class="modal-card-foot">
+                        <b-button
+                            label="Close"
+                            @click="$emit('close')" />
+                        <b-button
+                            label="Login"
+                            @click="save"
+                            type="is-primary" />
+                    </footer>
+                </div>
+            </form>
+        `
+    }
+
+    var userAddress = new Vue({
+        el: '#userAddress',
+        delimiters: ['{$', '$}'],
+        components: {
+            ModalForm
+        },
+        data: {
+            events:{
+                'save': this.save,
+                'update': this.update
+            },
+            isComponentModalActive: false,
+            formProps: {
+                'email': 'asda',
+                'password:': 'asdasda'
+            }
+        },
+        methods: {
+            add(){
+                
+               this.isComponentModalActive = true
+               
+            },
+            edit(action){
+               this.isComponentModalActive = true
+               console.log(this.formProps)
+            },
+            save(s){
+                
+                console.log(s)
+            },
+            update(s){
+                console.log(s)
+            }
+        }
+        
+    })
+</script>
+    
+{% endblock %}
+    
