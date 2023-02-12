@@ -69,6 +69,17 @@ class BaykeAddressView(LoginRequiredMixin, View):
     
     def get(self, request, *args, **kwargs):
         address_queryset = BaykeShopAddress.objects.show()
+        addr_id = request.GET.get('addr_id')
+        
+        # 点击修改按钮时返回数据回填表单  
+        if addr_id:
+            addr_list = BaykeShopAddress.objects.show().filter(id=int(addr_id)).values(
+                'id', 'name', 'phone', 'email', 'province',
+                'city', 'county','address','is_default'
+            )
+            addr_json = dict(addr_list.first())
+            return JsonResponse({'code':'ok', 'message': '获取成功', 'formProps':addr_json})
+        
         context = {
             "addr_list": address_queryset,
             **kwargs,
@@ -83,9 +94,10 @@ class BaykeAddressView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         form = BaykeShopAddressForm(request.POST)
         addr_default = BaykeShopAddress.objects.show().filter(is_default=True)
-        addr_id = request.POST.get('addr_id')
+        addr_id = request.POST.get('addr_id', None)
+        
         # 新增按钮动作
-        if form.is_valid() and addr_id is None:
+        if form.is_valid() and (not addr_id):
             if form.cleaned_data['is_default']:
                 addr_default.update(is_default=False)
             new_addr = form.save(commit=False)
@@ -94,13 +106,11 @@ class BaykeAddressView(LoginRequiredMixin, View):
             return JsonResponse({'code': 'ok', 'message': '保存成功！'})
         
         # 点击修改按钮时返回  
-        if addr_id:
-            addr_list = BaykeShopAddress.objects.show().filter(id=int(addr_id)).values(
-                'id', 'name', 'phone', 'email', 'province',
-                'city', 'county','address','is_default'
-            )
-            addr_json = dict(addr_list.first())
-            return JsonResponse({'code':'ok', 'message': '获取成功', 'formProps':addr_json})
+        if form.is_valid() and addr_id:
+            if form.cleaned_data['is_default']:
+                addr_default.update(is_default=False)
+            BaykeShopAddress.objects.show().filter(id=int(addr_id)).update(**form.cleaned_data)
+            return JsonResponse({'code':'ok', 'message': '修改成功'})
         
         return JsonResponse({'code': 'error', 'message': '发生错误！'})  
         
@@ -112,3 +122,10 @@ class BaykeAddressView(LoginRequiredMixin, View):
         addr_default.update(is_default=False)
         BaykeShopAddress.objects.filter(id=int(data.get('addr_id'))).update(is_default=True)
         return JsonResponse({'code': 'ok', 'message': '设置默认成功！'})
+    
+    def delete(self, request, *args, **kwargs):
+        from django.http import QueryDict
+        data = QueryDict(request.body)
+        addr_id = data.get('addr_id')
+        BaykeShopAddress.objects.filter(id=int(addr_id)).delete()
+        return JsonResponse({'code': 'ok', 'message': '删除成功！'})

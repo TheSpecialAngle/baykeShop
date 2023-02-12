@@ -10,7 +10,6 @@
         <b-field label="收件人" :label-position="labelPosition">
             <b-input
                 v-model="formProps.name"
-                @input="update"
                 type="text"
                 :value="formProps.name"
                 placeholder="收件人姓名"
@@ -78,11 +77,9 @@
     </section>
     <footer class="modal-card-foot">
         <b-button
-            label="Close"
-            @click="$emit('close')" />
-        <b-button
-            label="Login"
+            label="保存"
             @click="save"
+            expanded
             type="is-primary" />
     </footer>
 </div>

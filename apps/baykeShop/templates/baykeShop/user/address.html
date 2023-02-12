@@ -28,16 +28,62 @@
         <b-button 
           type="is-primary is-light"  
           icon-left="map-plus" 
-          @click="isComponentModalActive = true">添加地址
+          @click="add">添加地址
         </b-button>
       </div>
     </div>
   
     <div class="dropdown-divider"></div>
 
+    <div class="columns is-multiline">
+        {% for addr in addr_list %}
+        <div class="column is-4">
+          <div class="card">
+            <div class="card-content">
+              {% if addr.is_default %}
+              <span class="tag is-primary">默认</span>
+              {% endif %}
+              <span>{{ addr.name }}</span> <span>{{ addr.phone }}</span>
+              <p class=" has-text-grey mt-2">
+                {{ addr.province }}{{ addr.city }}{{ addr.county }}{{ addr.address }}
+              </p>
+            </div>
+            <footer class="card-footer is-size-7">
+              <p class="card-footer-item">
+                <span>
+                  <a @click="edit({{ addr.id }})" >
+                    <span class="mdi mdi-human-edit"></span>
+                    修改
+                  </a>
+                </span>
+              </p>
+              <p class="card-footer-item">
+                <span>
+                  <a @click="del('{{ addr.id }}')">
+                    <span class="mdi mdi-trash-can-outline"></span>
+                    删除
+                  </a>
+                </span>
+              </p>
+              {% if not addr.is_default %}
+              <p class="card-footer-item">
+                <span>
+                  <a @click="btnDefault({{ addr.id }})"><span class=" mdi mdi-map-marker-check-outline"></span>
+                    设为默认</a>
+                </span>
+              </p>
+              {% endif %}
+            </footer>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
     <b-modal
         v-model="isComponentModalActive"
         has-modal-card
+        :destroy-on-hide="true"
+        :props="formProps"
         :events="events"
         :can-cancel="false">
         <modal-form v-bind="formProps" @save="save"></modal-form>
@@ -49,58 +95,41 @@
 {% block vuescript %}
 <script>
     const ModalForm = {
-        props: ['email', 'password'],
+        props: [
+            'id',
+            'name',
+            'phone',
+            'province',
+            'city',
+            'county',
+            'address',
+            'is_default',
+            'email',  
+            'labelPosition'
+        ],
         data(){
             return {
                 formProps: {
-                    email: 'asdaasad'
+                    id: this.id,
+                    name: this.name,
+                    phone: this.phone,
+                    email: this.email,
+                    province: this.province,
+                    city:this.city,
+                    county: this.county,
+                    address: this.address,
+                    is_default: this.is_default,
+                    labelPosition:'on-border',
                 }
                 
             }
         },
-        template: `
-            <div class="modal-card" style="width: auto">
-                <header class="modal-card-head">
-                    <p class="modal-card-title">Login</p>
-                </header>
-                <section class="modal-card-body">
-                    <b-field label="Email">
-                        <b-input
-                            v-model="formProps.email"
-                            type="email"
-                            :value="formProps.email"
-                            placeholder="Your email"
-                            required>
-                        </b-input>
-                    </b-field>
-
-                    <b-field label="Password">
-                        <b-input
-                            type="password"
-                            :value="password"
-                            password-reveal
-                            placeholder="Your password"
-                            required>
-                        </b-input>
-                    </b-field>
-
-                    <b-checkbox>Remember me</b-checkbox>
-                </section>
-                <footer class="modal-card-foot">
-                    <b-button
-                        label="Close"
-                        @click="$parent.close()" />
-                    <b-button
-                        label="Login"
-                        @click="save"
-                        type="is-primary" />
-                </footer>
-            </div>
-        `,
+        template: `{% include 'baykeShop/user/addr_form.html' %}`,
         methods: {
             save(){
-                this.$emit('save', this.$props)
-            }
+                this.$emit('save', this.formProps)
+            },
+
         }
     }
 
@@ -112,22 +141,143 @@
         },
         data:{
             events:{
-                'save': this.save,
-                'email': this.email
+                'save': this.save
             },
             isComponentModalActive: false,
             formProps: {
-                email: 'evan@you.com',
-                password: 'testing'
+                name: '',
+                phone: '',
+                email: '',
+                province: '',
+                city:'',
+                county: '',
+                address: '',
+                is_default: false,
+                labelPosition:'on-border',
             }
         },
         methods: {
-            save(formProps){
-                console.log(formProps)
+            getCookie(name) {
+                var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+                return r ? r[1] : undefined;
             },
-            email(){
-                console.log('asdasa')
-                return 'asdasda'
+            toastMessage(type, message){
+                return this.$buefy.toast.open({
+                    message: message,
+                    type: type
+                })
+            },
+
+            // 后台提交保存
+            save(props){
+                const sendData = new URLSearchParams()
+                sendData.append('addr_id', props.id)
+                sendData.append('name', props.name)
+                sendData.append('phone', props.phone)
+                sendData.append('email', props.email)
+                sendData.append('province', props.province)
+                sendData.append('city', props.city)
+                sendData.append('county', props.county)
+                sendData.append('address', props.address)
+                sendData.append('is_default', props.is_default)
+                axios({
+                    method: 'post',
+                    url: '{% url "baykeShop:user_address" %}',
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', '发生错误！')
+                    }
+                })
+                
+            },
+            // 设置默认
+            btnDefault(addr_id){
+                const sendData = new URLSearchParams()
+                sendData.append('addr_id', addr_id)
+                sendData.append('is_default', true)
+                axios({
+                  method: 'put',
+                  url: '{% url "baykeShop:user_address" %}',
+                  data: sendData,
+                  headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': this.getCookie('csrftoken'),
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                  }
+                }).then(res => {
+                  if (res.data.code == 'ok'){
+                    this.toastMessage('is-success', res.data.message)
+                    location.reload()
+                  }else{
+                    this.toastMessage('is-danger', '发生错误！')
+                  }
+                })
+            },
+            add(){                
+                this.formProps = {
+                    id: '',
+                    name: '',
+                    phone: '',
+                    email: '',
+                    province: '',
+                    city:'',
+                    county: '',
+                    address: '',
+                    is_default: false,
+                    labelPosition:'on-border',
+                }
+                this.isComponentModalActive = true;
+            },
+
+            // 编辑回填
+            edit(addr_id){
+                const sendData = new URLSearchParams();
+                sendData.append('addr_id', addr_id);
+                axios({
+                    method: 'get',
+                    url: '{% url "baykeShop:user_address" %}',
+                    params:sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    this.formProps = res.data.formProps
+                    this.formProps.labelPosition='on-border'
+                    this.isComponentModalActive = true;
+                })
+            },
+
+            del(addr_id){
+                const sendData = new URLSearchParams();
+                sendData.append('addr_id', addr_id);
+                axios({
+                    method: 'delete',
+                    url: '{% url "baykeShop:user_address" %}',
+                    data:sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', '发生错误！')
+                    }
+                })
             }
         }
     })
