@@ -309,7 +309,13 @@
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     }
                 }).then(res => {
-                    console.log(res)
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        localStorage.removeItem('carts')
+                        location.href = res.data.redirect
+                    }else{
+                        this.toastMessage('is-danger', '发生错误！')
+                    }
                 })
             }
         }

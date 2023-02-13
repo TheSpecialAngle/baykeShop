@@ -21,5 +21,18 @@ from baykeCore.common.mixin import LoginRequiredMixin
 User = get_user_model()
 
 
+class BaykeShopOrderPayView(LoginRequiredMixin, View):
+    
+    template_name = None
+    
+    def get(self, request, *args, **kwargs):
+        
+        context = {**kwargs}
+        
+        return TemplateResponse(
+            request, 
+            [ self.template_name or 'baykeShop/order_pay.html'],
+            context
+        )
 
 

@@ -61,12 +61,14 @@ class BaykeShopOrderInfo(BaykeModelMixin):
     freight = models.DecimalField(
         max_digits=12, 
         decimal_places=2, 
-        verbose_name="运费"
+        verbose_name="运费",
+        blank=True,
+        default=0.00
     )
     name = models.CharField("签收人", max_length=50, default="")
     phone = models.CharField("手机号", max_length=11, default="")
     email = models.EmailField("邮箱", blank=True, default="", max_length=50)
-    address = models.CharField("地址", max_length=150)
+    address = models.CharField("地址", max_length=200)
     pay_time = models.DateTimeField(
         null=True, 
         blank=True, 
@@ -106,6 +108,7 @@ class BaykeShopOrderSKU(BaykeModelMixin):
         null=True, 
         verbose_name="订单商品"
     )
+    desc = models.CharField("商品说明", max_length=200, blank=True, default="")
     count = models.IntegerField(default=1, verbose_name="数量")
     price = models.DecimalField('单价', max_digits=18, decimal_places=2)
 

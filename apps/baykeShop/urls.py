@@ -14,6 +14,7 @@ urlpatterns = [
     path("user/logout/", views.LogoutView.as_view(), name="logout"),
     path("user/cart/", views.BaykeShopCartView.as_view(), name="cart"),
     path("user/order/confirm/", views.BaykeShopOrderConfirmView.as_view(), name="order_confirm"),
+    path("user/order/pay/", views.BaykeShopOrderPayView.as_view(), name="order_pay"),
     
     path("user/profile/", views.BaykeUserProfileView.as_view(), name="user_profile"),
     path("user/balance/", views.BaykeUserBalanceView.as_view(), name="user_balance"),

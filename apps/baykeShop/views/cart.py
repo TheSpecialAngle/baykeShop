@@ -10,12 +10,14 @@
 '''
 
 import json
+import time
 from django.db.models import F
 from django.db.utils import IntegrityError
 from django.views.generic import View
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.template.response import TemplateResponse
 from django.http import QueryDict
+from django.urls import reverse
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -76,6 +78,10 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         if not sales.isdigit() or not int(sales) > 0:
             return JsonResponse({'code': 'error', 'message': '商品数量值不符合要求，请检查！'})
         
+        # 验证库存是否充足
+        if int(sales) > sku.stock:
+            return JsonResponse({'code': 'error', 'message': '库存不足！'})
+        
         # 加入购物车
         try:
             BaykeShopingCart.objects.create(sku=sku, num=int(sales), owner=request.user)
@@ -83,7 +89,10 @@ class BaykeShopCartView(LoginRequiredMixin, View):
             total += int(sales)
         except IntegrityError:
             # 这里处理重复加入购物车的问题
-            BaykeShopingCart.objects.show().filter(sku=sku, owner=request.user).update(num=F('num')+int(sales))
+            BaykeShopingCart.objects.show().filter(
+                sku=sku, 
+                owner=request.user
+            ).update(num=F('num')+int(sales))
         
         context = {
             'code': 'ok',
@@ -113,7 +122,6 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         
         # 删除购物车
         if cart and actions == 'delete':
-            # cart.update(is_del=True)
             cart.delete()
             return JsonResponse({'code': 'ok', 'message': '删除成功！', **kwargs})
         
@@ -145,17 +153,86 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
         address = json.loads(data.get('address'))
         carts = json.loads(data.get('carts'))
         mark = data.get('mark', '')
-        
-        BaykeShopOrderInfo.objects.create(
+    
+        # 生成订单
+        orderinfo = BaykeShopOrderInfo.objects.create(
             owner=request.user,
             order_mark=mark,
+            total_amount=self.get_total_price(carts),
+            name=address.get('name'),
+            phone=address.get('phone'),
+            address=self.get_address(address),
+            order_sn=self.generate_order_sn()
         )
-        print(request.POST)
         
-        return JsonResponse({'code':'ok', 'message': '生成订单'})
+        # 生成订单商品，并清理该购物车
+        self._create_order_sku(carts, orderinfo)
+        return JsonResponse({
+            'code':'ok', 
+            'message': '生成订单成功！', 
+            'redirect': reverse('baykeShop:order_pay')
+        })
     
-    def get_total_price(self, request, cart_ids):
-        BaykeShopingCart.objects.filter(
-            owner=request.user,
-            id__in=cart_ids
-        ).aaggregate()
+    def get_total_price(self, carts):
+        # 商品总价
+        total_amount = 0
+        for cart in carts:
+            total_amount += BaykeShopingCart.objects.get(
+                id=cart.get('id')
+            ).sku.price * int(cart.get('sales'))
+        return total_amount
+    
+    def get_address(self, address):
+        # 详细地址
+        return f"""
+            {address.get('province')}
+            {address.get('city')}
+            {address.get('county')}
+            {address.get('address')}
+        """
+    
+    def generate_order_sn(self):
+        # 当前时间 + userid + 随机数
+        from random import Random
+        random_ins = Random()
+        order_sn = "{time_str}{user_id}{ranstr}".format(
+            time_str = time.strftime("%Y%m%d%H%M%S"),
+            user_id = self.request.user.id,
+            ranstr = random_ins.randint(10, 99))
+        return order_sn
+    
+    def _create_order_sku(self, carts, order):
+        for cart in carts:
+            try:
+                sku = BaykeShopSKU.objects.get(id=int(cart.get('sku_id')))
+                
+                BaykeShopOrderSKU.objects.create(
+                    order=order,
+                    sku=sku,
+                    desc=f"{cart.get('title')}-{self._get_sku_options(cart.get('options'))}",
+                    count=int(cart.get('sales')),
+                    price=sku.price
+                )
+                # 订单商品创建成功后，清理购物车
+                self._del_carts(cart_id=cart.get('id'))
+                
+                # 减掉库存
+                self._subtract_sku_stock(sku_id=cart.get('sku_id'), sales=cart.get('sales'))
+                
+            except BaykeShopSKU.DoesNotExist:
+                print("订单商品的sku不存在")
+                pass
+    
+    def _get_sku_options(self, options):
+        ops = []
+        for op in options:
+            ops.append("{}:{}".format(op.get('spec__name'), op.get('name')))
+        return ','.join(ops)
+    
+    def _del_carts(self, cart_id):
+        # 删除已经生成订单商品的购物车
+        BaykeShopingCart.objects.filter(id=int(cart_id)).delete()
+        
+    def _subtract_sku_stock(self, sku_id, sales):
+        # 减库存
+        BaykeShopSKU.objects.filter(id=sku_id).update(stock=F('stock')-int(sales))
