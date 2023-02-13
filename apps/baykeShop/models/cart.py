@@ -37,7 +37,7 @@ class BaykeShopingCart(BaykeModelMixin):
     @classmethod
     def get_cart_count(cls, user):
         # 当前用户的购物车数量
-        return cls.objects.show().filter(owner=user).count()
+        return sum(list(cls.objects.show().filter(owner=user).values_list('num', flat=True)))
     
 
 class BaykeShopAddress(BaykeModelMixin):

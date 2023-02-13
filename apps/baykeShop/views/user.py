@@ -15,7 +15,7 @@ from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 
-from baykeShop.models import BaykeUserInfo, BaykeShopAddress
+from baykeShop.models import BaykeShopAddress
 from baykeShop.forms import BaykeShopAddressForm
 
 User = get_user_model()
@@ -27,7 +27,6 @@ class BaykeUserProfileView(LoginRequiredMixin, View):
     template_name = None
     
     def get(self, request, *args, **kwargs):
-        
         
         context = {
             **kwargs,
@@ -68,12 +67,13 @@ class BaykeAddressView(LoginRequiredMixin, View):
     template_name = None
     
     def get(self, request, *args, **kwargs):
-        address_queryset = BaykeShopAddress.objects.show()
+        address_queryset = BaykeShopAddress.objects.show().filter(owner=request.user)
         addr_id = request.GET.get('addr_id')
         
         # 点击修改按钮时返回数据回填表单  
         if addr_id:
-            addr_list = BaykeShopAddress.objects.show().filter(id=int(addr_id)).values(
+            addr_list = BaykeShopAddress.objects.show().filter(
+                id=int(addr_id), owner=request.user).values(
                 'id', 'name', 'phone', 'email', 'province',
                 'city', 'county','address','is_default'
             )
@@ -93,39 +93,44 @@ class BaykeAddressView(LoginRequiredMixin, View):
         
     def post(self, request, *args, **kwargs):
         form = BaykeShopAddressForm(request.POST)
-        addr_default = BaykeShopAddress.objects.show().filter(is_default=True)
+        addr_default = BaykeShopAddress.objects.show().filter(
+            is_default=True, owner=request.user
+        )
         addr_id = request.POST.get('addr_id', None)
         
-        # 新增按钮动作
+        # 新增
         if form.is_valid() and (not addr_id):
             if form.cleaned_data['is_default']:
-                addr_default.update(is_default=False)
+                addr_default.update(is_default=False, owner=request.user)
             new_addr = form.save(commit=False)
             new_addr.owner = request.user
             new_addr.save()
             return JsonResponse({'code': 'ok', 'message': '保存成功！'})
         
-        # 点击修改按钮时返回  
+        # 修改  
         if form.is_valid() and addr_id:
             if form.cleaned_data['is_default']:
                 addr_default.update(is_default=False)
-            BaykeShopAddress.objects.show().filter(id=int(addr_id)).update(**form.cleaned_data)
+            BaykeShopAddress.objects.show().filter(
+                    id=int(addr_id), 
+                    owner=request.user
+                ).update(**form.cleaned_data)
             return JsonResponse({'code':'ok', 'message': '修改成功'})
         
         return JsonResponse({'code': 'error', 'message': '发生错误！'})  
-        
     
     def put(self, request, *args, **kwargs):
         from django.http import QueryDict
         data = QueryDict(request.body)
-        addr_default = BaykeShopAddress.objects.show().filter(is_default=True)
+        addr_default = BaykeShopAddress.objects.show().filter(is_default=True, owner=request.user)
         addr_default.update(is_default=False)
-        BaykeShopAddress.objects.filter(id=int(data.get('addr_id'))).update(is_default=True)
+        BaykeShopAddress.objects.filter(id=int(data.get('addr_id')), owner=request.user).update(is_default=True)
         return JsonResponse({'code': 'ok', 'message': '设置默认成功！'})
     
     def delete(self, request, *args, **kwargs):
+        # 删除
         from django.http import QueryDict
         data = QueryDict(request.body)
         addr_id = data.get('addr_id')
-        BaykeShopAddress.objects.filter(id=int(addr_id)).delete()
+        BaykeShopAddress.objects.filter(id=int(addr_id), owner=request.user).delete()
         return JsonResponse({'code': 'ok', 'message': '删除成功！'})

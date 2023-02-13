@@ -99,7 +99,10 @@
                         </div>
                         <div class=" is-flex is-align-items-center has-text-danger-dark ">
                             <span class="is-size-5">合计：</span> <span class="is-size-3 pr-5">¥ {$ total $}</span>
-                            <a class="button is-primary is-radiusless is-large pl-6 pr-6" href="{% url 'baykeShop:order_confirm' %}">去结算</a>
+                            <button class="button is-primary is-radiusless is-large pl-6 pr-6" :disabled="checkedRows.length > 0 ? false : true"
+                                v-on:click.capture="doThis">
+                                去结算
+                            </button>
                         </div>
                         <!-- <div>{$ checkedRows $}</div> -->
                     </div>
@@ -127,6 +130,7 @@
                 carts: carts,
                 checkedRows: [],
                 total: 0,
+                checkedRowsCartID:''
             },
             created(){
                 // 第一次加载时处理库存不足的选中数据
@@ -180,7 +184,6 @@
                     const sendData = new URLSearchParams();
                     sendData.append('cart_id', cart_id)
                     sendData.append('actions', 'delete')
-
                     this.$buefy.dialog.confirm({
                         message: '是否确认删除该购物车商品！',
                         cancelText: '取消',
@@ -218,9 +221,15 @@
                             })
                         }
                     })
+                },
 
-
-                    
+                // 去结算事件
+                doThis(){
+                    // 结算时将选中商品信息存储到本地
+                    if (this.checkedRows.length > 0){
+                        localStorage.setItem('carts', JSON.stringify(this.checkedRows))
+                        location.href = "{% url 'baykeShop:order_confirm' %}"
+                    }
                 }
             },
             watch: {

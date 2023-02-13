@@ -6,3 +6,4 @@ from .models import (
 from .spec import BaykeShopSpec, BaykeShopSpecOption
 from .cart import BaykeShopingCart, BaykeShopAddress
 from .user import BaykeUserInfo
+from .order import BaykeShopOrderInfo, BaykeShopOrderSKU
