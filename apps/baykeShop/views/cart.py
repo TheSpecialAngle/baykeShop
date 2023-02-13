@@ -1,21 +1,34 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@文件    :cart.py
+@说明    :购物车相关视图
+@时间    :2023/02/13 09:26:52
+@作者    :幸福关中&轻编程
+@版本    :1.0
+@微信    :baywanyun
+'''
+
+import json
 from django.db.models import F
 from django.db.utils import IntegrityError
 from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
-from django.urls import reverse_lazy
+from django.http import QueryDict
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
-from ..models import BaykeShopSKU, BaykeShopingCart
+from baykeCore.common.mixin import LoginRequiredMixin
+from baykeShop.models import (
+    BaykeShopSKU, BaykeShopingCart, BaykeShopAddress,
+    BaykeShopOrderInfo, BaykeShopOrderSKU
+)
 
 
 class BaykeShopCartView(LoginRequiredMixin, View):
     
-    login_url = reverse_lazy('baykeShop:login')
-    redirect_field_name = 'redirect_to'
     template_name = None
 
     def get(self, request, *args, **kwargs):
@@ -49,7 +62,6 @@ class BaykeShopCartView(LoginRequiredMixin, View):
             context
         )
     
-    
     def post(self, request, *args, **kwargs):
         # 加入购物车的方法，返回Json数据
         sku_id = request.POST.get('sku_id')
@@ -68,7 +80,7 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         try:
             BaykeShopingCart.objects.create(sku=sku, num=int(sales), owner=request.user)
             # 购物车商品数量+1
-            total += 1
+            total += int(sales)
         except IntegrityError:
             # 这里处理重复加入购物车的问题
             BaykeShopingCart.objects.show().filter(sku=sku, owner=request.user).update(num=F('num')+int(sales))
@@ -84,7 +96,6 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         return JsonResponse(context)
     
     def put(self, request, *args, **kwargs):
-        from django.http import QueryDict
         data = QueryDict(request.body)
         cart_id = data.get('cart_id')
         sales = data.get('sales')
@@ -105,7 +116,7 @@ class BaykeShopCartView(LoginRequiredMixin, View):
             # cart.update(is_del=True)
             cart.delete()
             return JsonResponse({'code': 'ok', 'message': '删除成功！', **kwargs})
- 
+        
 
 class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
     """购物车订单确认页面
@@ -114,11 +125,37 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
     
     def get(self, request, *args, **kwargs):
         
-        context = {
-            **kwargs
-        }
+        addr_queryset = BaykeShopAddress.objects.show().filter(owner=request.user)
+        addr_list = list(addr_queryset.values(
+            'id', 'name', 'phone', 'email', 'province', 
+            'city', 'county', 'address', 'is_default')
+        )
+        context = {'addr_list': addr_list, **kwargs}
         return TemplateResponse(
             request, 
             [self.template_name or 'baykeShop/order_confirm.html'], 
             context
         )
+        
+    def post(self, request, *args, **kwargs):
+        # 确认订单信息生成订单
+        # 并从购物车删除已生成订单的购物车信息
+        
+        data = request.POST
+        address = json.loads(data.get('address'))
+        carts = json.loads(data.get('carts'))
+        mark = data.get('mark', '')
+        
+        BaykeShopOrderInfo.objects.create(
+            owner=request.user,
+            order_mark=mark,
+        )
+        print(request.POST)
+        
+        return JsonResponse({'code':'ok', 'message': '生成订单'})
+    
+    def get_total_price(self, request, cart_ids):
+        BaykeShopingCart.objects.filter(
+            owner=request.user,
+            id__in=cart_ids
+        ).aaggregate()
