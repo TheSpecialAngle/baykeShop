@@ -312,7 +312,7 @@
                     if (res.data.code == 'ok'){
                         this.toastMessage('is-success', res.data.message)
                         localStorage.removeItem('carts')
-                        location.href = res.data.redirect
+                        location.href = res.data.redirect+"?orderID="+res.data.order_id
                     }else{
                         this.toastMessage('is-danger', '发生错误！')
                     }

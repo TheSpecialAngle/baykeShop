@@ -6,7 +6,8 @@ from .models import (
     BaykeShopCategory, BaykeShopSPU, 
     BaykeSPUCarousel, BaykeShopSKU, 
     BaykeShopSpec, BaykeShopSpecOption,
-    BaykeShopBanner
+    BaykeShopBanner, BaykeShopOrderInfo, 
+    BaykeShopOrderSKU
 )
 
 class BaykeShopCategoryInline(admin.TabularInline):
@@ -105,3 +106,5 @@ class BaykeShopBannerAdmin(BaseModelAdmin):
 # admin.site.register(BaykeShopSKU)
 admin.site.register(BaykeSPUCarousel)
 admin.site.register(BaykeShopSpecOption)
+admin.site.register(BaykeShopOrderInfo)
+admin.site.register(BaykeShopOrderSKU)

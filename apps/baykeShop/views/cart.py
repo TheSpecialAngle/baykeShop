@@ -165,12 +165,14 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
             order_sn=self.generate_order_sn()
         )
         
+    
         # 生成订单商品，并清理该购物车
         self._create_order_sku(carts, orderinfo)
         return JsonResponse({
             'code':'ok', 
             'message': '生成订单成功！', 
-            'redirect': reverse('baykeShop:order_pay')
+            'redirect': reverse('baykeShop:order_pay'),
+            'order_id': orderinfo.id
         })
     
     def get_total_price(self, carts):
@@ -189,7 +191,7 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
             {address.get('city')}
             {address.get('county')}
             {address.get('address')}
-        """
+        """.replace(" ", "")
     
     def generate_order_sn(self):
         # 当前时间 + userid + 随机数
