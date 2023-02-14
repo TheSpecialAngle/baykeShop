@@ -152,6 +152,7 @@
                         type="is-primary" 
                         size="is-large"
                         :disabled="stock ? false : true " 
+                        @click="savePay"
                         outlined>
                         立即购买
                     </b-button>
@@ -192,6 +193,7 @@
                 org_price: "{{ sku.org_price }}",
                 stock: "{{ sku.stock }}",
                 sales: "{{ sku.sales }}",
+                cover_pic:"{{ sku.cover_pic }}",
                 specs: specs,
                 options: options,
                 radioButton: currentSkuOptions,
@@ -231,9 +233,30 @@
                             headTop._data.cartNum = res.data.total
                             this.toastMessage('is-success', res.data.message)
                         }else{
+                            if (res.request.responseURL.includes('login')){
+                                location.href = res.request.responseURL
+                            }
                             this.toastMessage('is-danger', res.data.message)
                         }
                     })
+                },
+
+                savePay(){
+                    // 立即购买待完善
+                    let carts = [
+                        {
+                            "id": 0,
+                            "title": "{{ good.title }}",
+                            "sku_id": this.sku_id,
+                            "cover_pic": this.cover_pic,
+                            "options": this.options,
+                            "price": this.price,
+                            "stock": this.stock,
+                            "sales": this.num,
+                            "total_price": this.price
+                          }
+                    ]
+                    console.log(carts)
                 }
             },
             
@@ -248,6 +271,7 @@
                             this.org_price = sku.org_price
                             this.sales = sku.sales
                             this.stock = sku.stock
+                            this.cover_pic = sku.cover_pic
                         } else {
                             this.stock = 0
                         }

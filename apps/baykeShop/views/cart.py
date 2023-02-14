@@ -69,7 +69,7 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         sku_id = request.POST.get('sku_id')
         sales = request.POST.get('sales')
         total = BaykeShopingCart.get_cart_count(request.user)
-        
+    
         # 数据校验
         try:
             sku = BaykeShopSKU.objects.get(id=int(sku_id))
@@ -165,7 +165,6 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
             order_sn=self.generate_order_sn()
         )
         
-    
         # 生成订单商品，并清理该购物车
         self._create_order_sku(carts, orderinfo)
         return JsonResponse({

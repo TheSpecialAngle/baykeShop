@@ -16,6 +16,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 from baykeCore.common.mixin import LoginRequiredMixin
 from baykeShop.models import BaykeShopOrderInfo, BaykeUserInfo
@@ -31,6 +32,7 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
           
         order_id = request.GET.get('orderID', 0)
+        code = ""
         error = None
         extra_context = {}
         try:
@@ -41,15 +43,19 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
                 "address": order.address,
                 "name": order.name,
                 "phone": order.phone,
-                "desc": order.baykeshopordersku_set.first().desc
+                "desc": order.baykeshopordersku_set.first().desc,
+                "paymethod": order.pay_method,
+                "pay_time": order.pay_time
             }
         except BaykeShopOrderInfo.DoesNotExist:
             error = "该订单不存在，请先去挑选商品！"
             
         if order.pay_status != 1:
-            error = "该订单已支付，无需重复支付，请重新挑选商品！"
-        
+            code = "ok"
+            error = "支付成功！"
+
         context = {
+            "code": code,
             "error": error,
             **extra_context,
             **kwargs
@@ -75,9 +81,9 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
                 return JsonResponse({'code':'error', 'message': '余额不足！'})
             
             userinfo.update(balance=F('balance')-order.total_amount-order.freight)
-            orders.update(pay_status=2, trade_sn=f"YE{order_sn}", pay_method=4)
-        
-            return JsonResponse({'code':'ok', 'message': '支付成功！'})
+            orders.update(pay_status=2, trade_sn=f"YE{order_sn}", pay_method=4, pay_time=timezone.now())
+            context = {"code": "ok", "message": "支付成功！"}
+            return JsonResponse(context)
         else:
             return JsonResponse({'code':'error', 'message': '暂不支持该支付方式或支付信息有误！'})
 

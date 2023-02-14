@@ -125,7 +125,8 @@ class GoodDetailView(DetailView):
                 'price': str(sku.price),
                 'org_price': str(sku.org_price),
                 'stock': sku.stock,
-                'sales': sku.sales
+                'sales': sku.sales,
+                'cover_pic': sku.cover_pic.path
             }
             # 返回当前spu下的specs
             for op in sku_options:

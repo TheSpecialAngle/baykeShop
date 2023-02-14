@@ -51,14 +51,13 @@
 
 {% block content %}
 <div class="pay" id="orderPay">
-    
-    {% if error %}
-    <div class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center has-text-danger-dark" style="min-height:800px">
-        <span class="mdi mdi-alert-circle is-size-1"></span>
+    {% if error and not code %}
+    <div class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center" style="min-height:800px"> 
+       
+        <span class="mdi mdi-alert-circle is-size-1 has-text-danger-dark"></span>
         <span class=" is-size-4">{{ error }}</span> 
         <a class=" button is-black is-outlined is-small mt-2" href="{% url 'baykeShop:home' %}">继续逛</a>
     </div>
-        
     {% else %}
     <div class="pay-bg pt-6">
         <div class="has-text-white-ter ml-6">
@@ -73,35 +72,60 @@
         <p>订单价格：{{ total_amount }}元</p> 
         <p>收货信息：{{ name }} {{ phone }} {{ address }}</p>
         <p>商品名称：{{ desc }}</p> 
+        
+        {% if paymethod == 4 %}
+        <p>支付方式：余额支付</p> 
+        {% endif %}
+        {% if paymethod == 3 %}
+        <p>支付方式：微信支付</p> 
+        {% endif %}
+        {% if paymethod == 2 %}
+        <p>支付方式： 支付宝支付</p> 
+        {% endif %} 
+        
+        <p>支付时间：{{ pay_time }}</p>
+            
     </div>
 
-    <div class="box is-radiusless is-marginless">
-        <h1 class=" is-size-4 pl-2">选择以下支付方式</h1>
-        <div class="dropdown-divider"></div>
-        <div class="columns is-multiline">
-            
-            <div class="column is-3" v-for="pay in payMethods" :key="pay.value" @click="payMethod(pay)">
-                <div :class="{active:pay.default}"
-                    class="pay-method-box is-flex is-align-items-center is-justify-content-center">
-                    <div class="pay-icon mr-3" v-if="pay.value == 4">
-                        <img :src="pay.icon" width="36px">
-                    </div>
-                    <img v-else class="mr-3" :src="pay.icon" width="36px">
+        {% if code %}
+        <div class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center box mb-5 pt-6 pb-6"> 
+            <span class="mdi mdi-check-circle is-size-1 has-text-success"></span>
+            <span class=" is-size-4">支付成功</span> 
+            <div class="mt-2">
+                <a class=" button is-black is-outlined is-small " href="{% url 'baykeShop:home' %}">继续逛</a>
+                <a class="button is-black is-outlined is-small" href="{% url 'baykeShop:user_profile' %}">个人中心</a>
+            </div>
+        </div>
+        {% else %}
+        
+        <div class="box is-radiusless is-marginless">
+            <h1 class=" is-size-4 pl-2">选择以下支付方式</h1>
+            <div class="dropdown-divider"></div>
+            <div class="columns is-multiline">
+                
+                <div class="column is-3" v-for="pay in payMethods" :key="pay.value" @click="payMethod(pay)">
+                    <div :class="{active:pay.default}"
+                        class="pay-method-box is-flex is-align-items-center is-justify-content-center">
+                        <div class="pay-icon mr-3" v-if="pay.value == 4">
+                            <img :src="pay.icon" width="36px">
+                        </div>
+                        <img v-else class="mr-3" :src="pay.icon" width="36px">
 
-                    <div v-if="pay.value == 4">
-                        <h1 class=" is-size-4">{$ pay.payName $}</h1> 
-                        <span class="has-text-grey-light">余额：{{ request.user.baykeuserinfo.balance }}</span>
-                    </div>
-                    <h1 v-else class="is-size-4">{$ pay.payName $}</h1> 
+                        <div v-if="pay.value == 4">
+                            <h1 class=" is-size-4">{$ pay.payName $}</h1> 
+                            <span class="has-text-grey-light">余额：{{ request.user.baykeuserinfo.balance }}</span>
+                        </div>
+                        <h1 v-else class="is-size-4">{$ pay.payName $}</h1> 
 
-                    <div v-if="pay.default" class="tag is-danger pay-tag is-radiusless is-size-6">✔</div>
+                        <div v-if="pay.default" class="tag is-danger pay-tag is-radiusless is-size-6">✔</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="box is-flex is-justify-content-end is-marginless is-radiusless">
-        <b-button type="is-danger" class="pl-6 pr-6" @click="savePay">立即支付</b-button>
-    </div>
+        <div class="box is-flex is-justify-content-end is-marginless is-radiusless">
+            <b-button type="is-danger" class="pl-6 pr-6" @click="savePay">立即支付</b-button>
+        </div>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %}
@@ -183,7 +207,12 @@
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     }
                 }).then(res => {
-                    console.log(res)
+                    if (res.data.code == "ok"){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', res.data.message)
+                    }
                 })
             }
         }
