@@ -177,10 +177,16 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
     def get_total_price(self, carts):
         # 商品总价
         total_amount = 0
-        for cart in carts:
-            total_amount += BaykeShopingCart.objects.get(
-                id=cart.get('id')
-            ).sku.price * int(cart.get('sales'))
+
+        # 商品详情页点击立即购买跳转过来数据
+        print(carts[0].get('id'), 'asdddd')
+        if carts[0].get('id') == 0:
+            total_amount = BaykeShopSKU.objects.filter(id=int(carts[0].get('sku_id'))).first().price
+        else:
+            for cart in carts:
+                total_amount += BaykeShopingCart.objects.get(
+                    id=cart.get('id')
+                ).sku.price * int(cart.get('sales'))
         return total_amount
     
     def get_address(self, address):
@@ -210,12 +216,15 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
                 BaykeShopOrderSKU.objects.create(
                     order=order,
                     sku=sku,
-                    desc=f"{cart.get('title')}-{self._get_sku_options(cart.get('options'))}",
+                    desc=f"{cart.get('title')} {self._get_sku_options(cart.get('options'))}",
                     count=int(cart.get('sales')),
                     price=sku.price
                 )
-                # 订单商品创建成功后，清理购物车
-                self._del_carts(cart_id=cart.get('id'))
+                
+                # 立即购买就不需要清理购物车了
+                if cart.get('id') != 0:
+                    # 订单商品创建成功后，清理购物车
+                    self._del_carts(cart_id=cart.get('id'))
                 
                 # 减掉库存
                 self._subtract_sku_stock(sku_id=cart.get('sku_id'), sales=cart.get('sales'))
@@ -227,7 +236,11 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
     def _get_sku_options(self, options):
         ops = []
         for op in options:
-            ops.append("{}:{}".format(op.get('spec__name'), op.get('name')))
+            if isinstance(op, dict):
+                ops.append("{}:{}".format(op.get('spec__name'), op.get('name')))
+            else:
+                ops.append(op)
+        print(ops)
         return ','.join(ops)
     
     def _del_carts(self, cart_id):

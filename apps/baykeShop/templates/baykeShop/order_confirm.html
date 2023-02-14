@@ -92,8 +92,9 @@
                         <div class="ml-3">
                             <h1 style="font-size: 14px;">{$ cart.title $}</h1>
                             <p class="has-text-grey" style="font-size: 14px;">
-                                <span v-for="op in cart.options" :key="op.spec__name">
-                                    {$ op.spec__name $}: {$ op.name $}
+                                <span v-for="op, i in cart.options" :key="i">
+                                    <span v-if="op.spec__name">{$ op.spec__name $}: {$ op.name $}</span>
+                                    <span v-else>{$ op $}</span>
                                 </span>
                             </p>
                         </div>

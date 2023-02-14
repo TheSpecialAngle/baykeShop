@@ -249,14 +249,16 @@
                             "title": "{{ good.title }}",
                             "sku_id": this.sku_id,
                             "cover_pic": this.cover_pic,
-                            "options": this.options,
+                            "options": this.radioButton,
                             "price": this.price,
                             "stock": this.stock,
                             "sales": this.num,
                             "total_price": this.price
                           }
                     ]
-                    console.log(carts)
+                    
+                    localStorage.setItem('carts', JSON.stringify(carts))
+                    location.href = '{% url "baykeShop:order_confirm" %}'
                 }
             },
             

@@ -82,9 +82,9 @@
         {% if paymethod == 2 %}
         <p>支付方式： 支付宝支付</p> 
         {% endif %} 
-        
+        {% if pay_time %}
         <p>支付时间：{{ pay_time }}</p>
-            
+        {% endif %}   
     </div>
 
         {% if code %}
