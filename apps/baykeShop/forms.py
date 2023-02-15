@@ -122,10 +122,22 @@ class BaykeShopAddressForm(forms.ModelForm):
         return phone
 
 
+class UserForm(forms.ModelForm):
+    
+    class Meta:
+        model = User
+        fields = ['email', 'username']
+        
+    def clean(self):
+        return super().clean()
 
 
 class BaykeUserInfoForm(forms.ModelForm):
     
     class Meta:
         model = BaykeUserInfo
-        fields = ['owner', 'avatar' ]
+        fields = ['owner', 'avatar']
+        
+    
+    def clean(self):
+        return super().clean()

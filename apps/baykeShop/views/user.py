@@ -21,9 +21,8 @@ from baykeShop.forms import BaykeShopAddressForm, BaykeUserInfoForm
 User = get_user_model()
 
 
-class BaykeUserProfileView(LoginRequiredMixin, View):
-    """用户信息管理
-    """
+class BaykeUserInfoView(LoginRequiredMixin, View):
+    
     template_name = None
     
     def get(self, request, *args, **kwargs):
@@ -37,15 +36,27 @@ class BaykeUserProfileView(LoginRequiredMixin, View):
             [self.template_name or 'baykeShop/user/profile.html'],
             context
         )
-        
+
+
     def post(self, request, *args, **kwargs):
-        form = BaykeUserInfoForm(request.FILES, instance=request.user)
+        # 查询如果不存在就创建的快捷方式
+        obj, created = BaykeUserInfo.objects.get_or_create(
+            owner=request.user,
+            defaults={'owner': request.user},
+        )
+        print(obj, created)
+        form = BaykeUserInfoForm(request.POST, request.FILES, instance=obj)
         if form.is_valid():
-            print(form.cleaned_data)
-        
-        
-        return JsonResponse({'code':'ok', 'messsage': 'success'})
-    
+            form.cleaned_data['owner'] = request.user
+            form.save()
+        return JsonResponse({'code': 'ok', 'message': 'success'})
+
+
+
+
+
+
+
 
 class BaykeUserBalanceView(LoginRequiredMixin, View):
     """余额管理

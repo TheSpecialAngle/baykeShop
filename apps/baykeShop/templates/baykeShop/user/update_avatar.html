@@ -102,10 +102,15 @@
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
                         'X-CSRFToken': this.getCookie('csrftoken'),
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        'Content-Type': 'multipart/form-data'
                     }
                 }).then(res => {
-                    console.log(dropFiles)
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', '修改成功！')
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-success', '修改失败！')
+                    }
                 })
                 
             }

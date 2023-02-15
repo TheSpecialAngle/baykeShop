@@ -52,7 +52,7 @@
                         账户管理
                     </p>
                     <ul class="menu-list">
-                      <li><a class="{% if '/user/profile/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_profile' %}">个人信息</a></li>
+                      <li><a class="{% if '/user/userinfo/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_profile' %}">个人信息</a></li>
                       <li><a class="{% if '/user/balance/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_balance' %}">我的余额</a></li>
                       <li><a class="{% if '/user/address/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_address' %}">地址管理</a></li>
                     </ul>
