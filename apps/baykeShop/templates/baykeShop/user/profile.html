@@ -14,6 +14,24 @@
 {% endblock %}
 
 {% block content %}
+<style>
+    .animation-content{
+        z-index: 1;
+    }
+    .img-box {
+        border: dashed 1px #eee;
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
+    .img-box img{
+        margin-left: 50%;
+    }
+    .img-del{
+        position: absolute;
+        top:5px;
+        right:5px
+    }
+</style>
     <div class="columns mb-3">
         <div class="column is-2-fullhd is-3-desktop">
             <div class="box is-radiusless is-marginless is-flex is-flex-direction-column is-align-items-center">
@@ -62,7 +80,7 @@
                                 <img class="is-rounded" src="{{ MEDIA_URL }}{{ request.user.baykeuserinfo.avatar }}" >
                             </figure>
                         </div>
-                        <div><a href="" class="button is-danger is-inverted">修改</a></div>
+                        {% include 'baykeShop/user/update_avatar.html' %}
                     </div>
                     <div class="dropdown-divider"></div>
                     <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap is-align-items-center p-3">
@@ -99,8 +117,6 @@
                     <div class="dropdown-divider"></div>
                     <div class="is-flex is-justify-content-space-between is-flex-wrap-wrap is-align-items-center p-3">
                         <div class=" is-flex is-align-items-center">
-                            <!-- <span class=" has-text-grey">密码设置：</span> 
-                            <span>*********</span> -->
                         </div>
                         <div><a href="{% url 'baykeShop:logout' %}" class=" button is-primary">退出登录</a></div>
                     </div>
@@ -112,5 +128,7 @@
     </div>
 {% endblock %}
 
-{% block vuescript %}{% endblock %}
+{% block vuescript %}
+
+{% endblock %}
     

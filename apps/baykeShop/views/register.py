@@ -2,6 +2,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth import authenticate, login
 from django.views.generic import FormView
 from django.urls import reverse_lazy
+
+from baykeShop.models import BaykeUserInfo
 from ..forms import RegisterForm
 
 
@@ -19,7 +21,7 @@ class RegisterView(SuccessMessageMixin, FormView):
             new_user = form.save()
             auth_user = authenticate(username=new_user.username, 
                                      password=form.cleaned_data['password1'])
-            # UserProfile.objects.create(user=auth_user)
+            BaykeUserInfo.objects.create(owner=auth_user, nickname=auth_user.username)
             login(self.request, auth_user)
         return super().form_valid(form)
 

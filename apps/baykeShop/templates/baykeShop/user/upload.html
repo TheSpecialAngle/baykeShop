@@ -1,0 +1,40 @@
+<template>
+    <section>
+        <b-field v-if="!formProps.dropFiles">
+            <b-upload 
+                v-model="formProps.dropFiles"
+                accept=".jpg, .png, .gif"
+                @input="$emit('changeAvatar', formProps.dropFiles)"
+                drag-drop>
+                <section class="section">
+                    <div class="content has-text-centered">
+                        <p>
+                            <b-icon
+                                icon="upload"
+                                size="is-large">
+                            </b-icon>
+                        </p>
+                        <p>Drop your files here or click to upload</p>
+                    </div>
+                </section>
+            </b-upload>
+        </b-field>
+
+        <div class="is-flex is-flex-direction-column" v-if="formProps.dropFiles">
+
+            <div class="img-box is-relative">
+                <p class="image is-128x128">
+                    <img :src="imgPath">   
+                </p>
+                <button class="delete img-del" @click="formProps.dropFiles = null"></button>
+            </div>
+            
+            <button class="button is-primary mt-3" @click="$emit('saveAvatar', formProps.dropFiles)">立即上传</button>
+        </div>
+        
+    </section>
+</template>
+
+
+
+

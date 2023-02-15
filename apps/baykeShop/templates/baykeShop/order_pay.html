@@ -61,10 +61,17 @@
     {% else %}
     <div class="pay-bg pt-6">
         <div class="has-text-white-ter ml-6">
+            {% if code %}
+            <h1 class="is-size-2 ">
+                订单已支付~
+            </h1>
+            <p>支付信息如下，订单详情可前往个人中心查看</p>
+            {% else %}
             <h1 class="is-size-2 ">
                 订单提交成功！去付款咯~
             </h1>
             <p>剩余时间：01小时49分钟24秒</p>
+            {% endif %}
         </div>
     </div>
     <div class="box is-radiusless pay-order-desc">

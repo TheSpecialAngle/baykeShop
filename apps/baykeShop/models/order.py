@@ -58,7 +58,8 @@ class BaykeShopOrderInfo(BaykeModelMixin):
         verbose_name="支付方式", 
         help_text="支付方式",
         blank=True,
-        null=True
+        null=True,
+        editable=False
     )
     total_amount = models.DecimalField(
         max_digits=12, 

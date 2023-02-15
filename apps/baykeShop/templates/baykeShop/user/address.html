@@ -129,7 +129,6 @@
             save(){
                 this.$emit('save', this.formProps)
             },
-
         }
     }
 
@@ -223,39 +222,39 @@
                 })
             },
             add(){                
-                this.formProps = {
-                    id: '',
-                    name: '',
-                    phone: '',
-                    email: '',
-                    province: '',
-                    city:'',
-                    county: '',
-                    address: '',
-                    is_default: false,
-                    labelPosition:'on-border',
-                }
-                this.isComponentModalActive = true;
+              this.formProps = {
+                id: '',
+                name: '',
+                phone: '',
+                email: '',
+                province: '',
+                city:'',
+                county: '',
+                address: '',
+                is_default: false,
+                labelPosition:'on-border',
+              }
+              this.isComponentModalActive = true;
             },
 
             // 编辑回填
             edit(addr_id){
-                const sendData = new URLSearchParams();
-                sendData.append('addr_id', addr_id);
-                axios({
-                    method: 'get',
-                    url: '{% url "baykeShop:user_address" %}',
-                    params:sendData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest',
-                        'X-CSRFToken': this.getCookie('csrftoken'),
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                    }
-                }).then(res => {
-                    this.formProps = res.data.formProps
-                    this.formProps.labelPosition='on-border'
-                    this.isComponentModalActive = true;
-                })
+              const sendData = new URLSearchParams();
+              sendData.append('addr_id', addr_id);
+              axios({
+                method: 'get',
+                url: '{% url "baykeShop:user_address" %}',
+                params:sendData,
+                headers: {
+                  'X-Requested-With': 'XMLHttpRequest',
+                  'X-CSRFToken': this.getCookie('csrftoken'),
+                  'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                }
+              }).then(res => {
+                this.formProps = res.data.formProps
+                this.formProps.labelPosition='on-border'
+                this.isComponentModalActive = true;
+              })
             },
 
             del(addr_id){

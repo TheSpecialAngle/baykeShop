@@ -1,0 +1,93 @@
+<div id="updateAvatar">
+ 
+    <b-button
+        label="修改"
+        type="is-primary is-inverted"
+        @click="avatarModal" />
+</div>
+
+<script>
+    const ModalForm = {
+        props: ['dropFiles', 'imgSrc'],
+        delimiters: ['{$', '$}'],
+        data(){
+            return {
+                formProps: {
+                    dropFiles: this.dropFiles,
+                    imgSrc: this.imgSrc
+                }
+            }
+        },
+        computed: {
+            imgPath(){
+                console.log(this.formProps.dropFiles)
+                let dropFiles = this.formProps.dropFiles
+                let img = new FileReader();
+                img.readAsDataURL(dropFiles);
+                img.onload = ({ target }) => {
+                    this.formProps.imgSrc = target.result; //将img转化为二进制数据
+                    console.log(this.formProps.imgSrc)
+                };
+                return this.formProps.imgSrc
+            }
+        },
+        methods: {
+        },
+        template: `
+        <div class="box" style="min-width:300px">
+            {% include 'baykeShop/user/upload.html' %}
+        </div>
+        `
+    }
+</script>
+
+<script>
+    var updateAvatar = new Vue({
+        el: '#updateAvatar',
+        delimiters: ['{$', '$}'],
+        data:{
+            formProps: {
+                dropFiles: null,
+                imgSrc: ''
+            }
+        },
+        methods: {
+            avatarModal() {
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: ModalForm,
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                    trapFocus: true,
+                    events:{
+                        'changeAvatar': this.changeAvatar,
+                        'saveAvatar': this.saveAvatar
+                    }
+                })
+            },
+
+            changeAvatar(dropFiles){
+                
+                console.log(this.formProps.dropFiles)
+                /*
+                let img = new FileReader();
+                img.readAsDataURL(dropFiles);
+                img.onload = ({ target }) => {
+                    this.formProps.imgSrc = target.result; //将img转化为二进制数据
+                    console.log(this.formProps.imgSrc)
+                };
+                */
+            },
+            saveAvatar(dropFiles){
+                /*
+                let size = 1024 * 1024 * 2
+                if (size < dropFiles.size){
+                    alert('图片太大')
+                    return
+                }*/
+                // this.formProps.imgSrc = 'asdasd'
+                console.log(dropFiles)
+            }
+        }
+    })
+</script>
