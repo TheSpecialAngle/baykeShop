@@ -6,13 +6,15 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import password_validation
 from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.utils.html import format_html_join, format_html
 from django.core.exceptions import ValidationError
 
-from baykeShop.models import BaykeShopAddress
+from baykeShop.models import BaykeShopAddress, BaykeUserInfo
 from baykeShop.widgets import SearchTextInput
 
+
+User = get_user_model()
 
 def _password_validators_help_text_html(password_validators=None):
     """
@@ -118,3 +120,12 @@ class BaykeShopAddressForm(forms.ModelForm):
         if not ret:
             raise ValidationError("手机号格式不正确！")
         return phone
+
+
+
+
+class BaykeUserInfoForm(forms.ModelForm):
+    
+    class Meta:
+        model = BaykeUserInfo
+        fields = ['owner', 'avatar' ]

@@ -15,8 +15,8 @@ from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 
-from baykeShop.models import BaykeShopAddress
-from baykeShop.forms import BaykeShopAddressForm
+from baykeShop.models import BaykeShopAddress, BaykeUserInfo
+from baykeShop.forms import BaykeShopAddressForm, BaykeUserInfoForm
 
 User = get_user_model()
 
@@ -37,6 +37,14 @@ class BaykeUserProfileView(LoginRequiredMixin, View):
             [self.template_name or 'baykeShop/user/profile.html'],
             context
         )
+        
+    def post(self, request, *args, **kwargs):
+        form = BaykeUserInfoForm(request.FILES, instance=request.user)
+        if form.is_valid():
+            print(form.cleaned_data)
+        
+        
+        return JsonResponse({'code':'ok', 'messsage': 'success'})
     
 
 class BaykeUserBalanceView(LoginRequiredMixin, View):

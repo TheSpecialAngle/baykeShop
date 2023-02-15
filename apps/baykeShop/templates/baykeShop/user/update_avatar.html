@@ -20,8 +20,15 @@
         },
         computed: {
             imgPath(){
-                console.log(this.formProps.dropFiles)
+
                 let dropFiles = this.formProps.dropFiles
+                // 图片大小配置
+                let size = 1024 * 1024 * 2
+                if (size < dropFiles.size){
+                    this.formProps.dropFiles = null
+                    return ''
+                }
+
                 let img = new FileReader();
                 img.readAsDataURL(dropFiles);
                 img.onload = ({ target }) => {
@@ -52,6 +59,17 @@
             }
         },
         methods: {
+            getCookie(name) {
+                var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+                return r ? r[1] : undefined;
+            },
+            toastMessage(type, message){
+                return this.$buefy.toast.open({
+                    message: message,
+                    type: type
+                })
+            },
+
             avatarModal() {
                 this.$buefy.modal.open({
                     parent: this,
@@ -67,26 +85,29 @@
             },
 
             changeAvatar(dropFiles){
-                
-                console.log(this.formProps.dropFiles)
-                /*
-                let img = new FileReader();
-                img.readAsDataURL(dropFiles);
-                img.onload = ({ target }) => {
-                    this.formProps.imgSrc = target.result; //将img转化为二进制数据
-                    console.log(this.formProps.imgSrc)
-                };
-                */
-            },
-            saveAvatar(dropFiles){
-                /*
                 let size = 1024 * 1024 * 2
                 if (size < dropFiles.size){
-                    alert('图片太大')
+                    this.toastMessage('is-danger', '图片大小需小于2M，建议128px*128px的正方形图片！')
                     return
-                }*/
-                // this.formProps.imgSrc = 'asdasd'
-                console.log(dropFiles)
+                }
+            },
+            saveAvatar(dropFiles){
+                const sendData = new FormData()
+                sendData.append('avatar', dropFiles)
+                sendData.append('owner', '{{ request.user.id }}')
+                axios({
+                    method: 'post',
+                    url: '{% url "baykeShop:user_profile" %}',
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    console.log(dropFiles)
+                })
+                
             }
         }
     })

@@ -12,10 +12,10 @@ class BaykeUserInfo(BaykeModelMixin):
     owner = models.OneToOneField(User, on_delete=models.CASCADE, verbose_name="用户")
     avatar = models.ImageField(
         "头像", 
-        upload_to="avatar/%Y/%m", 
+        upload_to="avatar/", 
         max_length=200, 
         blank=True, 
-        default="avatar/default.jpg"
+        # default="avatar/default.jpg"
     )
     nickname = models.CharField(max_length=30, blank=True, default="", verbose_name="昵称")
     phone = models.CharField(max_length=11, blank=True, default="", verbose_name="手机号")
