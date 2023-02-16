@@ -15,9 +15,9 @@ from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import check_password, make_password
-
+from django.db.models import Sum
 from baykeCore.common.mixin import LoginRequiredMixin
-from baykeShop.models import BaykeShopAddress, BaykeUserInfo
+from baykeShop.models import BaykeShopAddress, BaykeUserInfo, BaykeUserBalanceLog
 from baykeShop.forms import BaykeShopAddressForm, BaykeUserInfoForm
 
 User = get_user_model()
@@ -80,8 +80,19 @@ class BaykeUserBalanceView(LoginRequiredMixin, View):
     
     def get(self, request, *args, **kwargs):
         
+        balancelogs = BaykeUserBalanceLog.objects.filter(owner=request.user)
+        minus_balancelogs = balancelogs.filter(change_status=2)
+        add_balancelogs = balancelogs.filter(change_status=1)
+        
+        amount_add = add_balancelogs.aggregate(Sum('amount'))
+        amount_minus = minus_balancelogs.aggregate(Sum('amount'))
         
         context = {
+            'balancelogs': balancelogs,
+            'minus_balancelogs': minus_balancelogs,
+            'add_balancelogs': add_balancelogs,
+            'amount_add': request.user.baykeuserinfo.balance + self.get_amount_minus(amount_minus),
+            'amount_minus': round(self.get_amount_minus(amount_minus), 2),
             **kwargs,
         }
         
@@ -90,6 +101,18 @@ class BaykeUserBalanceView(LoginRequiredMixin, View):
             [self.template_name or 'baykeShop/user/balance.html'],
             context
         )
+    
+    def get_amount_add(self, amount_add):
+        if amount_add["amount__sum"]:
+            return amount_add["amount__sum"]
+        else:
+            return 0
+    
+    def get_amount_minus(self, amount_minus):
+        if amount_minus["amount__sum"]:
+            return amount_minus["amount__sum"]
+        else:
+            return 0
         
 
 class BaykeAddressView(LoginRequiredMixin, View):

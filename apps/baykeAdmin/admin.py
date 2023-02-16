@@ -9,7 +9,7 @@ from django.contrib.auth.admin import (
 from baykeShop.models import BaykeUserInfo
 from .models import BaykeMenu, BaykePermission
 from .custom import CustomActions, CustomColumns
-
+from baykeShop.models import BaykeUserBalanceLog
 # 禁用全局删除
 # admin.site.disable_action('delete_selected')
 
@@ -51,10 +51,26 @@ class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
 class BaykeUserInfoInline(admin.StackedInline):
     '''Tabular Inline View for BaykeUserInfo'''
     model = BaykeUserInfo
+    
+    def save_model(self, request, obj, form, change) -> None:
+        print(form.cleaned_data, obj)
+        return super().save_model(request, obj, form, change)
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, BaseModelAdmin):
     inlines = (BaykeUserInfoInline, )
+    
+    # 编辑打开之前先缓存旧值，之后保存时读取缓存并比较
+    # def save_model(self, request, obj, form, change) -> None:
+    #     print(form.cleaned_data, obj)
+    #     return super().save_model(request, obj, form, change)
+    
+    # def save_formset(self, request, form, formset, change):
+        
+    #     print(formset.cleaned_data[0]['owner'].baykeuserinfo.balance)
+    #     res = super().save_formset(request, form, formset, change)
+    #     print(formset.cleaned_data[0]['balance'], change)
+    #     return super().save_formset(request, form, formset, change)
 
 @admin.register(Group)
 class GroupAdmin(BaseGroupAdmin, BaseModelAdmin):

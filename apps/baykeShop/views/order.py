@@ -19,7 +19,7 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from baykeCore.common.mixin import LoginRequiredMixin
-from baykeShop.models import BaykeShopOrderInfo, BaykeUserInfo
+from baykeShop.models import BaykeShopOrderInfo, BaykeUserInfo, BaykeUserBalanceLog
 
 
 User = get_user_model()
@@ -82,6 +82,12 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
             
             userinfo.update(balance=F('balance')-order.total_amount-order.freight)
             orders.update(pay_status=2, trade_sn=f"YE{order_sn}", pay_method=4, pay_time=timezone.now())
+            BaykeUserBalanceLog.objects.create(
+                owner=request.user, 
+                amount=order.total_amount, 
+                change_status=2,
+                change_way=3
+            )
             context = {"code": "ok", "message": "支付成功！"}
             return JsonResponse(context)
         else:

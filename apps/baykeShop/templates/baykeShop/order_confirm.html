@@ -296,6 +296,10 @@
 
             // 提交订单
             saveOrderInfo(){        
+                if (!this.default){
+                    this.toastMessage('is-danger', '请先选择收货地址！')
+                    return
+                }
                 const sendData = new URLSearchParams()
                 sendData.append('address', JSON.stringify(this.default))
                 sendData.append('carts', JSON.stringify(this.orderCarts))

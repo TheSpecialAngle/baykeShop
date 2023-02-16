@@ -153,7 +153,10 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
         address = json.loads(data.get('address'))
         carts = json.loads(data.get('carts'))
         mark = data.get('mark', '')
-    
+
+        if not address:
+            return JsonResponse({'code':'error', 'message': '请先选择收货地址！'})
+        
         # 生成订单
         orderinfo = BaykeShopOrderInfo.objects.create(
             owner=request.user,

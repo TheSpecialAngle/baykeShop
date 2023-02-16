@@ -26,24 +26,93 @@
   </div>
   <div class="column">
     <div class=" has-text-grey">累计充值（元）</div>
-    <div class="is-size-2">0.00</div>
+    <div class="is-size-2">{{ amount_add }}</div>
   </div>
   <div class="column">
     <div class=" has-text-grey">累计消费（元）</div>
-    <div class="is-size-2">0.00</div>
+    <div class="is-size-2">{{ amount_minus }}</div>
   </div>
 </div>
 
 <div id="balanceTabs" class="pl-4 pr-4">
   <b-tabs class="block">
     <b-tab-item label="账单明细">
+      {% if balancelogs %}
+      <div class="table-container">
+        <table class="table is-fullwidth is-hoverable">
+          <tbody>
+            
+            {% for balance in balancelogs %}
+            <tr>
+              <!-- <td>{{ balance.id }}</td> -->
+              <td class=" has-text-danger">{{ balance.changestatus }}</td>
+              <td>-{{ balance.amount }}</td>
+              <td>{{ balance.changeway }}</td>
+              <td>{{ balance.add_date }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
       <div class="has-text-centered is-size-5 pt-6"> 
         <img src="{% static 'baykeShop/img/noyue.png' %}">
         <p class="has-text-grey-light is-size-7"> 亲，暂无账单明细哟~ </p>
       </div>
+      {% endif %}
+        
+      
     </b-tab-item>
-    <b-tab-item label="收入明细">asdasd</b-tab-item>
-    <b-tab-item label="支出明细">asdasd</b-tab-item>
+    <b-tab-item label="收入明细">
+      {% if add_balancelogs %}
+      <div class="table-container">
+        <table class="table is-fullwidth is-hoverable">
+          <tbody>
+            
+            {% for balance in add_balancelogs %}
+              <tr>
+                <!-- <td>{{ balance.id }}</td> -->
+                <td class=" has-text-danger">{{ balance.changestatus }}</td>
+                <td>-{{ balance.amount }}</td>
+                <td>{{ balance.changeway }}</td>
+                <td>{{ balance.add_date }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="has-text-centered is-size-5 pt-6"> 
+        <img src="{% static 'baykeShop/img/noyue.png' %}">
+        <p class="has-text-grey-light is-size-7"> 亲，暂无账单明细哟~ </p>
+      </div>
+      {% endif %}
+    </b-tab-item>
+    <b-tab-item label="支出明细">
+      {% if minus_balancelogs %}
+      <div class="table-container">
+        <table class="table is-fullwidth is-hoverable">
+          <tbody>
+            
+            {% for balance in minus_balancelogs %}
+              <tr>
+                <!-- <td>{{ balance.id }}</td> -->
+                <td class=" has-text-danger">{{ balance.changestatus }}</td>
+                <td>-{{ balance.amount }}</td>
+                <td>{{ balance.changeway }}</td>
+                <td>{{ balance.add_date }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="has-text-centered is-size-5 pt-6"> 
+        <img src="{% static 'baykeShop/img/noyue.png' %}">
+        <p class="has-text-grey-light is-size-7"> 亲，暂无账单明细哟~ </p>
+      </div>
+      {% endif %}
+    </b-tab-item>
   </b-tabs>
 </div>
 
