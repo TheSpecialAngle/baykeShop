@@ -128,7 +128,7 @@ class BaykeUserInfoForm(forms.ModelForm):
     
     class Meta:
         model = BaykeUserInfo
-        fields = ['owner', 'avatar', 'nickname', 'phone']
+        fields = ['owner', 'avatar', 'nickname']
         
     def clean(self):
         return super().clean()

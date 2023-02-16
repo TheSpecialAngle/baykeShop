@@ -46,11 +46,13 @@ class BaykeUserInfoView(LoginRequiredMixin, View):
             owner=request.user,
             defaults={'owner': request.user},
         )
+        
         form = BaykeUserInfoForm(request.POST, request.FILES, instance=obj)
         if form.is_valid():
-            form.cleaned_data['owner'] = request.user
             form.save()
-        return JsonResponse({'code': 'ok', 'message': 'success'})
+            return JsonResponse({'code': 'ok', 'message': 'success'})
+        else:
+            return JsonResponse({'code': 'error', 'message': '手机号必须唯一！'})
 
 
     def put(self, request, *args, **kwargs):

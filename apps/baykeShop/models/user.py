@@ -18,7 +18,7 @@ class BaykeUserInfo(BaykeModelMixin):
         default="avatar/default.jpg"
     )
     nickname = models.CharField(max_length=30, blank=True, default="", verbose_name="昵称")
-    phone = models.CharField(max_length=11, blank=True, default="", verbose_name="手机号")
+    phone = models.CharField(max_length=11, blank=True, unique=True, null=True, verbose_name="手机号")
     balance = models.DecimalField("余额", max_digits=8, blank=True, decimal_places=2, default=0.00)
 
     class Meta:
