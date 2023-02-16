@@ -10,11 +10,13 @@
 '''
 
 from django.views.generic import View
-from django.contrib.auth.mixins import LoginRequiredMixin
+
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import check_password, make_password
 
+from baykeCore.common.mixin import LoginRequiredMixin
 from baykeShop.models import BaykeShopAddress, BaykeUserInfo
 from baykeShop.forms import BaykeShopAddressForm, BaykeUserInfoForm
 
@@ -44,7 +46,6 @@ class BaykeUserInfoView(LoginRequiredMixin, View):
             owner=request.user,
             defaults={'owner': request.user},
         )
-        print(obj, created)
         form = BaykeUserInfoForm(request.POST, request.FILES, instance=obj)
         if form.is_valid():
             form.cleaned_data['owner'] = request.user
@@ -52,10 +53,23 @@ class BaykeUserInfoView(LoginRequiredMixin, View):
         return JsonResponse({'code': 'ok', 'message': 'success'})
 
 
-
-
-
-
+    def put(self, request, *args, **kwargs):
+        from django.http import QueryDict
+        data = QueryDict(request.body)
+        if not data:
+            return JsonResponse({'code': 'error', 'message': '不能为空！'})
+        
+        if not check_password(data.get('old_password'), request.user.password):
+            return JsonResponse({'code':'error', 'message': '您输入的旧密码有误！'})
+        
+        if data.get('password1') != data.get('password2'):
+            return JsonResponse({'code':'error', 'message': '两次密码输入不一致！'})
+        
+        user = request.user
+        user.password = make_password(data.get('password2'))
+        user.save()
+        
+        return JsonResponse({'code':'ok', 'message': '密码修改成功！'})
 
 
 class BaykeUserBalanceView(LoginRequiredMixin, View):

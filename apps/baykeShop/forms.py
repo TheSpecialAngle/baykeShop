@@ -9,6 +9,8 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html_join, format_html
 from django.core.exceptions import ValidationError
+from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm
+
 
 from baykeShop.models import BaykeShopAddress, BaykeUserInfo
 from baykeShop.widgets import SearchTextInput
@@ -122,22 +124,16 @@ class BaykeShopAddressForm(forms.ModelForm):
         return phone
 
 
-class UserForm(forms.ModelForm):
-    
-    class Meta:
-        model = User
-        fields = ['email', 'username']
-        
-    def clean(self):
-        return super().clean()
-
-
 class BaykeUserInfoForm(forms.ModelForm):
     
     class Meta:
         model = BaykeUserInfo
-        fields = ['owner', 'avatar']
+        fields = ['owner', 'avatar', 'nickname', 'phone']
         
-    
     def clean(self):
         return super().clean()
+    
+
+class BaykeUserPasswordChangeForm(PasswordChangeForm, AdminPasswordChangeForm):
+    
+    pass
