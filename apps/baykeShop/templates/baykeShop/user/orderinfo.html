@@ -1,0 +1,56 @@
+{% extends 'baykeShop/user/profile.html' %}
+
+{% load static %}
+
+{% block title %}
+订单管理 - {{ request.user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+          <li><a href="{% url 'baykeShop:user_profile' %}">个人中心</a></li>
+          <li class="is-active"><a href="#" aria-current="page">订单管理</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block profile %}
+<div id="orderInfo">
+    <b-tabs class="block">
+        <b-tab-item label="全部订单">
+            
+            {% for order in page_obj %}
+                {{ order }}
+            {% endfor %}
+                
+        </b-tab-item>
+        <b-tab-item label="待付款">
+            啊实打实
+        </b-tab-item>
+        <b-tab-item label="待发货">
+            啊实打实大
+        </b-tab-item>
+        <b-tab-item label="待收货">
+            啊实打实大
+        </b-tab-item>
+        <b-tab-item label="待评价">
+            啊实打实大
+        </b-tab-item>
+        <b-tab-item label="已完成">
+            啊实打实大
+        </b-tab-item>
+    </b-tabs>
+</div>
+{% endblock %}
+
+{% block vuescript %}
+<script>
+    var orderInfo = new Vue({
+        el: '#orderInfo',
+        delimiters: ['{$', '$}'],
+        data:{}
+    })
+</script>
+{% endblock %}

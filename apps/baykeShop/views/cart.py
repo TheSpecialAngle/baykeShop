@@ -182,7 +182,6 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
         total_amount = 0
 
         # 商品详情页点击立即购买跳转过来数据
-        print(carts[0].get('id'), 'asdddd')
         if carts[0].get('id') == 0:
             total_amount = BaykeShopSKU.objects.filter(id=int(carts[0].get('sku_id'))).first().price
         else:

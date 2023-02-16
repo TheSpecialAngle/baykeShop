@@ -60,8 +60,8 @@
                       我的订单
                     </p>
                     <ul class="menu-list">
-                      <li><a>全部订单</a></li>
-                      <li><a>售后订单</a></li>
+                      <li><a class="{% if '/user/orders/' in request.path_info  %} is-active {% endif %}" href="{% url 'baykeShop:user_orders' %}">全部订单</a></li>
+                      {% comment %} <li><a>售后订单</a></li> {% endcomment %}
                     </ul>
                     
                 </aside>

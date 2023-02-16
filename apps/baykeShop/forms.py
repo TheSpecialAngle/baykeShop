@@ -9,7 +9,6 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html_join, format_html
 from django.core.exceptions import ValidationError
-from django.contrib.auth.forms import AdminPasswordChangeForm, PasswordChangeForm
 
 
 from baykeShop.models import BaykeShopAddress, BaykeUserInfo
@@ -132,8 +131,3 @@ class BaykeUserInfoForm(forms.ModelForm):
         
     def clean(self):
         return super().clean()
-    
-
-class BaykeUserPasswordChangeForm(PasswordChangeForm, AdminPasswordChangeForm):
-    
-    pass

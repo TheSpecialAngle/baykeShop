@@ -11,7 +11,7 @@
 
 import json
 from django.db.models import F
-from django.views.generic import View
+from django.views.generic import View, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
@@ -19,7 +19,9 @@ from django.contrib.auth import get_user_model
 from django.utils import timezone
 
 from baykeCore.common.mixin import LoginRequiredMixin
-from baykeShop.models import BaykeShopOrderInfo, BaykeUserInfo, BaykeUserBalanceLog
+from baykeShop.models import (
+    BaykeShopOrderInfo, BaykeUserInfo, BaykeUserBalanceLog
+)
 
 
 User = get_user_model()
@@ -93,3 +95,16 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
         else:
             return JsonResponse({'code':'error', 'message': '暂不支持该支付方式或支付信息有误！'})
 
+
+class BaykeShopOrderListView(LoginRequiredMixin, ListView):
+    
+    paginate_by = 10
+    paginate_orphans = 2
+    template_name = "baykeShop/user/orderinfo.html"
+    
+    def get_queryset(self):
+        return BaykeShopOrderInfo.objects.filter(owner=self.request.user)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context

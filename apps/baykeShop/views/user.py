@@ -29,16 +29,13 @@ class BaykeUserInfoView(LoginRequiredMixin, View):
     
     def get(self, request, *args, **kwargs):
         
-        context = {
-            **kwargs,
-        }
+        context = { **kwargs,}
         
         return TemplateResponse(
             request, 
             [self.template_name or 'baykeShop/user/profile.html'],
             context
         )
-
 
     def post(self, request, *args, **kwargs):
         # 查询如果不存在就创建的快捷方式
