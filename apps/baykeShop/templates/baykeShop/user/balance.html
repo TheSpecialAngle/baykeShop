@@ -46,7 +46,7 @@
             <tr>
               <!-- <td>{{ balance.id }}</td> -->
               <td class=" has-text-danger">{{ balance.changestatus }}</td>
-              <td>-{{ balance.amount }}</td>
+              <td>{{ balance.amount }}</td>
               <td>{{ balance.changeway }}</td>
               <td>{{ balance.add_date }}</td>
             </tr>
@@ -72,8 +72,8 @@
             {% for balance in add_balancelogs %}
               <tr>
                 <!-- <td>{{ balance.id }}</td> -->
-                <td class=" has-text-danger">{{ balance.changestatus }}</td>
-                <td>-{{ balance.amount }}</td>
+                <td class="has-text-success">{{ balance.changestatus }}</td>
+                <td>+{{ balance.amount }}</td>
                 <td>{{ balance.changeway }}</td>
                 <td>{{ balance.add_date }}</td>
               </tr>
@@ -97,7 +97,7 @@
             {% for balance in minus_balancelogs %}
               <tr>
                 <!-- <td>{{ balance.id }}</td> -->
-                <td class=" has-text-danger">{{ balance.changestatus }}</td>
+                <td class="has-text-danger">{{ balance.changestatus }}</td>
                 <td>-{{ balance.amount }}</td>
                 <td>{{ balance.changeway }}</td>
                 <td>{{ balance.add_date }}</td>

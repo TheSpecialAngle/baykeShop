@@ -5,6 +5,8 @@ from django.contrib.auth.admin import (
     UserAdmin as BaseUserAdmin, 
     GroupAdmin as BaseGroupAdmin
 )
+from django.core.cache import cache
+
 # Register your models here.
 from baykeShop.models import BaykeUserInfo
 from .models import BaykeMenu, BaykePermission
@@ -51,26 +53,51 @@ class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
 class BaykeUserInfoInline(admin.StackedInline):
     '''Tabular Inline View for BaykeUserInfo'''
     model = BaykeUserInfo
-    
-    def save_model(self, request, obj, form, change) -> None:
-        print(form.cleaned_data, obj)
-        return super().save_model(request, obj, form, change)
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin, BaseModelAdmin):
     inlines = (BaykeUserInfoInline, )
     
     # 编辑打开之前先缓存旧值，之后保存时读取缓存并比较
-    # def save_model(self, request, obj, form, change) -> None:
-    #     print(form.cleaned_data, obj)
-    #     return super().save_model(request, obj, form, change)
+    def get_inline_formsets(self, request, formsets, inline_instances, obj=None):
+        user, created = BaykeUserInfo.objects.get_or_create(
+            owner=obj,
+            defaults={'owner': obj},
+        )
+        cache.set(f'{obj.username}_balance', obj.baykeuserinfo.balance)
+        cache_balance = cache.get(f"{obj.username}_balance")
+        print(cache_balance)
+        return super().get_inline_formsets(request, formsets, inline_instances, obj)
     
-    # def save_formset(self, request, form, formset, change):
-        
-    #     print(formset.cleaned_data[0]['owner'].baykeuserinfo.balance)
-    #     res = super().save_formset(request, form, formset, change)
-    #     print(formset.cleaned_data[0]['balance'], change)
-    #     return super().save_formset(request, form, formset, change)
+    
+    def save_formset(self, request, form, formset, change):
+        cache_balance = cache.get(f"{form.cleaned_data['username']}_balance")
+        data = formset.cleaned_data[0]
+        balance = data['balance']
+        if float(balance) > 0 and float(balance) > float(cache_balance):
+            item_balance = float(balance) - float(cache_balance)
+            BaykeUserBalanceLog.objects.create(
+                owner=data['owner'], 
+                amount=item_balance,
+                change_status=1,
+                change_way=2
+            )
+        if float(balance) < float(cache_balance) and float(balance) != 0:
+            item_balance = float(cache_balance) - float(balance)
+            BaykeUserBalanceLog.objects.create(
+                owner=data['owner'], 
+                amount=item_balance,
+                change_status=2,
+                change_way=2
+            )
+        if float(balance) == 0 and float(balance) < float(cache_balance):
+            BaykeUserBalanceLog.objects.create(
+                owner=data['owner'], 
+                amount=float(cache_balance),
+                change_status=2,
+                change_way=2
+            )
+        return super().save_formset(request, form, formset, change)
 
 @admin.register(Group)
 class GroupAdmin(BaseGroupAdmin, BaseModelAdmin):
