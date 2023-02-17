@@ -20,6 +20,7 @@ urlpatterns = [
     path("user/balance/", views.BaykeUserBalanceView.as_view(), name="user_balance"),
     path("user/address/", views.BaykeAddressView.as_view(), name="user_address"),
     path("user/orders/", views.BaykeShopOrderListView.as_view(), name="user_orders"),
+    path("user/orders/<int:pk>/", views.BaykeShopOrderDetailView.as_view(), name="user_orders_detail"),
     
     path("search/", views.SearchView.as_view(), name="search"),
     

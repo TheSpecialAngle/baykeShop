@@ -18,61 +18,82 @@
 
 {% block profile %}
 <div id="orderInfo">
-    <b-tabs class="block">
-        <b-tab-item label="{{ label }}">
-            {% for order in page_obj %}
-            <div class="is-flex is-flex-direction-column">
-                <div class="is-flex is-justify-content-space-between mb-4">
-                    <span>订单日期：{{ order.add_date }}</span>
-                    <span class=" has-text-danger-dark">{{ order.get_pay_status_display }}</span>
-                </div>
-                
-                <div class="orderSku">
-                    {% for order_sku in order.baykeshopordersku_set.all %}
-                        <article class="media">
-                            <figure class="media-left">
-                              <p class="image is-128x128">
-                                <img src="{{ MEDIA_URL }}{{ order_sku.sku.cover_pic }}">
-                              </p>
-                            </figure>
-                            <div class="media-content pr-6">
-                              <div class="pt-1 is-flex is-flex-direction-column is-justify-content-space-around">
-                                    <!-- <h1 class="is-size-6">{{ order_sku.sku.spu.title }}</h1> -->
-                                    <h1>{{ order_sku.desc}}</h1>
-                                    <div class=" is-flex is-justify-content-space-between mt-2">
-                                        <span></span>
-                                        <!-- <span class="has-text-grey-light">{{ order_sku.sku.options.all }}</span> -->
-                                        <span>x{{ order_sku.count }}</span>
-                                    </div>
-                                    <span class="mt-3 has-text-danger-dark">¥{{ order_sku.price }}</span>
-                               </div>
-                            </div>
-                            <!-- <div class="media-right">
-                              <button class="delete"></button>
-                            </div> -->
-                        </article>
-                    {% endfor %} 
-                </div>
-                
-                <div class=" dropdown-divider"></div>
-                <div class="has-text-right pt-3 pb-3">共{{ order.baykeshopordersku_set.count }}件商品，总金额 ¥{{ order.total_amount }} (含运费0.00)</div>
-                <div class="buttons is-marginless is-justify-content-end is-align-items-center">
-                    {% if order.pay_status == 1 %}
-                    <a href="" class=" button is-primary is-outlined">取消订单</a>
-                    <a href="{% url 'baykeShop:order_pay' %}?orderID={{ order.id }}" class="button is-primary">立即支付</a>
-                    {% endif %}
-                    <a href="" class=" button is-primary">查看详情</a>
-                </div>
-                <div class=" dropdown-divider"></div>
+
+    <div class="tabs">
+        <ul>
+            <li class="{% if '/user/orders/' in request.path_info and 'pay_status' not in request.get_full_path  %} is-active {% endif %}">
+                <a href="{% url 'baykeShop:user_orders' %}">全部订单</a>
+            </li>
+            <li class="{% if 'pay_status=1' in request.get_full_path  %} is-active {% endif %}">
+                <a href="{% url 'baykeShop:user_orders' %}?pay_status=1">待付款</a>
+            </li>
+            <li class="{% if 'pay_status=2' in request.get_full_path  %} is-active {% endif %}" >
+                <a href="{% url 'baykeShop:user_orders' %}?pay_status=2">待发货</a>
+            </li>
+            <li class="{% if 'pay_status=3' in request.get_full_path  %} is-active {% endif %}" >
+                <a href="{% url 'baykeShop:user_orders' %}?pay_status=3">待收货</a>
+            </li>
+            <li class="{% if 'pay_status=4' in request.get_full_path  %} is-active {% endif %}">
+                <a href="{% url 'baykeShop:user_orders' %}?pay_status=4">待评价</a>
+            </li>
+            <li class="{% if 'pay_status=5' in request.get_full_path  %} is-active {% endif %}" >
+                <a href="{% url 'baykeShop:user_orders' %}?pay_status=5">已完成</a>
+            </li>
+            <li class="{% if 'pay_status=6' in request.get_full_path  %} is-active {% endif %}" >
+                <a href="{% url 'baykeShop:user_orders' %}?pay_status=6">已取消</a>
+            </li>
+        </ul>
+    </div>
+
+    {% for order in page_obj %}
+    <div class="box is-shadowless is-flex is-flex-direction-column">
+        <div class="is-flex is-justify-content-space-between mb-4">
+            <span>订单日期：{{ order.add_date }}</span>
+            <span class=" has-text-danger-dark">{{ order.get_pay_status_display }}</span>
+        </div>
+        <div class="orderSku">
+            {% for order_sku in order.baykeshopordersku_set.all %}
+                <article class="media">
+                        <figure class="media-left">
+                          <p class="image is-128x128">
+                            <img src="{{ MEDIA_URL }}{{ order_sku.sku.cover_pic }}">
+                          </p>
+                        </figure>
+                        <div class="media-content pr-6">
+                          <div class="pt-1 is-flex is-flex-direction-column is-justify-content-space-around">
+                                <!-- <h1 class="is-size-6">{{ order_sku.sku.spu.title }}</h1> -->
+                                <h1>{{ order_sku.desc}}</h1>
+                                <div class=" is-flex is-justify-content-space-between mt-2">
+                                    <span></span>
+                                    <!-- <span class="has-text-grey-light">{{ order_sku.sku.options.all }}</span> -->
+                                    <span>x{{ order_sku.count }}</span>
+                                </div>
+                                <span class="mt-3 has-text-danger-dark">¥{{ order_sku.price }}</span>
+                           </div>
+                        </div>
+                        <!-- <div class="media-right">
+                          <button class="delete"></button>
+                        </div> -->
+                </article>
+                {% endfor %} 
+            <div class=" dropdown-divider"></div>
+            <div class="has-text-right pt-3 pb-3">共{{ order.baykeshopordersku_set.count }}件商品，总金额 ¥{{ order.total_amount }} (含运费0.00)</div>
+            <div class="buttons is-marginless is-justify-content-end is-align-items-center">
+                {% if order.pay_status == 1 %}
+                <a href="" class=" button is-primary is-outlined">取消订单</a>
+                <a href="{% url 'baykeShop:order_pay' %}?orderID={{ order.id }}" class="button is-primary">立即支付</a>
+                {% endif %}
+                <a href="{% url 'baykeShop:user_orders_detail' order.id %}" class=" button is-primary">查看详情</a>
             </div>
-            {% endfor %}
-        </b-tab-item>
-    </b-tabs>
-</div>
+            <div class=" dropdown-divider"></div>
+        </div>
+    </div>
+    {% endfor %}
 
     {% if page_obj %}
         {% page_result page_obj tag=pay_satus %} 
     {% endif %}
+</div>
 {% endblock %}
 
 {% block vuescript %}

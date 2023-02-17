@@ -1,0 +1,42 @@
+{% extends 'baykeShop/user/profile.html' %}
+
+{% load static shop_tags %}
+
+{% block title %}
+{{ order.desc }} - 订单详情
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+          <li><a href="{% url 'baykeShop:user_profile' %}">个人中心</a></li>
+          <li class="is-active"><a href="#" aria-current="page">订单详情</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block profile %}
+
+<div class="box" id="orderStatus">
+    <h1>订单状态</h1>
+    <template>
+        <b-steps>
+            <b-step-item label="Account" icon="account-key"></b-step-item>
+            <b-step-item label="Profile" icon="account"></b-step-item>
+            <b-step-item label="Social" icon="account-plus"></b-step-item>
+        </b-steps>
+    </template>
+</div>
+{% endblock %}
+
+
+{% block vuescript %}
+{% comment %} <script>
+    var orderInfo = new Vue({
+        el: '#orderInfo',
+        delimiters: ['{$', '$}'],
+        data:{}
+    })
+</script> {% endcomment %}
+{% endblock %}

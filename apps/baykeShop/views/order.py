@@ -11,7 +11,7 @@
 
 import json
 from django.db.models import F
-from django.views.generic import View, ListView
+from django.views.generic import View, ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.template.response import TemplateResponse
@@ -97,7 +97,7 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
 
 
 class BaykeShopOrderListView(LoginRequiredMixin, ListView):
-    
+    # 个人中心订单列表页
     paginate_by = 10
     # paginate_orphans = 1
     template_name = "baykeShop/user/orderinfo.html"
@@ -117,5 +117,15 @@ class BaykeShopOrderListView(LoginRequiredMixin, ListView):
     def get_pay_satus(self):
         if self.request.GET.get('pay_status'):
             return f"pay_status={self.request.GET.get('pay_status')}"
+        
+
+class BaykeShopOrderDetailView(LoginRequiredMixin, DetailView):
+    # 订单详情页
+    
+    template_name = "baykeShop/user/order_detail.html"
+    context_object_name = "order"
+    
+    def get_queryset(self):
+        return BaykeShopOrderInfo.objects.filter(owner=self.request.user)
     
    

@@ -83,7 +83,7 @@ class BaykeUserBalanceView(LoginRequiredMixin, View):
         minus_balancelogs = balancelogs.filter(change_status=2)
         add_balancelogs = balancelogs.filter(change_status=1)
         
-        amount_add = add_balancelogs.aggregate(Sum('amount'))
+        # amount_add = add_balancelogs.aggregate(Sum('amount'))
         amount_minus = minus_balancelogs.aggregate(Sum('amount'))
         
         context = {
