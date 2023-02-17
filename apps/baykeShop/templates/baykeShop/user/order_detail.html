@@ -3,40 +3,139 @@
 {% load static shop_tags %}
 
 {% block title %}
-{{ order.desc }} - 订单详情
+订单详情
 {% endblock %}
 
 {% block breadcrumbs %}
-    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
-        <ul>
-          <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
-          <li><a href="{% url 'baykeShop:user_profile' %}">个人中心</a></li>
-          <li class="is-active"><a href="#" aria-current="page">订单详情</a></li>
-        </ul>
-    </nav>
+<nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+    <ul>
+        <li><a href="{% url 'baykeShop:home' %}">首页</a></li>
+        <li><a href="{% url 'baykeShop:user_profile' %}">个人中心</a></li>
+        <li class="is-active"><a href="#" aria-current="page">订单详情</a></li>
+    </ul>
+</nav>
 {% endblock %}
 
 {% block profile %}
 
-<div class="box" id="orderStatus">
-    <h1>订单状态</h1>
-    <template>
-        <b-steps>
-            <b-step-item label="Account" icon="account-key"></b-step-item>
-            <b-step-item label="Profile" icon="account"></b-step-item>
-            <b-step-item label="Social" icon="account-plus"></b-step-item>
-        </b-steps>
-    </template>
+<div class="box is-shadowless has-background-light pt-6" id="orderStatus">
+    <b-steps v-model="activeStep" :has-navigation="false">
+        <b-step-item label="待付款" icon="account-key" :clickable="false"></b-step-item>
+        <b-step-item label="待发货" icon="car" :clickable="false"></b-step-item>
+        <b-step-item label="待收货" icon="account-plus" :clickable="false"></b-step-item>
+        <b-step-item label="待评价" icon="comment-plus" :clickable="false"></b-step-item>
+        <b-step-item label="已完成" icon="store" :clickable="false"></b-step-item>
+    </b-steps>
 </div>
+
+<div class="box is-shadowless has-background-light">
+    <h1 class="is-size-4">订单信息</h1>
+    <div class="dropdown-divider"></div>
+    <div style="line-height: 2.5em;">
+        <p>订单编号：{{ order.order_sn }}</p>
+        {% if order.trade_sn %}
+        <p>交易编号：{{ order.trade_sn }}</p>
+        {% endif %}
+        <p>订单日期：{{ order.add_date }}</p>
+        <p>支付状态：{{ label }}</p>  
+        {% if order.get_pay_method_display %}
+        <p>支付方式：{{ order.get_pay_method_display }}</p>
+        {% endif %}
+        <p>订单金额：¥{{ order.total_amount }}</p>
+    </div>
+</div>
+
+<div class="box is-shadowless has-background-light">
+    <h1 class="is-size-4">收货信息</h1>
+    <div class="dropdown-divider"></div>
+    <div style="line-height: 2.5em;">
+        <p>收货人：{{ order.name }}</p>
+        <p>联系电话：{{ order.phone }}</p>
+        <p>收货地址：{{ order.address }}</p>
+    </div>
+</div>
+
+<div class="box is-shadowless has-background-light">
+    <h1 class="is-size-4">商品信息</h1>
+    <div class="dropdown-divider"></div>
+    {% for order_sku in order.baykeshopordersku_set.all %}
+    <article class="media">
+        <figure class="media-left">
+            <p class="image is-128x128">
+                <img src="{{ MEDIA_URL }}{{ order_sku.sku.cover_pic }}">
+            </p>
+        </figure>
+        <div class="media-content pr-6">
+            <div class="pt-1 is-flex is-flex-direction-column is-justify-content-space-around">
+                <!-- <h1 class="is-size-6">{{ order_sku.sku.spu.title }}</h1> -->
+                <h1>{{ order_sku.desc}}</h1>
+                <div class=" is-flex is-justify-content-space-between mt-2">
+                    <span></span>
+                    <!-- <span class="has-text-grey-light">{{ order_sku.sku.options.all }}</span> -->
+                    <span>x{{ order_sku.count }}</span>
+                </div>
+                <span class="mt-3 has-text-danger-dark">¥{{ order_sku.price }}</span>
+            </div>
+        </div>
+        <!-- <div class="media-right">
+                          <button class="delete"></button>
+                        </div> -->
+    </article>
+    {% endfor %}
+    <div class=" dropdown-divider"></div>
+    <div class="has-text-right pt-3 pb-3">
+        共{{ order.baykeshopordersku_set.count }}件商品，总金额 ¥{{ order.total_amount }}
+        (含运费0.00)</div>
+    <div class="buttons is-marginless is-justify-content-end is-align-items-center">
+        {% if order.pay_status == 1 %}
+        <a href="" class="button is-primary is-outlined">取消订单</a>
+        <a href="{% url 'baykeShop:order_pay' %}?orderID={{ order.id }}" class="button is-primary">立即支付</a>
+        {% endif %}
+        {% if order.pay_status == 3 %}
+        <a href="" class="button is-primary">确认收货</a>
+        {% endif %}
+        {% if order.pay_status == 4 %}
+        <a href="" class="button is-primary">去评价</a>
+        {% endif %}
+    </div>
+    <div class=" dropdown-divider"></div>
+</div>
+
 {% endblock %}
 
 
 {% block vuescript %}
-{% comment %} <script>
-    var orderInfo = new Vue({
-        el: '#orderInfo',
+<script>
+    var orderStatus = new Vue({
+        el: '#orderStatus',
         delimiters: ['{$', '$}'],
-        data:{}
+        data: {
+            activeStep: 0
+        },
+        created() {
+            this.orderStatusMethod()
+        },
+        methods: {
+            orderStatusMethod() {
+                switch (Number('{{ order.pay_status }}')) {
+                    case 1:
+                        this.activeStep = 0;
+                        break;
+                    case 2:
+                        this.activeStep = 1;
+                        break;
+                    case 3:
+                        this.activeStep = 2;
+                        break;
+                    case 4:
+                        this.activeStep = 3;
+                        break;
+                    case 5:
+                        this.activeStep = 4;
+                        break;
+                }
+            }
+        }
     })
-</script> {% endcomment %}
+</script>
 {% endblock %}

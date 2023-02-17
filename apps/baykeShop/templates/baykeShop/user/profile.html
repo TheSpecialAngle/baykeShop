@@ -40,9 +40,9 @@
                 </figure>
                 <p class="mt-2">
                     {% if request.user.baykeuserinfo %}
-                    {{ request.user.baykeuserinfo.nickname }}
+                        {{ request.user.baykeuserinfo.nickname }}
                     {% else %}
-                    {{ request.user.username }}
+                        {{ request.user.username }}
                     {% endif %}
                 </p>
             </div>
@@ -60,12 +60,18 @@
                       我的订单
                     </p>
                     <ul class="menu-list">
-                      <li><a class="{% if '/user/orders/' in request.path_info and 'pay_status' not in request.get_full_path  %} is-active {% endif %}" 
-                             href="{% url 'baykeShop:user_orders' %}">全部订单</a></li>
-                      <li><a class="{% if 'pay_status=1' in request.get_full_path  %} is-active {% endif %}" 
-                             href="{% url 'baykeShop:user_orders' %}?pay_status=1">待付款</a></li>
-                             <li><a class="{% if 'pay_status=2' in request.get_full_path  %} is-active {% endif %}" 
-                                href="{% url 'baykeShop:user_orders' %}?pay_status=2">待发货</a></li>
+                        <li>
+                            <a class="{% if '/user/orders/' in request.path_info and 'pay_status' not in request.get_full_path  %} is-active {% endif %}" 
+                             href="{% url 'baykeShop:user_orders' %}">全部订单</a>
+                        </li>
+                        <li>
+                            <a class="{% if 'pay_status=1' in request.get_full_path  %} is-active {% endif %}" 
+                             href="{% url 'baykeShop:user_orders' %}?pay_status=1">待付款</a>
+                        </li>
+                        <li>
+                            <a class="{% if 'pay_status=2' in request.get_full_path  %} is-active {% endif %}" 
+                                href="{% url 'baykeShop:user_orders' %}?pay_status=2">待发货</a>
+                        </li>
                     </ul>
                     
                 </aside>

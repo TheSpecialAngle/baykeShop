@@ -128,4 +128,9 @@ class BaykeShopOrderDetailView(LoginRequiredMixin, DetailView):
     def get_queryset(self):
         return BaykeShopOrderInfo.objects.filter(owner=self.request.user)
     
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['label'] = BaykeShopOrderInfo.get_tabs_label(self.get_object().pay_status)
+        return context
+    
    
