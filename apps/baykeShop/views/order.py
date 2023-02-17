@@ -99,12 +99,23 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
 class BaykeShopOrderListView(LoginRequiredMixin, ListView):
     
     paginate_by = 10
-    paginate_orphans = 2
+    # paginate_orphans = 1
     template_name = "baykeShop/user/orderinfo.html"
     
     def get_queryset(self):
-        return BaykeShopOrderInfo.objects.filter(owner=self.request.user)
+        queryset = BaykeShopOrderInfo.objects.filter(owner=self.request.user).order_by('-add_date')
+        if self.request.GET.get('pay_status'):
+            queryset = queryset.filter(pay_status=int(self.request.GET.get('pay_status')))
+        return queryset
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['label'] = BaykeShopOrderInfo.get_tabs_label(self.request.GET.get('pay_status'))
+        context['pay_satus'] = self.get_pay_satus()
         return context
+    
+    def get_pay_satus(self):
+        if self.request.GET.get('pay_status'):
+            return f"pay_status={self.request.GET.get('pay_status')}"
+    
+   

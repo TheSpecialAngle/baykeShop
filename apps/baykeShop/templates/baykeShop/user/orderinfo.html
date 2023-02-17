@@ -1,6 +1,6 @@
 {% extends 'baykeShop/user/profile.html' %}
 
-{% load static %}
+{% load static shop_tags %}
 
 {% block title %}
 订单管理 - {{ request.user }}
@@ -19,30 +19,60 @@
 {% block profile %}
 <div id="orderInfo">
     <b-tabs class="block">
-        <b-tab-item label="全部订单">
-            
+        <b-tab-item label="{{ label }}">
             {% for order in page_obj %}
-                {{ order }}
-            {% endfor %}
+            <div class="is-flex is-flex-direction-column">
+                <div class="is-flex is-justify-content-space-between mb-4">
+                    <span>订单日期：{{ order.add_date }}</span>
+                    <span class=" has-text-danger-dark">{{ order.get_pay_status_display }}</span>
+                </div>
                 
-        </b-tab-item>
-        <b-tab-item label="待付款">
-            啊实打实
-        </b-tab-item>
-        <b-tab-item label="待发货">
-            啊实打实大
-        </b-tab-item>
-        <b-tab-item label="待收货">
-            啊实打实大
-        </b-tab-item>
-        <b-tab-item label="待评价">
-            啊实打实大
-        </b-tab-item>
-        <b-tab-item label="已完成">
-            啊实打实大
+                <div class="orderSku">
+                    {% for order_sku in order.baykeshopordersku_set.all %}
+                        <article class="media">
+                            <figure class="media-left">
+                              <p class="image is-128x128">
+                                <img src="{{ MEDIA_URL }}{{ order_sku.sku.cover_pic }}">
+                              </p>
+                            </figure>
+                            <div class="media-content pr-6">
+                              <div class="pt-1 is-flex is-flex-direction-column is-justify-content-space-around">
+                                    <!-- <h1 class="is-size-6">{{ order_sku.sku.spu.title }}</h1> -->
+                                    <h1>{{ order_sku.desc}}</h1>
+                                    <div class=" is-flex is-justify-content-space-between mt-2">
+                                        <span></span>
+                                        <!-- <span class="has-text-grey-light">{{ order_sku.sku.options.all }}</span> -->
+                                        <span>x{{ order_sku.count }}</span>
+                                    </div>
+                                    <span class="mt-3 has-text-danger-dark">¥{{ order_sku.price }}</span>
+                               </div>
+                            </div>
+                            <!-- <div class="media-right">
+                              <button class="delete"></button>
+                            </div> -->
+                        </article>
+                    {% endfor %} 
+                </div>
+                
+                <div class=" dropdown-divider"></div>
+                <div class="has-text-right pt-3 pb-3">共{{ order.baykeshopordersku_set.count }}件商品，总金额 ¥{{ order.total_amount }} (含运费0.00)</div>
+                <div class="buttons is-marginless is-justify-content-end is-align-items-center">
+                    {% if order.pay_status == 1 %}
+                    <a href="" class=" button is-primary is-outlined">取消订单</a>
+                    <a href="{% url 'baykeShop:order_pay' %}?orderID={{ order.id }}" class="button is-primary">立即支付</a>
+                    {% endif %}
+                    <a href="" class=" button is-primary">查看详情</a>
+                </div>
+                <div class=" dropdown-divider"></div>
+            </div>
+            {% endfor %}
         </b-tab-item>
     </b-tabs>
 </div>
+
+    {% if page_obj %}
+        {% page_result page_obj tag=pay_satus %} 
+    {% endif %}
 {% endblock %}
 
 {% block vuescript %}

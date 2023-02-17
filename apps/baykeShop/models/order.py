@@ -109,6 +109,13 @@ class BaykeShopOrderInfo(BaykeModelMixin):
         # 获取支付方式的默认值
         return cls._meta.get_field('pay_method').default
     
+    @classmethod
+    def get_tabs_label(cls, pay_status):
+        if pay_status is not None:
+            label_dict = dict(cls.OrderStatusChoices.choices)
+            return label_dict.get(int(pay_status))
+        return "全部订单"
+    
 
 class BaykeShopOrderSKU(BaykeModelMixin):
     """订单商品"""
@@ -126,7 +133,10 @@ class BaykeShopOrderSKU(BaykeModelMixin):
         verbose_name="订单商品",
         editable=False
     )
+    title = models.CharField("商品标题", max_length=200, blank=True, default="")
     desc = models.CharField("商品说明", max_length=200, blank=True, default="")
+    spec = models.CharField("商品规格", max_length=200, blank=True, default="")
+    content = models.TextField("商品详情", blank=True, default="")
     count = models.IntegerField(default=1, verbose_name="数量")
     price = models.DecimalField('单价', max_digits=18, decimal_places=2)
 

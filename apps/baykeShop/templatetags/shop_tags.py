@@ -1,4 +1,5 @@
 from django.template import Library
+from django.urls import resolve, reverse
 from baykeShop.models import BaykeShopCategory, BaykeShopBanner, BaykeShopingCart
 from baykeShop.forms import SearchForm
 
@@ -38,14 +39,27 @@ def carousel_result():
 
 
 @register.inclusion_tag('baykeShop/page.html', takes_context=True)
-def page_result(context, page_obj):
+def page_result(context, page_obj, *args, **kwargs):
+    """分页组件
+    使用方法
+        {% load shop_tags %}
+        {% page_result page_obj tag=pay_satus %} 
+    接受参数：
+        page_obj 分页后的queryset
+        tag为关键字参数，当你要为特定的查询条件数据进行分页时使用
+        那么tag的值pay_satus的数据格式应为: `a=1&b=2`或者None这种方式
+    """
     request = context['request']
     current = request.GET.get('page', 1)
+    tag=""
+    if kwargs and kwargs['tag']:
+        tag = kwargs['tag']
     return {
         'paginator': page_obj.paginator,
         'total': page_obj.paginator.num_pages,
         'current': current,
         'per_page': page_obj.paginator.per_page,
+        'tag': tag
     }
     
 

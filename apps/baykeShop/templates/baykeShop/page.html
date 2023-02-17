@@ -1,6 +1,7 @@
 <div id="paginator" class="mb-5">
     <template>
         <section>
+            {{ url }}
             {% comment %}
             <b-field grouped group-multiline>
                 <b-field label="Total">
@@ -94,7 +95,7 @@
                         :id="`page${props.page.number}`" 
                         tag="a"
                         class="is-block is-clickable" 
-                        :href="`{{ request.path }}?page=${props.page.number}`">
+                        :href="`{{ request.get_full_path }}?page=${props.page.number}`">
                         {$ props.page.number $}
                     </b-pagination-button>
                 </template>
@@ -125,7 +126,7 @@
         },
         methods: {
             convertToRoman(num) {
-                location.replace('{{ request.path }}?page=' + num)
+                location.href='{{ request.path_info }}?page='+num+'&{{tag}}'
             }
         }
     })

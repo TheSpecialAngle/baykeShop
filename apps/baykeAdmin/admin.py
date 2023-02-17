@@ -60,13 +60,13 @@ class UserAdmin(BaseUserAdmin, BaseModelAdmin):
     
     # 编辑打开之前先缓存旧值，之后保存时读取缓存并比较
     def get_inline_formsets(self, request, formsets, inline_instances, obj=None):
-        user, created = BaykeUserInfo.objects.get_or_create(
-            owner=obj,
-            defaults={'owner': obj},
-        )
-        cache.set(f'{obj.username}_balance', obj.baykeuserinfo.balance)
-        cache_balance = cache.get(f"{obj.username}_balance")
-        print(cache_balance)
+        if obj is not None:
+            user, created = BaykeUserInfo.objects.get_or_create(
+                owner=obj,
+                defaults={'owner': obj},
+            )
+            cache.set(f'{obj.username}_balance', obj.baykeuserinfo.balance)
+            cache_balance = cache.get(f"{obj.username}_balance")
         return super().get_inline_formsets(request, formsets, inline_instances, obj)
     
     
