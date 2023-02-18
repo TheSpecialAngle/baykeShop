@@ -136,16 +136,37 @@ class BaykeShopOrderDetailView(LoginRequiredMixin, DetailView):
     
     def post(self, request, *args, **kwargs):
         data = request.POST
-        order = self.get_object()
-        # 确认收货逻辑
+        # order = self.get_object()
+        
+        ######### 取消订单逻辑 #########
+        if data.get('order_id') and data.get('pay_status'):
+            order = BaykeShopOrderInfo.objects.get(id=int(data.get('order_id')))
+            orderskus = order.baykeshopordersku_set.all()
+            # 库存回归
+            for ordersku in orderskus:
+                sku = ordersku.sku
+                sku.stock += ordersku.count
+                sku.save()
+            # 修改订单状态
+            order.pay_status = 6
+            order.save()
+            return JsonResponse({'code':'ok', 'message':'取消订单成功！'})
+        
+        ######### 确认收货逻辑 #########
         if data.get('order_id') and data.get('ate') == 'ATE':
+            order = BaykeShopOrderInfo.objects.get(id=int(data.get('order_id')))
             order.pay_status = 4
             order.save()
             return JsonResponse({'code':'ok', 'message':'收货成功！'})
         
-        # 订单评价逻辑
+        
+        ######### 订单评价逻辑 #########
         if data.get('ordersku_id') and data.get('content'):
             order_sku = BaykeShopOrderSKU.objects.get(id=int(data.get('ordersku_id')))
+            order = order_sku.order
+            ######### 评论时机判断验证 #########
+            if order.pay_status <= 3 or order.pay_status >= 5:
+                return JsonResponse({'code':'error', 'message':'该商品未确认收货或已经完成无需再次评论！'})
             
             # 保存评论内容
             BaykeShopOrderSKUComment.objects.create(
@@ -159,7 +180,7 @@ class BaykeShopOrderDetailView(LoginRequiredMixin, DetailView):
             order_sku.save()
             
             # 判断订单所有商品是否都已评价
-            commenteds = list(self.get_object().baykeshopordersku_set.values_list('is_commented', flat=True))
+            commenteds = list(order.baykeshopordersku_set.values_list('is_commented', flat=True))
             # 更改订单的评价状态
             if len(commenteds) > 0 and all(commenteds):
                 order.pay_status = 5
@@ -167,12 +188,3 @@ class BaykeShopOrderDetailView(LoginRequiredMixin, DetailView):
             return JsonResponse({'code':'ok', 'message':'评价成功！'})
         
         return JsonResponse({'code':'error', 'message':'发生错误！'})
-
-
-
-class BaykeShopOrderCommentView(LoginRequiredMixin, DetailView):
-    template_name = "baykeShop/user/order_detail_comment.html"
-    context_object_name = "order"
-    
-    def get_queryset(self):
-        return BaykeShopOrderInfo.objects.filter(owner=self.request.user)

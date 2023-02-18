@@ -45,14 +45,14 @@
     </div>
 
     {% for order in page_obj %}
-    <div class="box is-shadowless is-flex is-flex-direction-column">
+    <div class="box is-flex is-flex-direction-column ">
         <div class="is-flex is-justify-content-space-between mb-4">
             <span>订单日期：{{ order.add_date }}</span>
             <span class=" has-text-danger-dark">{{ order.get_pay_status_display }}</span>
         </div>
         <div class="orderSku">
             {% for order_sku in order.baykeshopordersku_set.all %}
-                <article class="media">
+                <article class="media box is-shadowless has-background-light">
                         <figure class="media-left">
                           <p class="image is-128x128">
                             <img src="{{ MEDIA_URL }}{{ order_sku.sku.cover_pic }}">
@@ -83,7 +83,8 @@
             <div class="has-text-right pt-3 pb-3">共{% order_num order.baykeshopordersku_set.all %}件商品，总金额 ¥{{ order.total_amount }} (含运费0.00)</div>
             <div class="buttons is-marginless is-justify-content-end is-align-items-center">
                 {% if order.pay_status == 1 %}
-                <a href="" class=" button is-primary is-outlined">取消订单</a>
+                <button class="button is-primary is-outlined" 
+                    @click="orderDelete('{{ order.id }}', '{{ order.pay_status }}', `{% url 'baykeShop:user_orders_detail' order.id %}`)">取消订单</button>
                 <a href="{% url 'baykeShop:order_pay' %}?orderID={{ order.id }}" class="button is-primary">立即支付</a>
                 {% endif %}
                 {% if order.pay_status == 3 %}
@@ -97,7 +98,9 @@
     {% endfor %}
 </div>
 {% if page_obj %}
+<div class="mt-5">
     {% page_result page_obj tag=pay_satus %} 
+</div>
 {% endif %}
 {% endblock %}
 
@@ -125,6 +128,40 @@
                     type: type
                 })
             },
+
+            // 取消订单
+            orderDelete(order_id, pay_satus, url){
+                this.$buefy.dialog.confirm({
+                    message: '该订单取消会被删除释放，是否确认？',
+                    cancelText: '取消',
+                    confirmText: '确认',
+                    onConfirm: () => {
+                        const sendData = new URLSearchParams()
+                        sendData.append('order_id', order_id)
+                        sendData.append('pay_status', pay_satus)
+                        console.log(order_id, pay_satus)
+                        axios({
+                            method: 'post',
+                            url: url,
+                            data: sendData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRFToken': this.getCookie('csrftoken'),
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            }
+                        }).then(res => {
+                            if (res.data.code == 'ok'){
+                                this.toastMessage('is-success', res.data.message)
+                                // location.reload()
+                            }else{
+                                this.toastMessage('is-danger', "发生错误，请联系管理员！")
+                            }
+                        })
+                    }
+                })
+            },
+
+            // 确认收货
             sureOrderInfo(id, url){
                 const sendData = new URLSearchParams()
                 sendData.append('order_id', id)
