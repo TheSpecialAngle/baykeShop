@@ -23,5 +23,4 @@ urlpatterns = [
     path("user/orders/<int:pk>/", views.BaykeShopOrderDetailView.as_view(), name="user_orders_detail"),
     
     path("search/", views.SearchView.as_view(), name="search"),
-    
 ]

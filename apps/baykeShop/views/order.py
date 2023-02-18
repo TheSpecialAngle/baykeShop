@@ -133,4 +133,12 @@ class BaykeShopOrderDetailView(LoginRequiredMixin, DetailView):
         context['label'] = BaykeShopOrderInfo.get_tabs_label(self.get_object().pay_status)
         return context
     
+    def post(self, request, *args, **kwargs):
+        data = request.POST
+        if data.get('order_id') and data.get('ate') == 'ATE':
+            order = self.get_object()
+            order.pay_status = 4
+            order.save()
+        return JsonResponse({'code':'ok', 'message':'收货成功！'})
+    
    

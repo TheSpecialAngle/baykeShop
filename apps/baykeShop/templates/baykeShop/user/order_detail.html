@@ -18,7 +18,8 @@
 
 {% block profile %}
 
-<div class="box is-shadowless has-background-light pt-6" id="orderStatus">
+<div id="orderStatus">
+<div class="box is-shadowless has-background-light pt-6" >
     <b-steps v-model="activeStep" :has-navigation="false">
         <b-step-item label="待付款" icon="account-key" :clickable="false"></b-step-item>
         <b-step-item label="待发货" icon="car" :clickable="false"></b-step-item>
@@ -42,6 +43,7 @@
         <p>支付方式：{{ order.get_pay_method_display }}</p>
         {% endif %}
         <p>订单金额：¥{{ order.total_amount }}</p>
+        <p>订单留言：{{ order.order_mark }}</p>
     </div>
 </div>
 
@@ -67,24 +69,22 @@
         </figure>
         <div class="media-content pr-6">
             <div class="pt-1 is-flex is-flex-direction-column is-justify-content-space-around">
-                <!-- <h1 class="is-size-6">{{ order_sku.sku.spu.title }}</h1> -->
-                <h1>{{ order_sku.desc}}</h1>
+                <h1>{{ order_sku.title}}</h1>
                 <div class=" is-flex is-justify-content-space-between mt-2">
-                    <span></span>
-                    <!-- <span class="has-text-grey-light">{{ order_sku.sku.options.all }}</span> -->
+                    <span class="has-text-grey-light">{{ order_sku.spec }}</span>
                     <span>x{{ order_sku.count }}</span>
                 </div>
                 <span class="mt-3 has-text-danger-dark">¥{{ order_sku.price }}</span>
             </div>
         </div>
         <!-- <div class="media-right">
-                          <button class="delete"></button>
-                        </div> -->
+                <button class="delete"></button>
+            </div> -->
     </article>
     {% endfor %}
     <div class=" dropdown-divider"></div>
     <div class="has-text-right pt-3 pb-3">
-        共{{ order.baykeshopordersku_set.count }}件商品，总金额 ¥{{ order.total_amount }}
+        共{% order_num order.baykeshopordersku_set.all %}件商品，总金额 ¥{{ order.total_amount }}
         (含运费0.00)</div>
     <div class="buttons is-marginless is-justify-content-end is-align-items-center">
         {% if order.pay_status == 1 %}
@@ -92,7 +92,7 @@
         <a href="{% url 'baykeShop:order_pay' %}?orderID={{ order.id }}" class="button is-primary">立即支付</a>
         {% endif %}
         {% if order.pay_status == 3 %}
-        <a href="" class="button is-primary">确认收货</a>
+        <button class="button is-primary" @click="sureOrder('{{ order.id }}', `{% url 'baykeShop:user_orders_detail' order.id %}`)">确认收货</button>
         {% endif %}
         {% if order.pay_status == 4 %}
         <a href="" class="button is-primary">去评价</a>
@@ -100,7 +100,7 @@
     </div>
     <div class=" dropdown-divider"></div>
 </div>
-
+</div>
 {% endblock %}
 
 
@@ -116,6 +116,16 @@
             this.orderStatusMethod()
         },
         methods: {
+            getCookie(name) {
+                var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+                return r ? r[1] : undefined;
+            },
+            toastMessage(type, message){
+                return this.$buefy.toast.open({
+                    message: message,
+                    type: type
+                })
+            },
             orderStatusMethod() {
                 switch (Number('{{ order.pay_status }}')) {
                     case 1:
@@ -134,6 +144,29 @@
                         this.activeStep = 4;
                         break;
                 }
+            },
+
+            sureOrder(id, url){
+                const sendData = new URLSearchParams()
+                sendData.append('order_id', id)
+                sendData.append('ate', 'ATE')
+                axios({
+                    method: 'post',
+                    url: url,
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', "发生错误，请联系管理员！")
+                    }
+                })
             }
         }
     })

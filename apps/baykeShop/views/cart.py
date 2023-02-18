@@ -167,9 +167,41 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
             address=self.get_address(address),
             order_sn=self.generate_order_sn()
         )
-        
-        # 生成订单商品，并清理该购物车
-        self._create_order_sku(carts, orderinfo)
+        # 商品总价
+        total_amount = 0
+        for cart in carts:
+            skus = BaykeShopSKU.objects.filter(id=int(cart.get('sku_id')))
+            _carts = BaykeShopingCart.objects.filter(id=cart.get('id'))
+            
+            # 计算商品总价
+            if cart.get('id') == 0:
+                total_amount = skus.first().price
+            else:
+                total_amount += _carts.first().sku.price * int(cart.get('sales'))
+
+            # 创建订单商品
+            BaykeShopOrderSKU.objects.create(
+                order=orderinfo,
+                sku=skus.first(),
+                title=cart.get('title'),
+                spec=self._get_sku_options(cart.get('options')),
+                desc=f"{cart.get('title')} {self._get_sku_options(cart.get('options'))}",
+                content=skus.first().spu.content,
+                count=int(cart.get('sales')),
+                price=skus.first().price
+            )
+            
+            # 减库存加销量
+            skus.update(
+                stock=F('stock')-int(cart.get('sales')), 
+                sales=F('sales')+int(cart.get('sales'))
+            )
+
+            # 判断是否为购物车生成订单，则清理购物车
+            if int(cart.get('id')) != 0:
+                # 订单商品创建成功后，清理购物车
+                _carts.delete()
+            
         return JsonResponse({
             'code':'ok', 
             'message': '生成订单成功！', 
@@ -180,7 +212,7 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
     def get_total_price(self, carts):
         # 商品总价
         total_amount = 0
-
+        print(carts)
         # 商品详情页点击立即购买跳转过来数据
         if carts[0].get('id') == 0:
             total_amount = BaykeShopSKU.objects.filter(id=int(carts[0].get('sku_id'))).first().price
@@ -210,31 +242,6 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
             ranstr = random_ins.randint(10, 99))
         return order_sn
     
-    def _create_order_sku(self, carts, order):
-        for cart in carts:
-            try:
-                sku = BaykeShopSKU.objects.get(id=int(cart.get('sku_id')))
-                
-                BaykeShopOrderSKU.objects.create(
-                    order=order,
-                    sku=sku,
-                    desc=f"{cart.get('title')} {self._get_sku_options(cart.get('options'))}",
-                    count=int(cart.get('sales')),
-                    price=sku.price
-                )
-                
-                # 立即购买就不需要清理购物车了
-                if cart.get('id') != 0:
-                    # 订单商品创建成功后，清理购物车
-                    self._del_carts(cart_id=cart.get('id'))
-                
-                # 减掉库存
-                self._subtract_sku_stock(sku_id=cart.get('sku_id'), sales=cart.get('sales'))
-                
-            except BaykeShopSKU.DoesNotExist:
-                print("订单商品的sku不存在")
-                pass
-    
     def _get_sku_options(self, options):
         ops = []
         for op in options:
@@ -242,13 +249,4 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
                 ops.append("{}:{}".format(op.get('spec__name'), op.get('name')))
             else:
                 ops.append(op)
-        print(ops)
         return ','.join(ops)
-    
-    def _del_carts(self, cart_id):
-        # 删除已经生成订单商品的购物车
-        BaykeShopingCart.objects.filter(id=int(cart_id)).delete()
-        
-    def _subtract_sku_stock(self, sku_id, sales):
-        # 减库存
-        BaykeShopSKU.objects.filter(id=sku_id).update(stock=F('stock')-int(sales))

@@ -1,5 +1,5 @@
 from django.template import Library
-from django.urls import resolve, reverse
+from django.db.models import Sum
 from baykeShop.models import BaykeShopCategory, BaykeShopBanner, BaykeShopingCart
 from baykeShop.forms import SearchForm
 
@@ -66,3 +66,8 @@ def page_result(context, page_obj, *args, **kwargs):
 @register.simple_tag
 def cart_num(user):
     return BaykeShopingCart.get_cart_count(user) if user.is_authenticated else 0
+
+
+@register.simple_tag
+def order_num(orderskus):
+    return orderskus.aggregate(Sum("count")).get('count__sum')
