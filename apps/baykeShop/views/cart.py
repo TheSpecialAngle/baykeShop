@@ -14,7 +14,7 @@ import time
 from django.db.models import F
 from django.db.utils import IntegrityError
 from django.views.generic import View
-from django.http import JsonResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.http import QueryDict
 from django.urls import reverse

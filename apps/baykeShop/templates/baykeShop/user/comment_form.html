@@ -1,0 +1,51 @@
+<script>
+    const orderCommentModalForm = {
+        props: ['content', 'radio'],
+        delimiters: ['{$', '$}'],
+        data(){
+            return {
+                formProps: {
+                    content: this.content,
+                    radio: 5,
+                    user_id: '{{ request.user.id }}',
+                }
+            }
+        },
+        
+        template: `
+        <div class="box" style="min-width:400px">
+            <b-field label="评论内容">
+                <b-input
+                    placeholder="请客观的写下您对商品的评论！" 
+                    maxlength="200" 
+                    type="textarea" 
+                    v-model="formProps.content">
+                </b-input>
+            </b-field>
+            <div class="block">
+                <b-radio v-model="formProps.radio"
+                    name="name"
+                    native-value=5>
+                    好评
+                </b-radio>
+                <b-radio v-model="formProps.radio"
+                    name="name"
+                    native-value=3>
+                    中评
+                </b-radio>
+                <b-radio v-model="formProps.radio"
+                    name="name"
+                    native-value=1>
+                    差评
+                </b-radio>
+            </div>
+            <b-button
+                type="is-primary" 
+                expanded 
+                @click="$emit('saveComment', formProps)">
+                立即修改
+            </b-button>
+        </div>
+        `
+    }
+</script>

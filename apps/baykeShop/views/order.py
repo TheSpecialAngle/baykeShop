@@ -20,7 +20,8 @@ from django.utils import timezone
 
 from baykeCore.common.mixin import LoginRequiredMixin
 from baykeShop.models import (
-    BaykeShopOrderInfo, BaykeUserInfo, BaykeUserBalanceLog
+    BaykeShopOrderInfo, BaykeUserInfo, BaykeUserBalanceLog,
+    BaykeShopOrderSKUComment, BaykeShopOrderSKU
 )
 
 
@@ -135,10 +136,43 @@ class BaykeShopOrderDetailView(LoginRequiredMixin, DetailView):
     
     def post(self, request, *args, **kwargs):
         data = request.POST
+        order = self.get_object()
+        # 确认收货逻辑
         if data.get('order_id') and data.get('ate') == 'ATE':
-            order = self.get_object()
             order.pay_status = 4
             order.save()
-        return JsonResponse({'code':'ok', 'message':'收货成功！'})
+            return JsonResponse({'code':'ok', 'message':'收货成功！'})
+        
+        # 订单评价逻辑
+        if data.get('ordersku_id') and data.get('content'):
+            order_sku = BaykeShopOrderSKU.objects.get(id=int(data.get('ordersku_id')))
+            
+            # 保存评论内容
+            BaykeShopOrderSKUComment.objects.create(
+                owner=request.user, 
+                order_sku=order_sku,
+                content=data.get('content'),
+                comment_choices=int(data.get('comment_choices'))
+            )
+            # 修改评论标识
+            order_sku.is_commented = True
+            order_sku.save()
+            
+            # 判断订单所有商品是否都已评价
+            commenteds = list(self.get_object().baykeshopordersku_set.values_list('is_commented', flat=True))
+            # 更改订单的评价状态
+            if len(commenteds) > 0 and all(commenteds):
+                order.pay_status = 5
+                order.save()
+            return JsonResponse({'code':'ok', 'message':'评价成功！'})
+        
+        return JsonResponse({'code':'error', 'message':'发生错误！'})
+
+
+
+class BaykeShopOrderCommentView(LoginRequiredMixin, DetailView):
+    template_name = "baykeShop/user/order_detail_comment.html"
+    context_object_name = "order"
     
-   
+    def get_queryset(self):
+        return BaykeShopOrderInfo.objects.filter(owner=self.request.user)

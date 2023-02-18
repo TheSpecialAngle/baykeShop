@@ -77,9 +77,15 @@
                 <span class="mt-3 has-text-danger-dark">¥{{ order_sku.price }}</span>
             </div>
         </div>
-        <!-- <div class="media-right">
-                <button class="delete"></button>
-            </div> -->
+        <div class="media-right">
+            {% if not order_sku.is_commented and order.pay_status == 4 %}
+                <button 
+                    class="button is-primary is-small is-outlined" 
+                    @click="orderCommentModal('{{ order_sku.id }}', '{{ order.id }}')">
+                    去评价
+                </button>
+            {% endif %}
+        </div>
     </article>
     {% endfor %}
     <div class=" dropdown-divider"></div>
@@ -94,9 +100,7 @@
         {% if order.pay_status == 3 %}
         <button class="button is-primary" @click="sureOrder('{{ order.id }}', `{% url 'baykeShop:user_orders_detail' order.id %}`)">确认收货</button>
         {% endif %}
-        {% if order.pay_status == 4 %}
-        <a href="" class="button is-primary">去评价</a>
-        {% endif %}
+        
     </div>
     <div class=" dropdown-divider"></div>
 </div>
@@ -105,12 +109,18 @@
 
 
 {% block vuescript %}
+{% include 'baykeShop/user/comment_form.html' %}
+
 <script>
     var orderStatus = new Vue({
         el: '#orderStatus',
         delimiters: ['{$', '$}'],
         data: {
-            activeStep: 0
+            activeStep: 0,
+            formProps:{
+                order_id: '',
+                ordersku_id: ''
+            }
         },
         created() {
             this.orderStatusMethod()
@@ -146,6 +156,7 @@
                 }
             },
 
+            // 确认收货
             sureOrder(id, url){
                 const sendData = new URLSearchParams()
                 sendData.append('order_id', id)
@@ -167,7 +178,54 @@
                         this.toastMessage('is-danger', "发生错误，请联系管理员！")
                     }
                 })
+            },
+
+            // 评论表单
+            orderCommentModal(order_sku, order_id){
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: orderCommentModalForm,
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                    trapFocus: true,
+                    events:{
+                        'saveComment': this.saveComment
+                    }
+                })
+                this.formProps.ordersku_id = order_sku
+                this.formProps.order_id = order_id
+            },
+            
+            //评论提交
+            saveComment(formProps){
+                order_id = this.formProps.order_id
+                ordersku_id = this.formProps.ordersku_id
+                const sendData = new URLSearchParams()
+                sendData.append('order_id', order_id)
+                sendData.append('ordersku_id', ordersku_id)
+                sendData.append('content', formProps.content)
+                sendData.append('comment_choices', formProps.radio)
+                sendData.append('user_id', formProps.user_id)
+                
+                axios({
+                    method: 'post',
+                    url: '{{ request.path }}',
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', "发生错误，请联系管理员！")
+                    }
+                })
             }
+
         }
     })
 </script>

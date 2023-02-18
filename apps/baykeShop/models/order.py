@@ -139,6 +139,7 @@ class BaykeShopOrderSKU(BaykeModelMixin):
     content = models.TextField("商品详情", blank=True, default="")
     count = models.IntegerField(default=1, verbose_name="数量")
     price = models.DecimalField('单价', max_digits=18, decimal_places=2)
+    is_commented = models.BooleanField(default=False, verbose_name="是否已评价")
 
     class Meta:
         verbose_name = '订单商品'
