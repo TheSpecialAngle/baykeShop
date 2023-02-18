@@ -1,6 +1,8 @@
 from django.template import Library
 from django.db.models import Sum
-from baykeShop.models import BaykeShopCategory, BaykeShopBanner, BaykeShopingCart
+from baykeShop.models import (
+    BaykeShopCategory, BaykeShopBanner, BaykeShopingCart
+)
 from baykeShop.forms import SearchForm
 
 

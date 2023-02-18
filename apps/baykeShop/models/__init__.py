@@ -8,3 +8,4 @@ from .cart import BaykeShopingCart, BaykeShopAddress
 from .user import BaykeUserInfo
 from .order import BaykeShopOrderInfo, BaykeShopOrderSKU
 from .balance import BaykeUserBalanceLog
+from .comment import BaykeShopOrderSKUComment
