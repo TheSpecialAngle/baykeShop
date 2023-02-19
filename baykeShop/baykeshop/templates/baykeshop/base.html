@@ -1,0 +1,60 @@
+{% load i18n static shop_tags %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:" en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}-BaykeShop</title>
+    <link rel="stylesheet" href="{% static 'baykeshop/css/buefy.min.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css">
+    <script src="{% static 'baykeshop/js/vue.js' %}"></script>
+    <script src="{% static 'baykeshop/js/buefy.min.js' %}"></script>
+    <style>
+        html,body{
+            height: 100%;
+            background-color: #f9f9f9;
+        }
+        .dropdown-trigger navbar-item span:hover{
+            color: black;
+        }
+    </style>
+    {% block extrastyle %}{% endblock %}
+</head>
+<body>
+    <div class="is-flex is-flex-direction-column">
+        <header class="header">
+            {% block header %}
+            <div id="headTop" class="head-top-box has-background-black-bis">
+                {% include 'baykeshop/head_top.html' %}
+            </div>
+            {% block navbar %}{% navbar_result %}{% endblock %}
+            {% endblock %}
+        </header>
+        <div class="main">
+            <div class="container">
+                {% block banner %}
+                {% carousel_result %}
+                {% endblock %}
+
+                {% block section %}
+                {% include 'baykeshop/seckill.html' %}
+                {% endblock %}
+            </div>
+        </div>
+
+        {% include 'baykeshop/footer.html' %}
+    </div>
+    <script>
+        var headTop = new Vue({
+            el: '#headTop',
+            delimiters: ['{$', '$}'],
+            data: {
+                cartNum: '{% cart_num request.user %}'
+            }
+        })
+    </script>
+
+    {% block vuescript %}{% endblock %}
+</body>
+</html>

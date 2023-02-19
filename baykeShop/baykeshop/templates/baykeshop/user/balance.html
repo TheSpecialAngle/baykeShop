@@ -1,0 +1,129 @@
+{% extends 'baykeshop/user/profile.html' %}
+
+{% load static %}
+
+{% block title %}
+我的余额 - {{ request.user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeshop:home' %}">首页</a></li>
+          <li><a href="{% url 'baykeshop:user_profile' %}">个人中心</a></li>
+          <li class="is-active"><a href="#" aria-current="page">我的余额</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block profile %}
+<h1 class="is-size-5 pl-2">我的余额</h1>
+<div class="dropdown-divider"></div>
+<div class="columns pl-5 pr-5 pt-5">
+  <div class="column">
+    <div class=" has-text-grey">账户可用余额（元）</div>
+    <div class="is-size-2">{{ request.user.baykeuserinfo.balance }}</div>
+  </div>
+  <div class="column">
+    <div class=" has-text-grey">累计充值（元）</div>
+    <div class="is-size-2">{{ amount_add }}</div>
+  </div>
+  <div class="column">
+    <div class=" has-text-grey">累计消费（元）</div>
+    <div class="is-size-2">{{ amount_minus }}</div>
+  </div>
+</div>
+
+<div id="balanceTabs" class="pl-4 pr-4">
+  <b-tabs class="block">
+    <b-tab-item label="账单明细">
+      {% if balancelogs %}
+      <div class="table-container">
+        <table class="table is-fullwidth is-hoverable">
+          <tbody>
+            
+            {% for balance in balancelogs %}
+            <tr>
+              <!-- <td>{{ balance.id }}</td> -->
+              <td class=" has-text-danger">{{ balance.changestatus }}</td>
+              <td>{{ balance.amount }}</td>
+              <td>{{ balance.changeway }}</td>
+              <td>{{ balance.add_date }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="has-text-centered is-size-5 pt-6"> 
+        <img src="{% static 'baykeshop/img/noyue.png' %}">
+        <p class="has-text-grey-light is-size-7"> 亲，暂无账单明细哟~ </p>
+      </div>
+      {% endif %}
+        
+      
+    </b-tab-item>
+    <b-tab-item label="收入明细">
+      {% if add_balancelogs %}
+      <div class="table-container">
+        <table class="table is-fullwidth is-hoverable">
+          <tbody>
+            
+            {% for balance in add_balancelogs %}
+              <tr>
+                <!-- <td>{{ balance.id }}</td> -->
+                <td class="has-text-success">{{ balance.changestatus }}</td>
+                <td>+{{ balance.amount }}</td>
+                <td>{{ balance.changeway }}</td>
+                <td>{{ balance.add_date }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="has-text-centered is-size-5 pt-6"> 
+        <img src="{% static 'baykeshop/img/noyue.png' %}">
+        <p class="has-text-grey-light is-size-7"> 亲，暂无账单明细哟~ </p>
+      </div>
+      {% endif %}
+    </b-tab-item>
+    <b-tab-item label="支出明细">
+      {% if minus_balancelogs %}
+      <div class="table-container">
+        <table class="table is-fullwidth is-hoverable">
+          <tbody>
+            
+            {% for balance in minus_balancelogs %}
+              <tr>
+                <!-- <td>{{ balance.id }}</td> -->
+                <td class="has-text-danger">{{ balance.changestatus }}</td>
+                <td>-{{ balance.amount }}</td>
+                <td>{{ balance.changeway }}</td>
+                <td>{{ balance.add_date }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="has-text-centered is-size-5 pt-6"> 
+        <img src="{% static 'baykeshop/img/noyue.png' %}">
+        <p class="has-text-grey-light is-size-7"> 亲，暂无账单明细哟~ </p>
+      </div>
+      {% endif %}
+    </b-tab-item>
+  </b-tabs>
+</div>
+
+{% endblock %}
+
+{% block vuescript %}
+<script>
+  var balanceTabs = new Vue({
+    el: '#balanceTabs',
+    delimiters: ['{$', '$}'],
+    data: {}
+  })
+</script>
+{% endblock %}

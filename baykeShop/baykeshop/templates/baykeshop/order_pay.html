@@ -1,0 +1,230 @@
+{% extends 'baykeshop/cart.html' %}
+
+{% load static %}
+
+{% block title %}
+    支付
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .pay .pay-bg{
+        background: url('{% static "baykeShop/img/orderBg.png" %}') no-repeat;
+        background-size: 100% 100%;
+        height: 159px;
+    }
+    .pay-order-desc{
+        line-height: 2em;
+        padding-left: 3em;
+    }
+    .pay-method-box{
+        height: 150px;
+        border: solid 1px #eee;
+        position: relative;
+    }
+    .pay-tag{
+        position: absolute;
+        right: 0;
+        bottom: 0;
+    }
+    .pay-method-box:hover{
+        border: solid 1px #f14668;
+        cursor: pointer;
+    }
+    .active{
+        border: solid 1px #f14668;
+    }
+
+</style>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5 is-marginless" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeshop:home' %}">首页</a></li>
+          <li><a href="{% url 'baykeshop:user_profile' %}">购物车</a></li>
+          <li class="is-active"><a href="#" aria-current="page">立即支付</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block content %}
+<div class="pay" id="orderPay">
+    {% if error and not code %}
+    <div class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center" style="min-height:800px"> 
+       
+        <span class="mdi mdi-alert-circle is-size-1 has-text-danger-dark"></span>
+        <span class=" is-size-4">{{ error }}</span> 
+        <a class=" button is-black is-outlined is-small mt-2" href="{% url 'baykeshop:home' %}">继续逛</a>
+    </div>
+    {% else %}
+    <div class="pay-bg pt-6">
+        <div class="has-text-white-ter ml-6">
+            {% if code %}
+            <h1 class="is-size-2 ">
+                订单已支付~
+            </h1>
+            <p>支付信息如下，订单详情可前往个人中心查看</p>
+            {% else %}
+            <h1 class="is-size-2 ">
+                订单提交成功！去付款咯~
+            </h1>
+            <p>剩余时间：01小时49分钟24秒</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="box is-radiusless pay-order-desc">
+        <p>订单编号：{{ order_sn }}</p>
+        <p>订单价格：{{ total_amount }}元</p> 
+        <p>收货信息：{{ name }} {{ phone }} {{ address }}</p>
+        <p>商品名称：{{ desc }}</p> 
+        
+        {% if paymethod == 4 %}
+        <p>支付方式：余额支付</p> 
+        {% endif %}
+        {% if paymethod == 3 %}
+        <p>支付方式：微信支付</p> 
+        {% endif %}
+        {% if paymethod == 2 %}
+        <p>支付方式： 支付宝支付</p> 
+        {% endif %} 
+        {% if pay_time %}
+        <p>支付时间：{{ pay_time }}</p>
+        {% endif %}   
+    </div>
+
+        {% if code %}
+        <div class="is-flex is-flex-direction-column is-justify-content-center is-align-items-center box mb-5 pt-6 pb-6"> 
+            <span class="mdi mdi-check-circle is-size-1 has-text-success"></span>
+            <span class=" is-size-4">支付成功</span> 
+            <div class="mt-2">
+                <a class=" button is-black is-outlined is-small " href="{% url 'baykeshop:home' %}">继续逛</a>
+                <a class="button is-black is-outlined is-small" href="{% url 'baykeshop:user_profile' %}">个人中心</a>
+            </div>
+        </div>
+        {% else %}
+        
+        <div class="box is-radiusless is-marginless">
+            <h1 class=" is-size-4 pl-2">选择以下支付方式</h1>
+            <div class="dropdown-divider"></div>
+            <div class="columns is-multiline">
+                
+                <div class="column is-3" v-for="pay in payMethods" :key="pay.value" @click="payMethod(pay)">
+                    <div :class="{active:pay.default}"
+                        class="pay-method-box is-flex is-align-items-center is-justify-content-center">
+                        <div class="pay-icon mr-3" v-if="pay.value == 4">
+                            <img :src="pay.icon" width="36px">
+                        </div>
+                        <img v-else class="mr-3" :src="pay.icon" width="36px">
+
+                        <div v-if="pay.value == 4">
+                            <h1 class=" is-size-4">{$ pay.payName $}</h1> 
+                            <span class="has-text-grey-light">余额：{{ request.user.baykeuserinfo.balance }}</span>
+                        </div>
+                        <h1 v-else class="is-size-4">{$ pay.payName $}</h1> 
+
+                        <div v-if="pay.default" class="tag is-danger pay-tag is-radiusless is-size-6">✔</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="box is-flex is-justify-content-end is-marginless is-radiusless">
+            <b-button type="is-danger" class="pl-6 pr-6" @click="savePay">立即支付</b-button>
+        </div>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block vuescript %}
+<script>
+    var orderPay = new Vue({
+        el: "#orderPay",
+        delimiters: ['{$', '$}'],
+        data:{
+            payMethods:[
+                { 
+                    payName: "余额支付",
+                    value: 4,
+                    default: true,
+                    icon: "{% static 'baykeshop/img/ye.svg' %}"
+                },
+                { 
+                    payName: "微信支付",
+                    value: 3,
+                    default: false,
+                    icon: "{% static 'baykeshop/img/wxpay.svg' %}"
+                },
+                { 
+                    payName: "支付宝支付",
+                    value: 2,
+                    default: false,
+                    icon: "{% static 'baykeshop/img/alipay.svg' %}"
+                }
+            ],
+
+            defaultPay: ""
+        },
+        created(){
+            // 设置默认支付方式
+            this.payMethods.forEach(element => {
+                if (element.default){
+                    this.defaultPay = element
+                }
+            })
+        },
+
+        methods:{
+            getCookie(name) {
+                var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+                return r ? r[1] : undefined;
+            },
+            toastMessage(type, message){
+                return this.$buefy.toast.open({
+                    message: message,
+                    type: type
+                })
+            },
+
+            // 选择默认支付方式
+            payMethod(pay){
+                this.defaultPay = pay
+                this.payMethods.forEach(element => {
+                    if (pay.value == element.value){
+                        element.default = true
+                    }else{
+                        element.default = false
+                    }
+                })
+            },
+
+            // 立即支付
+            savePay(){
+                const sendData = new URLSearchParams()
+                sendData.append('paymethod', JSON.stringify(this.defaultPay))
+                sendData.append('order_sn', '{{ order_sn }}')
+                axios({
+                    method: 'post',
+                    url: '{% url "baykeshop:order_pay" %}',
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == "ok"){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', res.data.message)
+                    }
+                })
+            }
+        }
+    })
+
+</script>
+
+{% endblock %}

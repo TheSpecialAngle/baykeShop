@@ -1,0 +1,329 @@
+{% extends 'baykeshop/cart.html' %}
+
+{% block title %}
+    购物车-订单确认
+{% endblock %}
+    
+
+{% block extrastyle %}{{ block.super }}
+<style>
+    .address-box{
+        border: solid 1px #eee;
+        /* padding: 2em 2.5em 2em 2.5em;*/
+        cursor: pointer;
+        margin-top: 1em;
+        line-height: 1.5em;
+        position: relative;
+        height: 150px;
+    }
+    .btn-default{
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+    #cartAddress .active{
+        border: #f32020 1px solid;
+    }
+    .address-box:hover{
+        border: #f32020 1px solid;
+    }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeshop:home' %}">首页</a></li>
+          <li><a href="#">购物车</a></li>
+          <li class="is-active"><a href="#" aria-current="page">提交订单</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block content %}
+    <div id="cartAddress">
+        <!-- 收货地址 -->
+        <div class="box mb-3 is-radiusless">
+            <h1 class=" is-size-4 pl-2">收货地址</h1> 
+            <img width="100%" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABLAAAAAECAYAAACeNca/AAAAAXNSR0IArs4c6QAAADhlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAAqACAAQAAAABAAAEsKADAAQAAAABAAAABAAAAAAdekyeAAABbUlEQVR4Ae2asW3DMBBFSWqGACkzRHprgyCbZASPEHiRjJC4TlYIkD4zWIyPd8WXzcZKw+KpkSCIBPHw+HWimNP5eHj5nae6vNv1pqPW4/fhfr5sW98e51TK9n5TPeanz6t+Ga+Thq9zwAd8cAL4oBzIB3zAB+qHRH0W04B6soHAB3xYvRj4fnMc5AP5sJoYrD8YjoHfF8XGNy2nvZ23Hqcy7bttS+7f7z7cubnUbnvGG6zg20DgAz4EAXxQEOQDPuCDEsAHpUE+4AM+KAF8UBrkAz7ggxLAB6UxQD4U272Sct7puG66Pq/O/bzefVy2aX//0z/6td1Xz19X/TJeJw1f54AP+OAE8EE5kA/4gA/UD/b3lPrMZgL1ZMsDfIhYxAd8CBUcBN+bxoF8CCnIB58WY9cPhd0r4esAq4kxktWJ3W2Bg914DQQ+4IMGBD7gAz4oAXxQGuQDPuCDEsAHpUE+4AM+KAF8UBqj58MfRyl5tp+pqv4AAAAASUVORK5CYII=">
+            
+            {{ addr_list|json_script:"addr-data" }}
+            <div class="columns is-multiline">
+                <div class="column is-3" v-for="addr in addrsData" :key="addr.id">
+                    <div class="address-box pl-5 pr-5 is-flex is-flex-direction-column is-justify-content-center" 
+                        :class="{active: addr.is_default}" @click="activeAddress(addr)">
+                        <span class="tag is-danger btn-default is-radiusless" v-if="addr.is_default">{$ text $}</span>
+                        <h1 class="has-text-weight-bold">{$ addr.name $}</h1>
+                        <p>{$ addr.phone $}</p>
+                        <p class="has-text-grey">
+                            {$ addr.province $}{$ addr.city $}{$ addr.county $}{$ addr.address $}
+                        </p>
+                    </div>
+                </div>
+                <div class="column is-3 has-text-grey-light" @click="isComponentModalActive = true">
+                    <div class="address-box add-box is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
+                        <span class="icon is-size-1"><i class="mdi mdi-plus"></i></span>
+                        <p class="mt-3">添加新地址</p>
+                    </div>
+                </div>
+            </div>
+
+            <b-modal
+                v-model="isComponentModalActive"
+                has-modal-card
+                :destroy-on-hide="true"
+                :props="formProps"
+                :events="events"
+                :can-cancel="false">
+                <modal-form v-bind="formProps" @save="save"></modal-form>
+            </b-modal>
+        </div>
+
+        <!-- 订单信息 -->
+        <div class="box is-radiusless is-marginless">
+            <h1 class="is-size-4 pl-2">订单信息</h1>
+            <div class=" dropdown-divider"></div>
+            <div v-for="cart in orderCarts" :key="cart.id">
+                <div class="columns pl-2 pr-2 pt-2 is-marginless" >
+                    <div class="column is-7 is-flex is-align-items-center">
+                        <figure class="image is-96x96">
+                            <img :src="`/media/${cart.cover_pic}`">
+                        </figure>
+                        <div class="ml-3">
+                            <h1 style="font-size: 14px;">{$ cart.title $}</h1>
+                            <p class="has-text-grey" style="font-size: 14px;">
+                                <span v-for="op, i in cart.options" :key="i">
+                                    <span v-if="op.spec__name">{$ op.spec__name $}: {$ op.name $}</span>
+                                    <span v-else>{$ op $}</span>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column is-3 is-flex is-align-items-center is-justify-content-center has-text-danger-dark">
+                        ¥{$ cart.price $} x {$ cart.sales $}
+                    </div>
+                    <div class="column is-flex is-align-items-center is-justify-content-center has-text-danger-dark">
+                        ¥{$ cart.total_price $}
+                    </div>
+                </div>
+                <div class=" dropdown-divider is-marginless"></div>
+            </div>
+
+            <div class="mt-3 pt-4 pl-6 pr-6 has-background-light">
+                <b-field label="订单留言">
+                    <b-input maxlength="200" type="textarea" v-model="orderMark" placeholder="留言备注您的特殊需求及说明！"></b-input>
+                </b-field>
+            </div>
+        </div>
+
+        <!-- 结算信息 -->
+        <div class="box is-radiusless pr-6 is-marginless has-background-light">
+            <div class="columns is-size-5 pr-5">
+                <div class="column is-9 is-flex is-flex-direction-column is-align-items-end">
+                    <p class="mb-2">{$ num $} 件商品，总商品金额：</p> 
+                    <p class="mb-2">运费：</p>
+                    <p class="mb-2">应付总额：</p>
+                </div>
+                <div class="column is-3 is-flex is-flex-direction-column is-align-items-end">
+                    <p class="mb-2">¥{$ total.toFixed(2) $}元</p>
+                    <p class="mb-2">¥{$ freight.toFixed(2) $}元</p>
+                    <p class="mb-2 is-size-4 has-text-danger-dark">¥{$ totalPrice.toFixed(2) $}元</p>
+                </div>
+            </div>
+        </div>
+        <div class="box is-radiusless is-flex is-justify-content-end is-marginless">
+            <b-button type="is-danger" class="pl-6 pr-6" @click="saveOrderInfo">提交订单</b-button>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block vuescript %}
+<script>
+    const ModalForm = {
+        props: [
+            'id',
+            'name',
+            'phone',
+            'province',
+            'city',
+            'county',
+            'address',
+            'is_default',
+            'email',  
+            'labelPosition'
+        ],
+        data(){
+            return {
+                formProps: {
+                    id: this.id,
+                    name: this.name,
+                    phone: this.phone,
+                    email: this.email,
+                    province: this.province,
+                    city:this.city,
+                    county: this.county,
+                    address: this.address,
+                    is_default: this.is_default,
+                    labelPosition:'on-border',
+                }
+                
+            }
+        },
+        template: `{% include 'baykeshop/user/addr_form.html' %}`,
+        methods: {
+            save(){
+                this.$emit('save', this.formProps)
+            },
+        }
+    }
+
+    var addrs = JSON.parse(document.getElementById('addr-data').textContent);
+    var cartAddress = new Vue({
+        el: "#cartAddress",
+        delimiters: ['{$', '$}'],
+        components: {
+            ModalForm
+        },
+        data: {
+            addrsData: addrs,
+            default: null,
+            isActive: false,
+            text: '默认',
+            // 添加地址相关
+            events:{
+                'save': this.save
+            },
+            isComponentModalActive: false,
+            formProps: {
+                id: '',
+                name: '',
+                phone: '',
+                email: '',
+                province: '',
+                city:'',
+                county: '',
+                address: '',
+                is_default: false,
+                labelPosition:'on-border',
+            },
+
+            // 订单留言
+            orderMark: '',
+
+            // 订单信息
+            orderCarts: [],
+            total: 0,
+            freight: 0,
+            totalPrice: 0,
+            num: 0
+
+        },
+        created(){
+            // 载入时获取用户选中购物车商品
+            this.orderCarts = JSON.parse(localStorage.getItem('carts'))
+
+            // 商品总额（不含运费）
+            this.orderCarts.forEach(element => {
+                this.total += parseFloat(element.total_price)
+                this.num += Number(element.sales)
+            })
+
+            // 商品总价含运费
+            this.totalPrice = this.total + this.freight
+            
+            // 载入时设置地址默认值
+            this.addrsData.forEach(element => {
+                if (element.is_default){
+                    this.default = element
+                    return
+                }
+            })
+        },
+        methods: {
+            getCookie(name) {
+                var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+                return r ? r[1] : undefined;
+            },
+            toastMessage(type, message){
+                return this.$buefy.toast.open({
+                    message: message,
+                    type: type
+                })
+            },
+            // 新增地址
+            save(props){
+                const sendData = new URLSearchParams()
+                sendData.append('addr_id', props.id)
+                sendData.append('name', props.name)
+                sendData.append('phone', props.phone)
+                sendData.append('email', props.email)
+                sendData.append('province', props.province)
+                sendData.append('city', props.city)
+                sendData.append('county', props.county)
+                sendData.append('address', props.address)
+                sendData.append('is_default', props.is_default)
+                axios({
+                    method: 'post',
+                    url: '{% url "baykeshop:user_address" %}',
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', '发生错误！')
+                    }
+                })
+            },
+            // 点击选择地址
+            activeAddress(addr){
+                this.default = addr
+                this.addrsData.forEach(element => {
+                    if (addr.id == element.id){
+                        addr.is_default = true
+                        this.text = '选择 ✔'
+                    }else{
+                        element.is_default = false
+                    }
+                })
+            },
+
+            // 提交订单
+            saveOrderInfo(){        
+                if (!this.default){
+                    this.toastMessage('is-danger', '请先选择收货地址！')
+                    return
+                }
+                const sendData = new URLSearchParams()
+                sendData.append('address', JSON.stringify(this.default))
+                sendData.append('carts', JSON.stringify(this.orderCarts))
+                sendData.append('mark', this.orderMark)
+                axios({
+                    method: 'post',
+                    url: '{% url "baykeshop:order_confirm" %}',
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        localStorage.removeItem('carts')
+                        location.href = res.data.redirect+"?orderID="+res.data.order_id
+                    }else{
+                        this.toastMessage('is-danger', '发生错误！')
+                    }
+                })
+            }
+        }
+    })
+</script>
+{% endblock %}

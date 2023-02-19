@@ -1,0 +1,236 @@
+{% extends 'baykeshop/user/profile.html' %}
+
+{% load static shop_tags %}
+
+{% block title %}
+订单管理 - {{ request.user }}
+{% endblock %}
+
+{% block breadcrumbs %}
+    <nav class="breadcrumb is-small mt-5" aria-label="breadcrumbs">
+        <ul>
+          <li><a href="{% url 'baykeshop:home' %}">首页</a></li>
+          <li><a href="{% url 'baykeshop:user_profile' %}">个人中心</a></li>
+          <li class="is-active"><a href="#" aria-current="page">订单管理</a></li>
+        </ul>
+    </nav>
+{% endblock %}
+
+{% block profile %}
+<div id="orderInfo">
+    <div class="tabs">
+        <ul>
+            <li class="{% if '/user/orders/' in request.path_info and 'pay_status' not in request.get_full_path  %} is-active {% endif %}">
+                <a href="{% url 'baykeshop:user_orders' %}">全部订单</a>
+            </li>
+            <li class="{% if 'pay_status=1' in request.get_full_path  %} is-active {% endif %}">
+                <a href="{% url 'baykeshop:user_orders' %}?pay_status=1">待付款</a>
+            </li>
+            <li class="{% if 'pay_status=2' in request.get_full_path  %} is-active {% endif %}" >
+                <a href="{% url 'baykeshop:user_orders' %}?pay_status=2">待发货</a>
+            </li>
+            <li class="{% if 'pay_status=3' in request.get_full_path  %} is-active {% endif %}" >
+                <a href="{% url 'baykeshop:user_orders' %}?pay_status=3">待收货</a>
+            </li>
+            <li class="{% if 'pay_status=4' in request.get_full_path  %} is-active {% endif %}">
+                <a href="{% url 'baykeshop:user_orders' %}?pay_status=4">待评价</a>
+            </li>
+            <li class="{% if 'pay_status=5' in request.get_full_path  %} is-active {% endif %}" >
+                <a href="{% url 'baykeshop:user_orders' %}?pay_status=5">已完成</a>
+            </li>
+            <li class="{% if 'pay_status=6' in request.get_full_path  %} is-active {% endif %}" >
+                <a href="{% url 'baykeshop:user_orders' %}?pay_status=6">已取消</a>
+            </li>
+        </ul>
+    </div>
+
+    {% for order in page_obj %}
+    <div class="box is-flex is-flex-direction-column ">
+        <div class="is-flex is-justify-content-space-between mb-4">
+            <span>订单日期：{{ order.add_date }}</span>
+            <span class=" has-text-danger-dark">{{ order.get_pay_status_display }}</span>
+        </div>
+        <div class="orderSku">
+            {% for order_sku in order.baykeshopordersku_set.all %}
+                <article class="media box is-shadowless has-background-light">
+                        <figure class="media-left">
+                          <p class="image is-128x128">
+                            <img src="{{ MEDIA_URL }}{{ order_sku.sku.cover_pic }}">
+                          </p>
+                        </figure>
+                        <div class="media-content pr-6">
+                          <div class="pt-1 is-flex is-flex-direction-column is-justify-content-space-around">
+                                <h1>{{ order_sku.title}}</h1>
+                                <div class=" is-flex is-justify-content-space-between mt-2">
+                                    <span class="has-text-grey-light">{{ order_sku.spec }}</span>
+                                    <span>x{{ order_sku.count }}</span>
+                                </div>
+                                <span class="mt-3 has-text-danger-dark">¥{{ order_sku.price }}</span>
+                           </div>
+                        </div>
+                        <div class="media-right">
+                            {% if not order_sku.is_commented and order.pay_status == 4 %}
+                                <button 
+                                    class="button is-primary is-small is-outlined" 
+                                    @click="orderCommentModal('{{ order_sku.id }}', '{{ order.id }}', `{% url 'baykeshop:user_orders_detail' order.id %}`)">
+                                    去评价
+                                </button>
+                            {% endif %}
+                        </div>
+                </article>
+                {% endfor %} 
+            <div class=" dropdown-divider"></div>
+            <div class="has-text-right pt-3 pb-3">共{% order_num order.baykeshopordersku_set.all %}件商品，总金额 ¥{{ order.total_amount }} (含运费0.00)</div>
+            <div class="buttons is-marginless is-justify-content-end is-align-items-center">
+                {% if order.pay_status == 1 %}
+                <button class="button is-primary is-outlined" 
+                    @click="orderDelete('{{ order.id }}', '{{ order.pay_status }}', `{% url 'baykeshop:user_orders_detail' order.id %}`)">取消订单</button>
+                <a href="{% url 'baykeshop:order_pay' %}?orderID={{ order.id }}" class="button is-primary">立即支付</a>
+                {% endif %}
+                {% if order.pay_status == 3 %}
+                <button class="button is-primary" @click="sureOrderInfo('{{order.id}}', `{% url 'baykeshop:user_orders_detail' order.id %}`)">确认收货</button>
+                {% endif %}
+                <a href="{% url 'baykeshop:user_orders_detail' order.id %}" class=" button is-primary">查看详情</a>
+            </div>
+            <div class=" dropdown-divider"></div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% if page_obj %}
+<div class="mt-5">
+    {% page_result page_obj tag=pay_satus %} 
+</div>
+{% endif %}
+{% endblock %}
+
+{% block vuescript %}
+{% include 'baykeshop/user/comment_form.html' %}
+
+<script>
+    var orderInfo = new Vue({
+        el: '#orderInfo',
+        delimiters: ['{$', '$}'],
+        data:{
+            formProps:{
+                order_id: '',
+                ordersku_id: ''
+            }
+        },
+        methods:{
+            getCookie(name) {
+                var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
+                return r ? r[1] : undefined;
+            },
+            toastMessage(type, message){
+                return this.$buefy.toast.open({
+                    message: message,
+                    type: type
+                })
+            },
+
+            // 取消订单
+            orderDelete(order_id, pay_satus, url){
+                this.$buefy.dialog.confirm({
+                    message: '该订单取消会被删除释放，是否确认？',
+                    cancelText: '取消',
+                    confirmText: '确认',
+                    onConfirm: () => {
+                        const sendData = new URLSearchParams()
+                        sendData.append('order_id', order_id)
+                        sendData.append('pay_status', pay_satus)
+                        console.log(order_id, pay_satus)
+                        axios({
+                            method: 'post',
+                            url: url,
+                            data: sendData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRFToken': this.getCookie('csrftoken'),
+                                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                            }
+                        }).then(res => {
+                            if (res.data.code == 'ok'){
+                                this.toastMessage('is-success', res.data.message)
+                                // location.reload()
+                            }else{
+                                this.toastMessage('is-danger', "发生错误，请联系管理员！")
+                            }
+                        })
+                    }
+                })
+            },
+
+            // 确认收货
+            sureOrderInfo(id, url){
+                const sendData = new URLSearchParams()
+                sendData.append('order_id', id)
+                sendData.append('ate', 'ATE')
+                axios({
+                    method: 'post',
+                    url: url,
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', "发生错误，请联系管理员！")
+                    }
+                })
+            },
+
+            // 评论表单
+            orderCommentModal(order_sku, order_id, url){
+                this.$buefy.modal.open({
+                    parent: this,
+                    component: orderCommentModalForm,
+                    hasModalCard: true,
+                    customClass: 'custom-class custom-class-2',
+                    trapFocus: true,
+                    events:{
+                        'saveComment': this.saveComment
+                    }
+                })
+                this.formProps.ordersku_id = order_sku
+                this.formProps.order_id = order_id
+                this.formProps.url = url
+            },
+            
+            //评论提交
+            saveComment(formProps){
+                order_id = this.formProps.order_id
+                ordersku_id = this.formProps.ordersku_id
+                const sendData = new URLSearchParams()
+                sendData.append('order_id', order_id)
+                sendData.append('ordersku_id', ordersku_id)
+                sendData.append('content', formProps.content)
+                sendData.append('comment_choices', formProps.radio)
+                sendData.append('user_id', formProps.user_id)
+                axios({
+                    method: 'post',
+                    url: this.formProps.url,
+                    data: sendData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'X-CSRFToken': this.getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
+                }).then(res => {
+                    if (res.data.code == 'ok'){
+                        this.toastMessage('is-success', res.data.message)
+                        location.reload()
+                    }else{
+                        this.toastMessage('is-danger', "发生错误，请联系管理员！")
+                    }
+                })
+            }
+        }
+    })
+</script>
+{% endblock %}
