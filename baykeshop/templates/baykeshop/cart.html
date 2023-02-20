@@ -89,7 +89,7 @@
                 </b-table-column>
 
                 <b-table-column field="caozuo" label="操作" width="80" v-slot="props">
-                    <button class="delete" @click="updateCart(props.row.id)">删除</button>
+                    <button class="delete" @click="updateCart(props.row.id, props.row.sales)">删除</button>
                 </b-table-column>
 
                 <template #footer>
@@ -180,7 +180,7 @@
                     })
                 },
                 // 删除购物车
-                updateCart(cart_id){
+                updateCart(cart_id, sales){
                     const sendData = new URLSearchParams();
                     sendData.append('cart_id', cart_id)
                     sendData.append('actions', 'delete')
@@ -199,10 +199,9 @@
                                 }
                             }).then(res => {
                                 if (res.data.code == 'ok'){
-
                                     // 修改头部购物车数量
                                     let cartNum = Number(headTop._data.cartNum)
-                                    headTop._data.cartNum = cartNum - 1
+                                    headTop._data.cartNum = cartNum - Number(sales)
 
                                     // 删除购物车列表中的显示数据
                                     this.carts.forEach(row => {

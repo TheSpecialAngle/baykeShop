@@ -180,6 +180,8 @@
 {% endblock %}
 
 {% block vuescript %}
+
+    <script src="{% static 'baykeshop/js/request.js' %}"></script>
     <script>
         var options = JSON.parse(document.getElementById('options-data').textContent);
         var specs = JSON.parse(document.getElementById('specs-data').textContent);
@@ -193,7 +195,7 @@
                 org_price: "{{ sku.org_price }}",
                 stock: "{{ sku.stock }}",
                 sales: "{{ sku.sales }}",
-                cover_pic:"{{ sku.cover_pic }}",
+                cover_pic:"{{ sku.cover_pic.url }}",
                 specs: specs,
                 options: options,
                 radioButton: currentSkuOptions,
@@ -203,12 +205,9 @@
             },
             methods: {
                 getImgUrl(value) {
-                    return `/media/${value}`
+                    return `${value}`
                 },
-                getCookie(name) {
-                    var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
-                    return r ? r[1] : undefined;
-                },
+                
                 toastMessage(type, message){
                     return this.$buefy.toast.open({
                         message: message,
@@ -219,15 +218,10 @@
                     const sendData = new URLSearchParams()
                     sendData.append('sku_id', this.sku_id)
                     sendData.append('sales', this.num)
-                    axios({
+                    request({
                         method: 'post',
                         url: '{% url "baykeshop:cart" %}',
                         data: sendData,
-                        headers: {
-                            'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRFToken': this.getCookie('csrftoken'),
-                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                        }
                     }).then(res => {
                         if (res.data.code == 'ok'){
                             headTop._data.cartNum = res.data.total
@@ -256,7 +250,7 @@
                             "total_price": this.price
                           }
                     ]
-                    
+                   
                     localStorage.setItem('carts', JSON.stringify(carts))
                     location.href = '{% url "baykeshop:order_confirm" %}'
                 }

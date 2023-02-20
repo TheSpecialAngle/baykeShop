@@ -1,5 +1,8 @@
 BAYKE_DEFAULTS = {
     
+    # LOGO
+    "LOGO_URL": "/static/baykeshop/img/logo.png",
+    
     # 搜索框默认搜索词
     "SEARCH_VALUE": "电脑",
     

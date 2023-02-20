@@ -152,7 +152,7 @@
                         }).then(res => {
                             if (res.data.code == 'ok'){
                                 this.toastMessage('is-success', res.data.message)
-                                // location.reload()
+                                location.reload()
                             }else{
                                 this.toastMessage('is-danger', "发生错误，请联系管理员！")
                             }

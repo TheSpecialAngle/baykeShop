@@ -70,7 +70,6 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         sku_id = request.POST.get('sku_id')
         sales = request.POST.get('sales')
         total = BaykeShopingCart.get_cart_count(request.user)
-    
         # 数据校验
         try:
             sku = BaykeShopSKU.objects.get(id=int(sku_id))
@@ -86,15 +85,16 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         # 加入购物车
         try:
             BaykeShopingCart.objects.create(sku=sku, num=int(sales), owner=request.user)
-            # 购物车商品数量+1
-            total += int(sales)
+            
         except IntegrityError:
             # 这里处理重复加入购物车的问题
             BaykeShopingCart.objects.filter(
                 sku=sku, 
                 owner=request.user
             ).update(num=F('num')+int(sales))
-        
+            
+        # 购物车商品数量+1 
+        total += int(sales)
         context = {
             'code': 'ok',
             'message': '加入购物车成功！',
@@ -111,6 +111,7 @@ class BaykeShopCartView(LoginRequiredMixin, View):
         sales = data.get('sales')
         actions = data.get('actions')
         cart = BaykeShopingCart.objects.filter(id=int(cart_id), owner=request.user)
+    
         
         # 验证传入的购物车id
         if not cart.exists():
@@ -236,3 +237,16 @@ class BaykeShopOrderConfirmView(LoginRequiredMixin, View):
             else:
                 ops.append(op)
         return ','.join(ops)
+    
+    def get_total_price(self, carts):
+        # 商品总价
+        total_amount = 0
+        # 商品详情页点击立即购买跳转过来数据
+        if carts[0].get('id') == 0:
+            total_amount = BaykeShopSKU.objects.filter(id=int(carts[0].get('sku_id'))).first().price
+        else:
+            for cart in carts:
+                total_amount += BaykeShopingCart.objects.get(
+                    id=cart.get('id')
+                ).sku.price * int(cart.get('sales'))
+        return total_amount

@@ -139,7 +139,7 @@ class GoodDetailView(DetailView):
                 'org_price': str(sku.org_price),
                 'stock': sku.stock,
                 'sales': sku.sales,
-                'cover_pic': sku.cover_pic.path
+                'cover_pic': sku.cover_pic.url
             }
             # 返回当前spu下的specs
             for op in sku_options:
@@ -160,11 +160,12 @@ class GoodDetailView(DetailView):
         # 商品轮播图
         spu = self.get_object()
         banners_queryset = spu.baykespucarousel_set.all()
-        banners = banners_queryset.values(
-            'img', 'target_url', 'desc'
-        )
+        banners = [
+            {'img': b.img.url, 'target_url': b.target_url, 'desc': b.desc} 
+            for b in banners_queryset
+        ]
         if not banners_queryset:
-            banners = [{'img': str(spu.cover_pic), 'desc': spu.title}]
+            banners = [{'img': spu.cover_pic.url, 'desc': spu.title}]
         return list(banners)
 
 

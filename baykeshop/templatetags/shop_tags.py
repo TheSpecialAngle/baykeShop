@@ -18,6 +18,7 @@ from baykeshop.models import (
     BaykeShopCategory, BaykeShopingCart
 )
 from baykeshop.forms.search import SearchForm
+from baykeshop.conf.bayke import bayke_settings
 
 
 register = Library()
@@ -39,9 +40,11 @@ def navbar_result(context):
     # 导航模块
     form = SearchForm(context["request"].GET)
     category_qs = category_queryset(is_home=True)
+    logo = bayke_settings.LOGO_URL
     return { 
         'category_qs': category_qs,
-        'form': form
+        'form': form,
+        'logo': logo
     }
     
 

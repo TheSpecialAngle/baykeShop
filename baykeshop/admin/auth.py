@@ -99,7 +99,7 @@ class BaykeMenuAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "parent":
-            kwargs["queryset"] = BaykeMenu.objects.show().filter(
+            kwargs["queryset"] = BaykeMenu.objects.filter(
                 parent__isnull=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
@@ -126,7 +126,7 @@ class BaykePermissionAdmin(BaseModelAdmin):
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "menus":
-            kwargs["queryset"] = BaykeMenu.objects.show().filter(
+            kwargs["queryset"] = BaykeMenu.objects.filter(
                 parent__isnull=True)
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 

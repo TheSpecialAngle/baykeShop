@@ -19,7 +19,7 @@ class AbstractModel(models.Model):
     """ 基类 """
     add_date = models.DateTimeField(auto_now_add=True)
     pub_date = models.DateTimeField(auto_now=True)
-    is_del = models.BooleanField(default=False)
+    is_del = models.BooleanField(default=False, editable=False)
 
     objects = BaseManager()
 
