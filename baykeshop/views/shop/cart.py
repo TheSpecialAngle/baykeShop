@@ -44,7 +44,7 @@ class BaykeShopCartView(LoginRequiredMixin, View):
             cart_dict['id'] = cart.id
             cart_dict['title'] = cart.sku.spu.title
             cart_dict['sku_id'] = cart.sku.id
-            cart_dict['cover_pic'] = cart.sku.cover_pic.name
+            cart_dict['cover_pic'] = cart.sku.cover_pic.url
             cart_dict['options'] = list(cart.sku.options.values('name', 'spec__name'))
             cart_dict['price'] = cart.sku.price
             cart_dict['stock'] = cart.sku.stock

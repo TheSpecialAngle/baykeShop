@@ -43,7 +43,7 @@
                 <b-table-column field="cover_pic" label="商品图" v-slot="props">
                     <figure class="image is-128x128">
                         <b-image
-                            :src="`/media/${props.row.cover_pic}`"
+                            :src="`${props.row.cover_pic}`"
                             :alt="props.row.title"
                             ratio="1by1"
                         ></b-image>
