@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'baykeshop.apps.BaykeshopConfig'
+    'baykeshop.apps.BaykeshopConfig',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
