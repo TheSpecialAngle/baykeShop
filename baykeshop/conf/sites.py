@@ -18,4 +18,4 @@ class BaykeAdminSite(admin.AdminSite):
 
 
 class BaykeAdminConfig(AdminConfig):
-    default_site = "baykeshop.admin.sites.BaykeAdminSite"
+    default_site = "baykeshop.conf.sites.BaykeAdminSite"

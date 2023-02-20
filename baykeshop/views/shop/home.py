@@ -22,12 +22,13 @@ from baykeshop.models import (
     BaykeShopSpecOption
 )
 
+from baykeshop.conf.bayke import bayke_settings
 from baykeshop.forms.filter import ProductFilterForm
 
-        
+
 class HomeView(View):
     # 首页视图
-    goods_count = 10
+    goods_count = bayke_settings.HOME_GOODS_COUNT
     template_name = None
     
     def get(self, request, *args, **kwargs):
@@ -42,8 +43,8 @@ class HomeView(View):
 
 class GoodsListView(SingleObjectMixin, ListView):
     # 商品列表页
-    paginate_by = 24
-    paginate_orphans = 4
+    paginate_by = bayke_settings.GOODS_PAGINATE_BY
+    paginate_orphans = bayke_settings.GOODS_PAGINATE_ORPHANS
     template_name = "baykeshop/goods.html"
     
     def get(self, request, *args, **kwargs):
@@ -169,8 +170,8 @@ class GoodDetailView(DetailView):
 
 class SearchView(ListView):
     """ 搜索功能 """ 
-    paginate_by = 24
-    paginate_orphans = 4
+    paginate_by = bayke_settings.GOODS_PAGINATE_BY
+    paginate_orphans = bayke_settings.GOODS_PAGINATE_ORPHANS
     template_name = "baykeshop/search.html"
     
     def get_context_data(self, **kwargs):

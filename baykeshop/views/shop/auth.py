@@ -9,11 +9,12 @@ from django.urls import reverse_lazy
 
 from baykeshop.forms.auth import LoginForm, RegisterForm
 from baykeshop.models import BaykeUserInfo
+from baykeshop.conf.bayke import bayke_settings
 
 
 class LoginView(BaseLoginView):
     """ 登录 """
-    next_page = 'baykeshop:home'
+    next_page = bayke_settings.NEXT_PAGE
     form_class = LoginForm
     redirect_field_name = 'redirect_to'
     template_name = "baykeshop/user/login.html"

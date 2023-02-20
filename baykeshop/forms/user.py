@@ -2,6 +2,7 @@ import re
 from django import forms
 from django.core.exceptions import ValidationError
 
+from baykeshop.conf.bayke import bayke_settings
 from baykeshop.models import BaykeShopAddress, BaykeUserInfo
 
 
@@ -17,7 +18,7 @@ class BaykeShopAddressForm(forms.ModelForm):
     
     def clean_phone(self):
         phone = self.cleaned_data['phone']
-        ret = re.match(r"^1[35678]\d{9}$", phone)
+        ret = re.match(bayke_settings.PHONE_REGX, phone)
         if not ret:
             raise ValidationError("手机号格式不正确！")
         return phone

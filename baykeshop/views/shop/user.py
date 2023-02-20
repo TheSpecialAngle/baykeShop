@@ -121,12 +121,12 @@ class BaykeAddressView(LoginRequiredMixin, View):
     template_name = None
     
     def get(self, request, *args, **kwargs):
-        address_queryset = BaykeShopAddress.objects.show().filter(owner=request.user)
+        address_queryset = BaykeShopAddress.objects.filter(owner=request.user)
         addr_id = request.GET.get('addr_id')
         
         # 点击修改按钮时返回数据回填表单  
         if addr_id:
-            addr_list = BaykeShopAddress.objects.show().filter(
+            addr_list = BaykeShopAddress.objects.filter(
                 id=int(addr_id), owner=request.user).values(
                 'id', 'name', 'phone', 'email', 'province',
                 'city', 'county','address','is_default'
@@ -147,7 +147,7 @@ class BaykeAddressView(LoginRequiredMixin, View):
         
     def post(self, request, *args, **kwargs):
         form = BaykeShopAddressForm(request.POST)
-        addr_default = BaykeShopAddress.objects.show().filter(
+        addr_default = BaykeShopAddress.objects.filter(
             is_default=True, owner=request.user
         )
         addr_id = request.POST.get('addr_id', None)
@@ -165,7 +165,7 @@ class BaykeAddressView(LoginRequiredMixin, View):
         if form.is_valid() and addr_id:
             if form.cleaned_data['is_default']:
                 addr_default.update(is_default=False)
-            BaykeShopAddress.objects.show().filter(
+            BaykeShopAddress.objects.filter(
                     id=int(addr_id), 
                     owner=request.user
                 ).update(**form.cleaned_data)
@@ -176,7 +176,7 @@ class BaykeAddressView(LoginRequiredMixin, View):
     def put(self, request, *args, **kwargs):
         from django.http import QueryDict
         data = QueryDict(request.body)
-        addr_default = BaykeShopAddress.objects.show().filter(is_default=True, owner=request.user)
+        addr_default = BaykeShopAddress.objects.filter(is_default=True, owner=request.user)
         addr_default.update(is_default=False)
         BaykeShopAddress.objects.filter(id=int(data.get('addr_id')), owner=request.user).update(is_default=True)
         return JsonResponse({'code': 'ok', 'message': '设置默认成功！'})

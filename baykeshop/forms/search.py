@@ -13,6 +13,7 @@
 from django import forms
 
 from baykeshop.forms.widgets import SearchTextInput
+from baykeshop.conf.bayke import bayke_settings
 
 
 class SearchForm(forms.Form):
@@ -23,6 +24,6 @@ class SearchForm(forms.Form):
             'placeholder': 'Search...',
             ':has-counter': 'false',
             'validation-message': '搜索词不能为空...',
-            'value': '手机'
+            'value': bayke_settings.SEARCH_VALUE
         })
     )
