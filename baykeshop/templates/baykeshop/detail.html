@@ -170,7 +170,36 @@
                         </div>
                     </b-tab-item>
                     <b-tab-item label="累计评论">
-                        评论
+                        <div class="is-flex is-justify-content-space-between p-2">
+                            <div class="">满意度：{{ like_rate }}%</div>
+                            <div class="is-flex is-align-items-center">
+                                <span> 评分：</span>
+                                <b-rate 
+                                    :value="{{ score }}" 
+                                    disabled 
+                                    custom-text="{{ score }}分">
+                                </b-rate>
+                            </div>
+                        </div>
+                        <div class=" dropdown-divider"></div>
+
+                        {% for comment in page_comments %}
+                            <article class="media">
+                                <figure class="media-left">
+                                    <p class="image is-32x32">
+                                        <img class="is-rounded" src="{{ comment.owner.baykeuserinfo.avatar.url }}">
+                                    </p>
+                                </figure>
+                                <div class="media-content">
+                                    <p>
+                                        {{ comment.owner.username }}
+                                        <b-rate size="is-small" :value="{{ comment.comment_choices }}" disabled custom-text="{{ comment.comment_choices }}分"></b-rate>
+                                    </p>
+                                    <p class=" is-size-7">{{ comment.add_date|timesince }}前</p>
+                                    <p class=" has-text-grey-light">{{ comment }}</p>
+                                </div>
+                            </article>
+                        {% endfor %}
                     </b-tab-item>
                 </b-tabs>
             </section>

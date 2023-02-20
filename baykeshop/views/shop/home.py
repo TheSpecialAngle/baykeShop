@@ -10,16 +10,17 @@
 '''
 
 
-from django.db.models import Q
+from django.db.models import Q, Avg
 from django.shortcuts import get_object_or_404
 from django.views.generic import View, DetailView, ListView
 from django.views.generic.detail import SingleObjectMixin
 from django.template.response import TemplateResponse
+from django.core.paginator import Paginator
 
 # Create your views here.
 from baykeshop.models import (
     BaykeShopSPU, BaykeShopCategory, BaykeShopSKU,
-    BaykeShopSpecOption
+    BaykeShopSpecOption, BaykeShopOrderSKUComment
 )
 
 from baykeshop.conf.bayke import bayke_settings
@@ -105,6 +106,9 @@ class GoodDetailView(DetailView):
         context['banners'] = self.get_spu_banners()
         context['sku'] = self.get_current_sku()
         context['sku_id'] = self.kwargs.get('sku_id')
+        context['page_comments'] = self.get_comments_page()
+        context['like_rate'], context['score'] = self.get_good_rate()
+        
         return context
     
     def get_sku_queryset(self):
@@ -168,7 +172,34 @@ class GoodDetailView(DetailView):
             banners = [{'img': spu.cover_pic.url, 'desc': spu.title}]
         return list(banners)
 
-
+    def get_comments(self):
+        # 评价列表
+        comments = BaykeShopOrderSKUComment.objects.filter(
+            order_sku__sku__spu=self.get_object()
+        )
+        return comments
+    
+    def get_comments_page(self):
+        paginator = Paginator(self.get_comments(), 24)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return page_obj
+        
+    def get_good_rate(self):
+        # 评分及满意度
+        comments = self.get_comments()
+        # 总评价数
+        rates = comments.count()
+        # 大于等于3分的人数
+        rate_gte_3 = comments.filter(comment_choices__gte=3).count()
+        # 满意度,大于三分的占比数
+        like_rate = round((rate_gte_3 / rates) * 100, 2)
+        # 评分
+        s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
+        score = s if s else 4.8
+        return like_rate, score
+        
+        
 class SearchView(ListView):
     """ 搜索功能 """ 
     paginate_by = bayke_settings.GOODS_PAGINATE_BY
