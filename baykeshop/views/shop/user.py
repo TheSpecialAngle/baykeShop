@@ -18,7 +18,7 @@ from django.db.models import Sum
 
 from baykeshop.core.mixins import LoginRequiredMixin
 from baykeshop.models import BaykeShopAddress, BaykeUserInfo, BaykeUserBalanceLog
-from baykeshop.forms.user import BaykeShopAddressForm, BaykeUserInfoForm
+from baykeshop.forms.shop.user import BaykeShopAddressForm, BaykeUserInfoForm
 
 User = get_user_model()
 

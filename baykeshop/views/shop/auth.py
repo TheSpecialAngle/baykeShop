@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate, login
 from django.views.generic import FormView
 from django.urls import reverse_lazy
 
-from baykeshop.forms.auth import LoginForm, RegisterForm
+from baykeshop.forms.shop.auth import LoginForm, RegisterForm
 from baykeshop.models import BaykeUserInfo
 from baykeshop.conf.bayke import bayke_settings
 

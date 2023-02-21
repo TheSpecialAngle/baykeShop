@@ -24,7 +24,7 @@ from baykeshop.models import (
 )
 
 from baykeshop.conf.bayke import bayke_settings
-from baykeshop.forms.filter import ProductFilterForm
+from baykeshop.forms.shop.filter import ProductFilterForm
 
 
 class HomeView(View):

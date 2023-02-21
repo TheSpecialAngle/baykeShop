@@ -18,7 +18,7 @@ from baykeshop.models import (
     BaykeShopCategory, BaykeShopingCart,
     BaykeShopOrderSKUComment
 )
-from baykeshop.forms.search import SearchForm
+from baykeshop.forms.shop.search import SearchForm
 from baykeshop.conf.bayke import bayke_settings
 
 
