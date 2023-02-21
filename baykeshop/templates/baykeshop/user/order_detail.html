@@ -94,7 +94,7 @@
         (含运费0.00)</div>
     <div class="buttons is-marginless is-justify-content-end is-align-items-center">
         {% if order.pay_status == 1 %}
-        <a href="" class="button is-primary is-outlined">取消订单</a>
+        {% comment %} <a href="" class="button is-primary is-outlined">取消订单</a> {% endcomment %}
         <a href="{% url 'baykeshop:order_pay' %}?orderID={{ order.id }}" class="button is-primary">立即支付</a>
         {% endif %}
         {% if order.pay_status == 3 %}

@@ -12,9 +12,9 @@
                 <b-navbar-item href="{% url 'baykeshop:home' %}">
                     首页
                 </b-navbar-item>
-                <b-navbar-item href="">
+                {% comment %} <b-navbar-item href="">
                     产品分类
-                </b-navbar-item>
+                </b-navbar-item> {% endcomment %}
                 {% for category in category_qs %}
                     {% if category.parent is None %}
                         <b-navbar-dropdown hoverable label="{{ category.name }}">
