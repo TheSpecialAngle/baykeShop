@@ -11,11 +11,12 @@
 
 
 from django.template import Library
-from django.db.models import Sum
+from django.db.models import Sum, Avg
 
 from baykeshop.models import BaykeBanner
 from baykeshop.models import (
-    BaykeShopCategory, BaykeShopingCart
+    BaykeShopCategory, BaykeShopingCart,
+    BaykeShopOrderSKUComment
 )
 from baykeshop.forms.search import SearchForm
 from baykeshop.conf.bayke import bayke_settings
@@ -90,3 +91,14 @@ def cart_num(user):
 @register.simple_tag
 def order_num(orderskus):
     return orderskus.aggregate(Sum("count")).get('count__sum')
+
+
+@register.simple_tag
+def sku_rate(sku):
+    comments = BaykeShopOrderSKUComment.objects.filter(
+            order_sku__sku=sku
+        )
+    # 评分
+    s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
+    score = s if s else 4.8
+    return score
