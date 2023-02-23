@@ -11,8 +11,10 @@
 
 from django.db import models
 from django.contrib.auth.models import Permission
-
+from django.contrib.auth import get_user_model
 from baykeshop.models.abstract import AbstractModel
+
+User = get_user_model()
 
 
 class BaykeMenu(AbstractModel):
@@ -41,10 +43,14 @@ class BaykePermission(AbstractModel):
     permission = models.OneToOneField(
         Permission,
         on_delete=models.CASCADE,
-        verbose_name="权限"
+        verbose_name="权限",
+        blank=True,
+        null=True
     )
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    url = models.CharField("url", max_length=150, blank=True, default="")
     menus = models.ForeignKey(BaykeMenu, on_delete=models.CASCADE)
-    icon = models.CharField(max_length=50)
+    icon = models.CharField(blank=True, default="", max_length=50)
 
     class Meta:
         verbose_name = '权限规则'

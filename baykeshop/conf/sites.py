@@ -17,7 +17,7 @@ class BaykeAdminSite(admin.AdminSite):
     # Text to put at the top of the admin index page.
     index_title = gettext_lazy("Site administration")
     
-    index_template = "baykeadmin/index.html"
+    # index_template = "baykeadmin/index.html"
     
     class Media:
         css = {

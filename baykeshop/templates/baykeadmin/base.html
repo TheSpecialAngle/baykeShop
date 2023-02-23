@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}-baykeshop</title>
+    
+    {% block head_media_css %}
+    {{ media.css }}
+    {% endblock %}
+
+</head>
+<body>
+    <div class="is-flex">
+        <div class="is-hidden-mobile">
+            <div class="sidebar box is-radiusless" style="width:200px; min-height: 100%;">
+                
+                {% block sidebar %}
+                    asdasdadsa
+                {% endblock %}
+                    
+            </div>
+        </div>
+        <div class="is-flex-grow-1">
+            <div class="box1 is-flex is-flex-direction-column is-justify-content-space-between1" style="min-height:100vh">
+                <div class="header" >
+                    <div class="box is-radiusless is-marginless">sdads</div>
+                    <div class="bread">asdasasd</div>
+                </div>
+                
+                <div class="main" style="flex:1; overflow:auto;">
+                    <div class="box">
+                        
+                        {% block main %}
+                            中间内容
+                        {% endblock %}
+                            
+                    </div>
+                </div>
+                <div class="main-footer is-flex is-justify-content-center">
+                    
+                    {% block footer %}
+                    <p class="pb-4">这是底部说明文件</p>
+                    {% endblock %}
+                        
+                </div>
+            </div>
+        </div>
+    </div>
+    {% block foot_media_js %}
+        {{ media.js }}
+    {% endblock %}
+
+</body>
+</html>
