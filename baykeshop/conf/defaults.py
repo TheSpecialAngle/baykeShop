@@ -23,6 +23,9 @@ BAYKE_DEFAULTS = {
     "GOODS_PAGINATE_ORPHANS": 4,
     
     # 商品详情页评论每页显示数量
-    "DETAIL_COMMENTS_PAGINATE_BY": 24
+    "DETAIL_COMMENTS_PAGINATE_BY": 24,
+    
+    # 管理后台是否启用自定义菜单
+    "ADMIN_MENUS": True
     
 }

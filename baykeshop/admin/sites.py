@@ -2,9 +2,9 @@ from django.contrib import admin
 from django.db.models import Q
 from django.contrib.auth.models import Permission
 from django.utils.text import capfirst
-from django.urls import NoReverseMatch, Resolver404, resolve, reverse
+from django.urls import NoReverseMatch, reverse
 
-
+from baykeshop.conf.bayke import bayke_settings
 from baykeshop.models import BaykeMenu
 
 
@@ -14,6 +14,12 @@ class BaykeAdminSite(admin.AdminSite):
     
     def get_app_list(self, request):
         
+        if bayke_settings.ADMIN_MENUS:
+            return self._build_menus(request)
+        
+        return super().get_app_list(request)
+
+    def _build_menus(self, request):
         # 获取当前用户拥有的权限菜单
         menus_queryset = BaykeMenu.objects.filter(
                 Q(baykepermission__permission__group__user=request.user)|
@@ -76,13 +82,14 @@ class BaykeAdminSite(admin.AdminSite):
                         pass
                 
                 item_model.append(model_dict)
-                # item_model.append({model:self._registry[model]})
-            menu_dict[menu] = item_model
+                
+            menu_dict['name'] = menu.name
+            menu_dict['app_label'] = app_label
+            menu_dict['app_url'] = "#"
+            menu_dict['has_module_perms'] = has_module_perms
+            menu_dict['models'] = item_model
             menus.append(menu_dict)
-        
-        print(menus)
-        # print(super().get_app_list(request))
-        
-        return super().get_app_list(request)
+        return menus
+
 
 bayke_site = BaykeAdminSite(name="baykeadmin")
