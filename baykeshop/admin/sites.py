@@ -10,24 +10,25 @@ from baykeshop.models import BaykeMenu
 
 
 class BaykeAdminSite(admin.AdminSite):
-    
+    """ 自定义AdminSite """
     
     def get_app_list(self, request):
-        
+        # 判断是否启用了自定义菜单
         if bayke_settings.ADMIN_MENUS:
             return self._build_menus(request)
         
         return super().get_app_list(request)
 
     def _build_menus(self, request):
+        
         # 获取当前用户拥有的权限菜单
         menus_queryset = BaykeMenu.objects.filter(
-                Q(baykepermission__permission__group__user=request.user)|
-                Q(baykepermission__permission__user=request.user)
-            ).distinct()
+            Q(baykepermission__permission__group__user=request.user)|
+            Q(baykepermission__permission__user=request.user)
+        ).distinct()
         
         # 如果为超管则赋予所有权限
-        if request.user.is_superuser:
+        if self.has_permission(request) and request.user.is_superuser:
             perms_ids = Permission.objects.values_list('id', flat=True)
             menus_queryset = BaykeMenu.objects.filter(
                 baykepermission__permission__id__in=list(perms_ids)
