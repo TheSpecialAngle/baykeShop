@@ -1,12 +1,10 @@
+from django import forms
 from django.contrib import admin
-from django.contrib.admin.options import IncorrectLookupParameters
-from django.template.response import SimpleTemplateResponse
+from django.contrib.admin.options import PermissionDenied
+from django.template.response import TemplateResponse
 from django.http.response import HttpResponseRedirect
-
-from django.contrib.admin import helpers, widgets
-
 from django.utils.translation import gettext as _
-from django.core.exceptions import PermissionDenied
+
 
 from baykeshop.forms.admin.action import ActionForm
 from baykeshop.admin.options import CustomActions, CustomColumns
@@ -37,32 +35,21 @@ class BaseModelAdmin(admin.ModelAdmin, CustomColumns):
         return queryset
     
     def changelist_view(self, request, extra_context=None):
-        from django.contrib.admin.views.main import ERROR_FLAG
         
         opts = self.model._meta
         app_label = opts.app_label
-        # 判断是否有编辑权限或查看权限
         if not self.has_view_or_change_permission(request):
             raise PermissionDenied
         
-        try:
-            cl = self.get_changelist_instance(request)
-        except IncorrectLookupParameters:
-            # 给出了古怪的查找参数，重定向到错误页
-            if ERROR_FLAG in request.GET:
-                return SimpleTemplateResponse(
-                    "admin/invalid_setup.html",
-                    {
-                        "title": _("Database error"),
-                    },
-                )
-            # 跳转回当前页
-            return HttpResponseRedirect(request.path + "?" + ERROR_FLAG + "=1")
+        cl = self.get_changelist_instance(request)
         
-        action_failed = False
-        selected = request.POST.getlist(helpers.ACTION_CHECKBOX_NAME)
-
-        actions = self.get_actions(request)
+         
+        context = {
+            "media": forms.Media(self.Media),
+            **(extra_context or {}),
+        }
         
+        return TemplateResponse(request, self.change_list_template, context)
     
-        return super().changelist_view(request, extra_context)
+    # def changelist_view(self, request, extra_context=None):
+    #     return super().changelist_view(request, extra_context)

@@ -36,7 +36,7 @@ class BaykeShopingCart(AbstractModel):
     
     @classmethod
     def get_cart_count(cls, user):
-        # 当前用户的购物车数量
+        # 当前用户的购物车商品数量
         return sum(list(cls.objects.filter(owner=user).values_list('num', flat=True)))
     
 

@@ -42,7 +42,7 @@ class BaykeShopOrderSKUComment(AbstractModel):
     comment_choices = models.PositiveSmallIntegerField(
         default=5,
         choices=CommentChoices.choices,
-        verbose_name="评价"
+        verbose_name="评分"
     )
 
     class Meta:
