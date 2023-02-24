@@ -12,6 +12,8 @@ from baykeshop.models import (
     BaykePermission, BaykeMenu
 )
 from baykeshop.admin.base import BaseModelAdmin
+from baykeshop.admin.sites import bayke_site
+from baykeshop.admin import inline
 
 # 禁用全局删除
 # admin.site.disable_action('delete_selected')
@@ -20,14 +22,10 @@ admin.site.unregister(User)
 admin.site.unregister(Group)
 
 
-class BaykeUserInfoInline(admin.StackedInline):
-    '''Tabular Inline View for BaykeUserInfo'''
-    model = BaykeUserInfo
 
-
-@admin.register(User)
+@admin.register(User, site=bayke_site)
 class UserAdmin(BaseUserAdmin, BaseModelAdmin):
-    inlines = (BaykeUserInfoInline, )
+    inlines = (inline.BaykeUserInfoInline, )
 
     # 编辑打开之前先缓存旧值，之后保存时读取缓存并比较
     def get_inline_formsets(self, request, formsets, inline_instances, obj=None):
@@ -70,55 +68,26 @@ class UserAdmin(BaseUserAdmin, BaseModelAdmin):
         return super().save_formset(request, form, formset, change)
 
 
-@admin.register(Group)
+@admin.register(Group, site=bayke_site)
 class GroupAdmin(BaseGroupAdmin, BaseModelAdmin):
     pass
 
 
-class BaykePermissionInline(admin.TabularInline):
-    '''Tabular Inline View for BaykePermission'''
-
-    model = BaykePermission
-    min_num = 1
-    max_num = 20
-    extra = 1
-    # raw_id_fields = (,)
-
-
-@admin.register(BaykeMenu)
-class BaykeMenuAdmin(BaseModelAdmin):
-    '''Admin View for BaykeMenu'''
-
-    list_display = ('id', 'name', 'add_date', 'operate')
-    list_editable = ('name', )
-    list_filter = ('name',)
-    search_fields = ('name', )
-    # inlines = [
-    #     BaykePermissionInline,
-    # ]
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "parent":
-            kwargs["queryset"] = BaykeMenu.objects.filter(
-                parent__isnull=True)
-        return super().formfield_for_foreignkey(db_field, request, **kwargs)
-
-
-@admin.register(Permission)
+@admin.register(Permission, site=bayke_site)
 class PermissionAdmin(BaseModelAdmin):
     '''Admin View for BaykePermission'''
 
-    list_display = ('id', 'name', 'operate')
+    list_display = ('id', 'name',)
     search_fields = ('name', )
     readonly_fields = ('codename', 'content_type')
     # inlines = (BaykePermissionInline, )
 
 
-@admin.register(BaykePermission)
+@admin.register(BaykePermission, site=bayke_site)
 class BaykePermissionAdmin(BaseModelAdmin):
     '''Admin View for BaykePermission'''
 
-    list_display = ('id', 'permission_name', 'operate')
+    list_display = ('id', 'permission_name')
 
     @admin.display(description='Name')
     def permission_name(self, obj):
@@ -131,7 +100,7 @@ class BaykePermissionAdmin(BaseModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-@admin.register(LogEntry)
+@admin.register(LogEntry, site=bayke_site)
 class LogEntryAdmin(BaseModelAdmin):
     '''Admin View for '''
 

@@ -47,7 +47,7 @@ class BaykePermission(AbstractModel):
         blank=True,
         null=True
     )
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    # owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
     url = models.CharField("url", max_length=150, blank=True, default="")
     menus = models.ForeignKey(BaykeMenu, on_delete=models.CASCADE)
     icon = models.CharField(blank=True, default="", max_length=50)
