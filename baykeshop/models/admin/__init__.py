@@ -51,9 +51,10 @@ class BaykePermission(AbstractModel):
     url = models.CharField("url", max_length=150, blank=True, default="")
     menus = models.ForeignKey(BaykeMenu, on_delete=models.CASCADE)
     icon = models.CharField(blank=True, default="", max_length=50)
+    is_show = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = '权限规则'
+        verbose_name = '菜单'
         verbose_name_plural = verbose_name
 
     def __str__(self):

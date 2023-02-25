@@ -73,13 +73,13 @@ class GroupAdmin(BaseGroupAdmin, BaseModelAdmin):
     pass
 
 
-@admin.register(Permission, site=bayke_site)
-class PermissionAdmin(BaseModelAdmin):
-    '''Admin View for BaykePermission'''
+# @admin.register(Permission, site=bayke_site)
+# class PermissionAdmin(BaseModelAdmin):
+#     '''Admin View for BaykePermission'''
 
-    list_display = ('id', 'name',)
-    search_fields = ('name', )
-    readonly_fields = ('codename', 'content_type')
+#     list_display = ('id', 'name',)
+#     search_fields = ('name', )
+#     readonly_fields = ('codename', 'content_type')
     # inlines = (BaykePermissionInline, )
 
 
@@ -87,11 +87,19 @@ class PermissionAdmin(BaseModelAdmin):
 class BaykePermissionAdmin(BaseModelAdmin):
     '''Admin View for BaykePermission'''
 
-    list_display = ('id', 'permission_name')
+    list_display = ('id','menus_name', 'verbose_name')
 
-    @admin.display(description='Name')
+    @admin.display(description='权限菜单')
     def permission_name(self, obj):
         return f"{obj.permission.name}"
+    
+    @admin.display(description='verboseName')
+    def verbose_name(self, obj):
+        return f"{obj.permission.content_type.model_class()._meta.verbose_name}"
+    
+    @admin.display(description='归属菜单')
+    def menus_name(self, obj):
+        return f"{obj.menus.name}"
 
     def formfield_for_foreignkey(self, db_field, request, **kwargs):
         if db_field.name == "menus":

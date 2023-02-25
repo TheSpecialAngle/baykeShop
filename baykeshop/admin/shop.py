@@ -9,6 +9,8 @@ from baykeshop.models import (
     BaykeShopOrderInfo, BaykeShopOrderSKU,
     BaykeBanner
 )
+from baykeshop.admin.sites import bayke_site
+
 
 class BaykeShopCategoryInline(admin.TabularInline):
     '''Tabular Inline View for BaykeShopCategory'''
@@ -29,6 +31,7 @@ class BaykeShopSKUInline(admin.TabularInline):
     extra = 1
     can_delete = False
     # raw_id_fields = (,)
+    
 
 class BaykeSPUCarouselInline(admin.TabularInline):
     '''Tabular Inline View for '''
@@ -40,9 +43,9 @@ class BaykeSPUCarouselInline(admin.TabularInline):
     # raw_id_fields = (,)
 
 
-@admin.register(BaykeShopCategory)
+@admin.register(BaykeShopCategory, site=bayke_site)
 class BaykeShopCategoryAdmin(BaseModelAdmin):
-    list_display = ('id', 'name', 'parent', 'operate')
+    list_display = ('id', 'name', 'parent')
     exclude = ('parent',)
     inlines = (BaykeShopCategoryInline, )
     # search_fields = ('parent__name',)
@@ -57,9 +60,9 @@ class BaykeShopCategoryAdmin(BaseModelAdmin):
         return super().formfield_for_foreignkey(db_field, request, **kwargs)
     
     
-@admin.register(BaykeShopSPU)
+@admin.register(BaykeShopSPU, site=bayke_site)
 class BaykeShopSPUAdmin(BaseModelAdmin):
-    list_display = ('id', 'title', 'operate')
+    list_display = ('id', 'title')
     filter_horizontal = ('category',)
     inlines = (BaykeShopSKUInline, BaykeSPUCarouselInline)
     
@@ -69,9 +72,9 @@ class BaykeShopSPUAdmin(BaseModelAdmin):
         return super().formfield_for_manytomany(db_field, request, **kwargs)
 
 
-@admin.register(BaykeShopSKU)
+@admin.register(BaykeShopSKU, site=bayke_site)
 class BaykeShopSKUAdmin(BaseModelAdmin):
-    list_display = ('id', 'spu', 'operate')
+    list_display = ('id', 'spu')
     # inlines = (BaykeShopSKUInline, )
     filter_horizontal = ('options',)
     # autocomplete_fields = ('options', )
@@ -86,16 +89,16 @@ class BaykeShopSpecOptionInline(admin.StackedInline):
     extra = 1
 
 
-@admin.register(BaykeShopSpec)
+@admin.register(BaykeShopSpec, site=bayke_site)
 class BaykeShopSpecAdmin(BaseModelAdmin):
-    list_display = ('id', 'name', 'operate')
+    list_display = ('id', 'name')
     # search_fields = ('name',)
     inlines = (BaykeShopSpecOptionInline, )
 
 
 @admin.register(BaykeBanner)
 class BaykeShopBannerAdmin(BaseModelAdmin):
-    list_display = ('id', 'imgformat', 'target_url', 'operate')
+    list_display = ('id', 'imgformat', 'target_url')
     
     @admin.display(description="轮播图")
     def imgformat(self, obj):

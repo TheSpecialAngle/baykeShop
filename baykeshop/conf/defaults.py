@@ -9,7 +9,7 @@ BAYKE_DEFAULTS = {
     # 手机号验证正则
     "PHONE_REGX": r"^1[35678]\d{9}$",
     
-    # 登陆成功后跳转地址
+    # PC商城登陆成功后跳转地址
     "NEXT_PAGE": "baykeshop:home",
     
     # 首页楼层显示商品数量
@@ -28,4 +28,9 @@ BAYKE_DEFAULTS = {
     # 管理后台是否启用自定义菜单
     "ADMIN_MENUS": True,
     
+    # 后台logo文字
+    "SITE_HEADER": "BaykeShop后台管理",
+    
+    # 后台title后缀
+    "SITE_TITLE": "BaykeShop商城系统"
 }
