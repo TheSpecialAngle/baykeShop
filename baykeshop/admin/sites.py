@@ -10,7 +10,6 @@ from baykeshop.conf.bayke import bayke_settings
 from baykeshop.models import BaykeMenu
 
 
-
 class BaykeAdminSite(admin.AdminSite):
     """ 自定义AdminSite """
     

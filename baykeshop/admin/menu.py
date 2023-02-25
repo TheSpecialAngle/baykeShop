@@ -9,12 +9,3 @@ class BaykeMenuAdmin(BaseModelAdmin):
     '''Admin View for BaykeMenu'''
 
     list_display = ('id', 'name')
-    # list_filter = ('',)
-    # inlines = [
-    #     Inline,
-    # ]
-    # raw_id_fields = ('',)
-    # readonly_fields = ('',)
-    # search_fields = ('',)
-    # date_hierarchy = ''
-    # ordering = ('',)
