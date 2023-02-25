@@ -26,6 +26,6 @@ BAYKE_DEFAULTS = {
     "DETAIL_COMMENTS_PAGINATE_BY": 24,
     
     # 管理后台是否启用自定义菜单
-    "ADMIN_MENUS": True
+    "ADMIN_MENUS": True,
     
 }

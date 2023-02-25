@@ -5,7 +5,7 @@ from django.template.response import TemplateResponse
 from django.http.response import HttpResponseRedirect
 from django.utils.translation import gettext as _
 
-
+from baykeshop.models import BaykePermission
 from baykeshop.forms.admin.action import ActionForm
 from baykeshop.admin.options import CustomActions, CustomColumns
 
@@ -25,3 +25,5 @@ class BaseModelAdmin(admin.ModelAdmin):
             return queryset.filter(is_del=False)
         return queryset
     
+    def change_view(self, request, object_id, form_url="", extra_context=None):
+        return super().change_view(request, object_id, form_url, extra_context)

@@ -20,7 +20,7 @@ class BaykeAdminSite(admin.AdminSite):
         return super().get_app_list(request)
 
     def _build_menus(self, request):
-        
+        request.breadcrumbs = None
         # 获取当前用户拥有的权限菜单
         menus_queryset = BaykeMenu.objects.filter(
             Q(baykepermission__permission__group__user=request.user)|
@@ -71,6 +71,14 @@ class BaykeAdminSite(admin.AdminSite):
                         model_dict["admin_url"] = reverse(
                             "admin:%s_%s_changelist" % info, current_app=self.name
                         )
+                        # breadcrumbs挂载到request对象上
+                        if request.path == model_dict["admin_url"]:
+                            request.breadcrumbs = {
+                                menu.name: {
+                                    'name': capfirst(model._meta.verbose_name_plural), 
+                                    'url': model_dict["admin_url"]
+                                    }
+                                }
                     except NoReverseMatch:
                         pass
                 
@@ -79,6 +87,14 @@ class BaykeAdminSite(admin.AdminSite):
                         model_dict["add_url"] = reverse(
                             "admin:%s_%s_add" % info, current_app=self.name
                         )
+                        # breadcrumbs挂载到request对象上
+                        if request.path == model_dict["add_url"]:
+                            request.breadcrumbs = {
+                                menu.name: {
+                                    'name': capfirst(model._meta.verbose_name_plural), 
+                                    'url': model_dict["admin_url"]
+                                    }
+                                }
                     except NoReverseMatch:
                         pass
                 

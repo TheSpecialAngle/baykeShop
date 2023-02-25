@@ -12,11 +12,11 @@
 
 from django.template import Library
 from django.db.models import Sum, Avg
-
+from django.http.request import HttpRequest
 from baykeshop.models import BaykeBanner
 from baykeshop.models import (
     BaykeShopCategory, BaykeShopingCart,
-    BaykeShopOrderSKUComment
+    BaykeShopOrderSKUComment, BaykePermission
 )
 from baykeshop.forms.shop.search import SearchForm
 from baykeshop.conf.bayke import bayke_settings
@@ -102,3 +102,22 @@ def sku_rate(sku):
     s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
     score = s if s else 4.8
     return score
+
+
+@register.simple_tag
+def breadcrumbs(request, opts=None):
+    if bayke_settings.ADMIN_MENUS:
+        if opts:
+            perm = BaykePermission.objects.filter(
+                permission__content_type__app_label=opts.app_label
+            ).first()
+            request.breadcrumbs = {
+                perm.menus.name: {
+                    'name': str(opts.verbose_name_plural), 
+                    'url': request.path
+                }
+            }
+        return request.breadcrumbs
+    else:
+        return None
+    
