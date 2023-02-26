@@ -130,7 +130,7 @@
             </div>
         </div>
         <div class="box is-flex is-justify-content-end is-marginless is-radiusless">
-            <b-button type="is-danger" class="pl-6 pr-6" @click="savePay">立即支付</b-button>
+            <b-button type="is-danger" class="pl-6 pr-6" @click="savePay(defaultPay.value)">立即支付</b-button>
         </div>
         {% endif %}
     {% endif %}
@@ -200,7 +200,8 @@
             },
 
             // 立即支付
-            savePay(){
+            savePay(paymethod){
+
                 const sendData = new URLSearchParams()
                 sendData.append('paymethod', JSON.stringify(this.defaultPay))
                 sendData.append('order_sn', '{{ order_sn }}')
@@ -214,11 +215,14 @@
                         'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
                     }
                 }).then(res => {
-                    if (res.data.code == "ok"){
+                    if (res.data.code == "ok" && paymethod == 4 && res.data.paymethod == 4){
                         this.toastMessage('is-success', res.data.message)
                         location.reload()
-                    }else{
-                        this.toastMessage('is-danger', res.data.message)
+                    }else if (res.data.code == "ok" && paymethod == 2 && res.data.paymethod == 2){
+                        console.log(res.data.pay_url)
+                        // location.replace(res.data.pay_url)
+                        location.href = res.data.pay_url
+                        // this.toastMessage('is-danger', res.data.message)
                     }
                 })
             }

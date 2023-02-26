@@ -12,7 +12,7 @@
 
 from django.template import Library
 from django.db.models import Sum, Avg
-from django.http.request import HttpRequest
+
 from baykeshop.models import BaykeBanner
 from baykeshop.models import (
     BaykeShopCategory, BaykeShopingCart,
@@ -59,7 +59,7 @@ def carousel_result():
 
 
 @register.inclusion_tag('baykeshop/page.html', takes_context=True)
-def page_result(context, page_obj, *args, **kwargs):
+def page_result(context, page_obj, **kwargs):
     """分页组件
     使用方法
         {% load shop_tags %}

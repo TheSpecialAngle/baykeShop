@@ -17,6 +17,7 @@ from django.http import JsonResponse
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.urls import reverse
 
 from baykeshop.core.mixins import LoginRequiredMixin
 from baykeshop.models import (
@@ -76,6 +77,7 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
         order_sn = data.get('order_sn')
         orders = BaykeShopOrderInfo.objects.filter(order_sn=order_sn)
         userinfo = BaykeUserInfo.objects.filter(owner=request.user)
+        
         # 余额支付
         if orders.exists() and userinfo.exists() and paymethod.get('value') == 4:
             order = orders.first()
@@ -91,7 +93,29 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
                 change_status=2,
                 change_way=3
             )
-            context = {"code": "ok", "message": "支付成功！"}
+            context = {"code": "ok", "message": "支付成功！", "paymethod": 4}
+            return JsonResponse(context)
+        # 支付宝支付
+        elif orders.exists() and userinfo.exists() and paymethod.get('value') == 2:
+            from baykeshop.pay.alipay.pay import alipay
+            from baykeshop.conf.bayke import bayke_settings
+            order = orders.first()
+            user = userinfo.first()
+            url_params = alipay.api_alipay_trade_page_pay(
+                subject=order_sn,
+                total_amount=order.total_amount.to_eng_string(),
+                out_trade_no=order_sn,
+                return_url=reverse(bayke_settings.ALIPAY_RETURN_URL),
+                notify_url=reverse(bayke_settings.ALIPAY_NOTIFY_URL),
+                orderID=order.id
+            )
+            pay_url = f"{alipay._gateway}?{url_params}"
+            context = {
+                "code": "ok", 
+                "message": "支付宝URL地址返回成功！", 
+                "paymethod": 2, 
+                "pay_url": pay_url
+            }
             return JsonResponse(context)
         else:
             return JsonResponse({'code':'error', 'message': '暂不支持该支付方式或支付信息有误！'})

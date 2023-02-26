@@ -1,3 +1,5 @@
+from django.conf import settings
+
 BAYKE_DEFAULTS = {
     
     # LOGO
@@ -32,5 +34,15 @@ BAYKE_DEFAULTS = {
     "SITE_HEADER": "BaykeShop后台管理",
     
     # 后台title后缀
-    "SITE_TITLE": "BaykeShop商城系统"
+    "SITE_TITLE": "BaykeShop商城系统",
+    
+    # 支付宝相关配置
+    "ALIPAY_PRIVATE_KEY": settings.BASE_DIR / "baykeshop/pay/alipay/keys/app_private_key.pem",
+    "ALIPAY_PUBLIC_KEY": settings.BASE_DIR / "baykeshop/pay/alipay/keys/app_public_key.pem",
+    "ALIPAY_APPID": "2021000116697536",
+    "ALIPAY_NOTIFY_URL": "baykeshop:alipay_notify",
+    "ALIPAY_RETURN_URL": "baykeshop:alipay_notify",
+    "ALIPAY_SIGN_TYPE": "RSA2",  # RSA 或者 RSA2
+    "ALIPAY_DEBUG": settings.DEBUG,
+    "ALIPAY_TIMOUT": 15
 }

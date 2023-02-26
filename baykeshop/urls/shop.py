@@ -5,6 +5,8 @@ from baykeshop.views.shop import cart
 from baykeshop.views.shop import order
 from baykeshop.views.shop import user
 
+from baykeshop.pay.alipay.notify import AlipayNotifyView
+
 app_name = "baykeshop"
 
 urlpatterns = [
@@ -32,5 +34,8 @@ urlpatterns = [
     path("user/userinfo/", user.BaykeUserInfoView.as_view(), name="user_profile"),
     path("user/balance/", user.BaykeUserBalanceView.as_view(), name="user_balance"),
     path("user/address/", user.BaykeAddressView.as_view(), name="user_address"),
+    
+    # pay
+    path("alipay/", AlipayNotifyView.as_view(), name="alipay_notify"),
     
 ]
