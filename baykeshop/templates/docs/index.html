@@ -17,11 +17,11 @@
     <div class="is-flex is-flex-direction-column" style="min-height:100vh">
     {% include 'docs/header.html' %}
     <div class="" style="flex: 1;">
-        <section class="hero is-light is-halfheight">
-            <div class="hero-body">
+        <section class="hero is-info is-bold is-halfheight">
+            <div class="hero-body container">
                 <div class="container">
-                    <div class="columns">
-                        <div class="column">
+                    <div class="columns is-centered">
+                        <div class="column has-text-centered">
                             <h1 class="title is-size-1">baykeShop（拜客商城系统）</h1>
                             <p class="mb-3 is-size-5">
                                 Python栈开源商城系统，采用django框架开发，使用简单，支持商品多规格配置，支持余额支付、支付宝支付以及微信支付！
@@ -30,16 +30,86 @@
                                 对django-admin进行了简单的二次开发定制，<strong> 支持自定义动态菜单，兼容django原生admin以及三方皮肤simpleui</strong>！
                             </p>
                         </div>
-                        <div class="column">
+                        <!-- <div class="column">
                             asdas
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>
         </section>
+
+        <section class="container pt-6">
+            <h1 class=" has-text-centered is-size-2 title">特色功能</h1>
+            <div class="columns">
+                <div class="column">
+                    <div class="box is-shadowless has-background-info-light is-flex is-flex-direction-column is-align-items-center is-justify-content-center has-text-centered" style="min-height: 250px;">
+                        <!-- <figure class="image is-64x64 mb-3">
+                            <img src="{% static 'docs/menu.svg' %}" alt="" srcset="">
+                        </figure> -->
+                        <h1 class="title is-size-4 has-text-grey-dark">自定义菜单</h1>
+                        <p class="subtitle has-text-grey pl-6 pr-6">后台定制默认admin,支持动态菜单，兼容三方皮肤</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box is-shadowless has-background-link-light is-flex is-flex-direction-column is-align-items-center is-justify-content-center has-text-centered" style="min-height: 250px;">
+                        <!-- <figure class="image is-64x64 mb-3">
+                            <img src="{% static 'docs/menu1.svg' %}" alt="" srcset="">
+                            
+                        </figure> -->
+                        <h1 class="title is-size-4 has-text-grey-dark">多规格商品</h1>
+                        <p class="subtitle has-text-grey pl-6 pr-6">完整的多规格商品逻辑，支持商品SPU和SKU及规格关系</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box is-shadowless has-background-light is-flex is-flex-direction-column is-align-items-center is-justify-content-center has-text-centered" style="min-height: 250px;">
+                        <!-- <figure class="image is-64x64 mb-3">
+                            <img src="{% static 'docs/menu.svg' %}" alt="" srcset="">
+                        </figure> -->
+                        <h1 class="title is-size-4 has-text-grey-dark">多种支付方式</h1>
+                        <p class="subtitle has-text-grey pl-6 pr-6">支持余额支付、微信支付、支付宝支付，配置简单收款便捷</p>
+                    </div>
+                </div>
+            </div>
+            <div class="columns">
+                <div class="column">
+                    <div class="box is-shadowless has-background-success-light is-flex is-flex-direction-column is-align-items-center is-justify-content-center has-text-centered" style="min-height: 250px;">
+                        <!-- <figure class="image is-64x64 mb-3">
+                            <img src="{% static 'docs/menu.svg' %}" alt="" srcset="">
+                        </figure> -->
+                        <h1 class="title is-size-4 has-text-grey-dark">多数据库支持</h1>
+                        <p class="subtitle has-text-grey pl-6 pr-6">凭借django强大的加持，可轻松配置多数据库Mysql/Sqlite3等</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box is-shadowless has-background-danger-light is-flex is-flex-direction-column is-align-items-center is-justify-content-center has-text-centered" style="min-height: 250px;">
+                        <!-- <figure class="image is-64x64 mb-3">
+                            <img src="{% static 'docs/menu.svg' %}" alt="" srcset="">
+                        </figure> -->
+                        <h1 class="title is-size-4 has-text-grey-dark">配置分离</h1>
+                        <p class="subtitle has-text-grey pl-6 pr-6">独立配置文件，通过简单的配置修改可控制全局相关功能</p>
+                    </div>
+                </div>
+                <div class="column">
+                    <div class="box is-shadowless has-background-warning-light is-flex is-flex-direction-column is-align-items-center is-justify-content-center has-text-centered" style="min-height: 250px;">
+                        <!-- <figure class="image is-64x64 mb-3">
+                            <img src="{% static 'docs/menu.svg' %}" alt="" srcset="">
+                        </figure> -->
+                        <h1 class="title is-size-4 has-text-grey-dark">多端分离</h1>
+                        <p class="subtitle has-text-grey pl-6 pr-6">PC端采用django的模板系统开发，移动端通过DRF框架将分离开放标准的RestFull api接口</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </div>
-    <div class="footer">
-        asdasd
+
+
+
+    <div class="footer mt-6">
+        <div class=" is-flex is-flex-direction-column is-align-items-center">
+            <p>Copyright © 2023 bayke.shop All Rights Reserved.</p> 
+            <p>备案号：<a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">陕ICP备2021004658号</a></p>
+        </div>
     </div>
     </div>
 </body>
