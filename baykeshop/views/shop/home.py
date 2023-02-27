@@ -181,7 +181,8 @@ class GoodDetailView(DetailView):
         return comments
     
     def get_comments_page(self):
-        paginator = Paginator(self.get_comments(), 24)
+        # 留言分页
+        paginator = Paginator(self.get_comments(), 5)
         page_number = self.request.GET.get('page')
         page_obj = paginator.get_page(page_number)
         return page_obj
@@ -194,11 +195,11 @@ class GoodDetailView(DetailView):
         # 大于等于3分的人数
         rate_gte_3 = comments.filter(comment_choices__gte=3).count()
         # 满意度,大于三分的占比数
-        like_rate = round((rate_gte_3 / rates) * 100, 2)
+        like_rate = (rate_gte_3 / rates) * 100
         # 评分
         s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
         score = s if s else 4.8
-        return like_rate, score
+        return round(like_rate), round(score, 1)
         
         
 class SearchView(ListView):

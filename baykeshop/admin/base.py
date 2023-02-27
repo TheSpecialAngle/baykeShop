@@ -1,13 +1,10 @@
-from django import forms
 from django.contrib import admin
-from django.contrib.admin.options import PermissionDenied
-from django.template.response import TemplateResponse
-from django.http.response import HttpResponseRedirect
+from django.utils.html import format_html, format_html_join
+from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from baykeshop.models import BaykePermission
 from baykeshop.forms.admin.action import ActionForm
-from baykeshop.admin.options import CustomActions, CustomColumns
+
 
 
 class BaseModelAdmin(admin.ModelAdmin):
@@ -27,3 +24,11 @@ class BaseModelAdmin(admin.ModelAdmin):
     
     def change_view(self, request, object_id, form_url="", extra_context=None):
         return super().change_view(request, object_id, form_url, extra_context)
+    
+    
+    @admin.display(description="操作")
+    def operate(self, obj):
+        hs = '<a href="{}">编辑</a> | <a href="{}">删除</a>'
+        h1 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=(obj.pk, ))
+        h2 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_delete', args=(obj.pk, ))
+        return format_html(hs, h1, h2)

@@ -36,7 +36,8 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
         'dis_pay_method', 
         'total_amount', 
         'dis_order_mark',
-        'pay_time'
+        'pay_time',
+        'operate'
     )
     # list_editable = ('pay_status', )
     search_fields = ('owner__username', 'order_sn',)
@@ -88,6 +89,7 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
             updated,
         ) % updated, messages.SUCCESS)
         
+        
     def get_urls(self):
         urls = super().get_urls()
         from django.urls import path
@@ -99,7 +101,6 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
     def acticon_order_view(self, request):
         return TemplateResponse(request, 'baykeadmin/action_order.html')
         
-    
     class Media:
         css = {'all': ['baykeadmin/css/ordersku.css']}
         

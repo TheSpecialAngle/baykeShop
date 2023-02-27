@@ -101,22 +101,24 @@ def sku_rate(sku):
     # 评分
     s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
     score = s if s else 4.8
-    return score
+    return round(score)
 
 
 @register.simple_tag
 def breadcrumbs(request, opts=None):
     if bayke_settings.ADMIN_MENUS:
         if opts:
-            perm = BaykePermission.objects.filter(
-                permission__content_type__app_label=opts.app_label
-            ).first()
-            request.breadcrumbs = {
-                perm.menus.name: {
-                    'name': str(opts.verbose_name_plural), 
-                    'url': request.path
-                }
-            }
+            print(request.breadcrumbs)
+            # perm = BaykePermission.objects.filter(
+            #     permission__content_type__app_label=opts.app_label
+            # ).first()
+            # request.breadcrumbs = {
+            #     perm.menus.name: {
+            #         'name': str(opts.verbose_name_plural), 
+            #         'url': request.path
+            #     }
+            # }
+            return request.breadcrumbs
         return request.breadcrumbs
     else:
         return None
