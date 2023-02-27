@@ -10,38 +10,11 @@ from baykeshop.models import (
     BaykeBanner
 )
 from baykeshop.admin.sites import bayke_site
-
-
-class BaykeShopCategoryInline(admin.TabularInline):
-    '''Tabular Inline View for BaykeShopCategory'''
-
-    model = BaykeShopCategory
-    min_num = 1
-    max_num = 20
-    extra = 1
-    exclude = ('img_map', )
-    # raw_id_fields = (,)
-
-class BaykeShopSKUInline(admin.TabularInline):
-    '''Stacked Inline View for BaykeShopSKU'''
-
-    model = BaykeShopSKU
-    # min_num = 1
-    max_num = 20
-    extra = 1
-    can_delete = False
-    # raw_id_fields = (,)
+from baykeshop.admin.inline import (
+    BaykeShopCategoryInline, BaykeShopSKUInline,
+    BaykeSPUCarouselInline, BaykeShopSpecOptionInline
+)
     
-
-class BaykeSPUCarouselInline(admin.TabularInline):
-    '''Tabular Inline View for '''
-
-    model = BaykeSPUCarousel
-    min_num = 1
-    max_num = 20
-    extra = 1
-    # raw_id_fields = (,)
-
 
 @admin.register(BaykeShopCategory, site=bayke_site)
 class BaykeShopCategoryAdmin(BaseModelAdmin):
@@ -80,15 +53,6 @@ class BaykeShopSKUAdmin(BaseModelAdmin):
     # autocomplete_fields = ('options', )
 
 
-class BaykeShopSpecOptionInline(admin.StackedInline):
-    '''Stacked Inline View for '''
-
-    model = BaykeShopSpecOption
-    min_num = 1
-    max_num = 20
-    extra = 1
-
-
 @admin.register(BaykeShopSpec, site=bayke_site)
 class BaykeShopSpecAdmin(BaseModelAdmin):
     list_display = ('id', 'name')
@@ -109,5 +73,5 @@ class BaykeShopBannerAdmin(BaseModelAdmin):
 # admin.site.register(BaykeShopSKU)
 admin.site.register(BaykeSPUCarousel)
 admin.site.register(BaykeShopSpecOption)
-bayke_site.register(BaykeShopOrderInfo)
+# bayke_site.register(BaykeShopOrderInfo)
 admin.site.register(BaykeShopOrderSKU)

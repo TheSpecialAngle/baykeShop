@@ -13,7 +13,7 @@ import json
 from django.db.models import F
 from django.views.generic import View, ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseNotFound
 from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
@@ -53,6 +53,7 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
             }
         except BaykeShopOrderInfo.DoesNotExist:
             error = "该订单不存在，请先去挑选商品！"
+            return HttpResponseNotFound("该URL允许单独访问， 404NotFound")
             
         if order.pay_status != 1:
             code = "ok"

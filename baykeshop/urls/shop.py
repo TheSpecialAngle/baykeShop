@@ -35,7 +35,7 @@ urlpatterns = [
     path("user/balance/", user.BaykeUserBalanceView.as_view(), name="user_balance"),
     path("user/address/", user.BaykeAddressView.as_view(), name="user_address"),
     
-    # pay
+    # pay,支付宝回调
     path("alipay/", AlipayNotifyView.as_view(), name="alipay_notify"),
     
 ]
