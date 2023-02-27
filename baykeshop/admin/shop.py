@@ -107,7 +107,7 @@ class BaykeShopOrderSKUCommentAdmin(BaseModelAdmin):
     
     @admin.display(description="操作")
     def operate(self, obj):
-        hs = '{} | <a href="{}">编辑</a> | <a href="{}">删除</a>'
+        hs = '{} | <a class="button" href="{}">编辑</a> | <a class="button" href="{}"><span class="deletelink">删除</span></a>'
         h1 = mark_safe('''
             <a class="related-widget-wrapper-link add-related" id="add_id_menus" data-popup="yes" 
                 href="/baykeadmin/baykeshop/baykemenu/add/?_to_field=id&amp;_popup=1" title="回复评论">
