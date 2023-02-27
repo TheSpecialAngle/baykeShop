@@ -109,5 +109,5 @@ class BaykeShopBannerAdmin(BaseModelAdmin):
 # admin.site.register(BaykeShopSKU)
 admin.site.register(BaykeSPUCarousel)
 admin.site.register(BaykeShopSpecOption)
-admin.site.register(BaykeShopOrderInfo)
+bayke_site.register(BaykeShopOrderInfo)
 admin.site.register(BaykeShopOrderSKU)

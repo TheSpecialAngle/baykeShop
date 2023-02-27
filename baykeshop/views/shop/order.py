@@ -105,8 +105,8 @@ class BaykeShopOrderPayView(LoginRequiredMixin, View):
                 subject=order_sn,
                 total_amount=order.total_amount.to_eng_string(),
                 out_trade_no=order_sn,
-                return_url=reverse(bayke_settings.ALIPAY_RETURN_URL),
-                notify_url=reverse(bayke_settings.ALIPAY_NOTIFY_URL),
+                return_url=f"{request.scheme}://{request.get_host()}{reverse(bayke_settings.ALIPAY_RETURN_URL)}",
+                notify_url=f"{request.scheme}://{request.get_host()}{reverse(bayke_settings.ALIPAY_NOTIFY_URL)}",
                 orderID=order.id
             )
             pay_url = f"{alipay._gateway}?{url_params}"
