@@ -101,7 +101,7 @@ def sku_rate(sku):
     # 评分
     s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
     score = s if s else 4.8
-    return round(score)
+    return round(score, 1)
 
 
 @register.simple_tag

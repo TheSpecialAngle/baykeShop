@@ -1,13 +1,12 @@
 from django.contrib import admin
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
+from django.urls import reverse
 # Register your models here.
 from baykeshop.admin.base import BaseModelAdmin
 from baykeshop.models import (
     BaykeShopCategory, BaykeShopSPU, 
-    BaykeSPUCarousel, BaykeShopSKU, 
-    BaykeShopSpec, BaykeShopSpecOption,
-    BaykeShopOrderInfo, BaykeShopOrderSKU,
+    BaykeShopSKU, BaykeShopSpec, 
     BaykeBanner, BaykeShopOrderSKUComment
 )
 from baykeshop.admin.sites import bayke_site
@@ -96,7 +95,28 @@ class BaykeShopSPUAdmin(BaseModelAdmin):
 @admin.register(BaykeShopOrderSKUComment, site=bayke_site)
 class BaykeShopOrderSKUCommentAdmin(BaseModelAdmin):
     """ 商品评论 """
-    list_display = ('owner', 'order_sku', 'content', 'comment_choices', 'operate')
+    list_display = ('owner', 'order_sku', 'content', 'ds_comment_sale', 'ds_comment_choices', 'operate')
+    
+    @admin.display(description="评分")
+    def ds_comment_sale(self, obj):
+        return obj.comment_choices
+    
+    @admin.display(description="评价")
+    def ds_comment_choices(self, obj):
+        return obj.get_comment_choices_display()
+    
+    @admin.display(description="操作")
+    def operate(self, obj):
+        hs = '{} | <a href="{}">编辑</a> | <a href="{}">删除</a>'
+        h1 = mark_safe('''
+            <a class="related-widget-wrapper-link add-related" id="add_id_menus" data-popup="yes" 
+                href="/baykeadmin/baykeshop/baykemenu/add/?_to_field=id&amp;_popup=1" title="回复评论">
+            回复
+            </a>
+        ''')
+        h2 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=(obj.pk, ))
+        h3 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_delete', args=(obj.pk, ))
+        return format_html(hs, h1, h2, h3)
 
 
 @admin.register(BaykeShopSKU, site=bayke_site)
@@ -124,7 +144,7 @@ class BaykeShopBannerAdmin(BaseModelAdmin):
 
 
 # admin.site.register(BaykeShopSKU)
-admin.site.register(BaykeSPUCarousel)
-admin.site.register(BaykeShopSpecOption)
+# admin.site.register(BaykeSPUCarousel)
+# admin.site.register(BaykeShopSpecOption)
 # bayke_site.register(BaykeShopOrderInfo)
-admin.site.register(BaykeShopOrderSKU)
+# admin.site.register(BaykeShopOrderSKU)

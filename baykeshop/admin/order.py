@@ -100,6 +100,9 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
     
     def acticon_order_view(self, request):
         return TemplateResponse(request, 'baykeadmin/action_order.html')
+    
+    def has_add_permission(self, request) -> bool:
+        return False
         
     class Media:
         css = {'all': ['baykeadmin/css/ordersku.css']}
