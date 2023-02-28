@@ -3,8 +3,8 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from baykeshop.conf.bayke import bayke_settings
-from baykeshop.models import BaykeShopAddress, BaykeUserInfo
-
+from baykeshop.models import BaykeShopAddress, BaykeUserInfo, BaykeShopSPU
+from baykeshop.forms.widgets import HTMLTextarea
 
 class BaykeShopAddressForm(forms.ModelForm):
     # 地址表单
@@ -32,3 +32,13 @@ class BaykeUserInfoForm(forms.ModelForm):
         
     def clean(self):
         return super().clean()
+    
+
+class BaykeShopSPUForm(forms.ModelForm):
+    
+    class Meta:
+        model = BaykeShopSPU
+        fields = "__all__"
+        widgets = {
+            'content': HTMLTextarea(),
+        }

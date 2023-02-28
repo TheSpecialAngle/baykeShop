@@ -14,7 +14,7 @@ from baykeshop.admin.inline import (
     BaykeShopCategoryInline, BaykeShopSKUInline,
     BaykeSPUCarouselInline, BaykeShopSpecOptionInline
 )
-    
+from baykeshop.forms.shop.user import BaykeShopSPUForm
 
 @admin.register(BaykeShopCategory, site=bayke_site)
 class BaykeShopCategoryAdmin(BaseModelAdmin):
@@ -47,6 +47,7 @@ class BaykeShopSPUAdmin(BaseModelAdmin):
     )
     list_display_links = ('title', )
     filter_horizontal = ('category',)
+    form = BaykeShopSPUForm
     inlines = (BaykeShopSKUInline, BaykeSPUCarouselInline)
     
     class Media:

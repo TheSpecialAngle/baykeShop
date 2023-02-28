@@ -1,0 +1,9 @@
+<textarea name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+    {% if widget.value %}{{ widget.value }}{% endif %}</textarea>
+<script>
+    tinymce.init({
+        selector: 'textarea#id_{{ widget.name }}',
+        language: 'zh-Hans',
+        language_url: '/static/baykeadmin/js/tinymce/langs/'
+    });
+</script>

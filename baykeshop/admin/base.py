@@ -3,9 +3,6 @@ from django.utils.html import format_html, format_html_join
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
-from baykeshop.forms.admin.action import ActionForm
-
-
 
 class BaseModelAdmin(admin.ModelAdmin):
     """继承了django的ModelAdmin
@@ -15,8 +12,8 @@ class BaseModelAdmin(admin.ModelAdmin):
     change_list_template = "baykeadmin/change_list.html"
     change_form_template = "baykeadmin/change_form.html"
     actions = ["mark_delete", "export_as_csv"]
-    action_form = ActionForm
-
+    # form = 
+    
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
         if self.model._meta.model_name not in ['user', 'group', 'permission', 'logentry']:

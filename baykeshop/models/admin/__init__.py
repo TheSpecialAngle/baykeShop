@@ -58,4 +58,16 @@ class BaykePermission(AbstractModel):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return f"{self.permission.name}  "
+        return f"{self.permission.name}"
+
+
+class BaykeUpload(AbstractModel):
+    """ 富文本编辑器图片上传 """
+    img = models.ImageField(upload_to="upload/editor/", max_length=200)
+    
+    class Meta:
+        verbose_name = '富文本编辑器图片上传'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.img.name

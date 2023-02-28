@@ -1,5 +1,5 @@
 from baykeshop.models.admin.user import BaykeUserInfo
-from baykeshop.models.admin import BaykeMenu, BaykePermission
+from baykeshop.models.admin import BaykeMenu, BaykePermission, BaykeUpload
 
 from baykeshop.models.shop.product import (
     BaykeShopCategory, BaykeShopSPU, BaykeShopSKU, 
