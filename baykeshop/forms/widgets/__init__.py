@@ -39,7 +39,7 @@ class HTMLTextarea(BaseTextarea):
         #     'all': ('pretty.css',)
         # }
         js = (
-            'baykeadmin/js/tinymce/tinymce.min.js',
+            # 'baykeadmin/js/tinymce/tinymce.min.js',
             # 'baykeadmin/js/config.js',
         )
     
