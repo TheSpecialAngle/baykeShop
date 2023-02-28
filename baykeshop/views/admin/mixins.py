@@ -1,8 +1,7 @@
-from django.views.generic import CreateView
-from baykeshop.models import BaykeMenu
+from django.views.generic import TemplateView
 
 
-class CreateMixins(CreateView):
+class TryView(TemplateView):
     
-    model = BaykeMenu
-    context_object_name = f"{model}".lower()
+    template_name = "baykeadmin/try.html"
+

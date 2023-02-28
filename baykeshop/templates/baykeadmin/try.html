@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh-hans">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="{% static 'baykeadmin/js/tinymce/tinymce.min.js' %}"></script>
+</head>
+<body>
+    <div id="try">
+        <textarea id="default-editor">
+            <p><em>Hello</em>, <span style="text-decoration: underline;"><strong>World!</strong></span></p>
+        </textarea>
+    </div>
+
+    <script>
+        tinymce.init({
+            selector: 'textarea#default-editor',
+            plugins: 'image code',
+            toolbar: 'undo redo | link image | code',
+            /* enable title field in the Image dialog*/
+            image_title: true,
+            /* enable automatic uploads of images represented by blob or data URIs*/
+            automatic_uploads: true,
+            /*
+              URL of our upload handler (for more details check: https://www.tiny.cloud/docs/configure/file-image-upload/#images_upload_url)
+              images_upload_url: 'postAcceptor.php',
+              here we add custom filepicker only to Image dialog
+            */
+            file_picker_types: 'image',
+            
+            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }'
+          });
+    </script>
+</body>
+</html>
