@@ -52,7 +52,7 @@ class BaykeAdminSite(admin.AdminSite):
                 try:
                     model_admin = self._registry[model]
                 except KeyError:
-                    messages.add_message(request, messages.INFO, f'{model}模型未在admin中注册，请先注册模型')
+                    messages.add_message(request, messages.INFO, f'{model._meta.model_name}【{model._meta.verbose_name}】未在baykeadmin中注册，请先注册模型')
                 app_label = model._meta.app_label
                 
                 has_module_perms = model_admin.has_module_permission(request)
