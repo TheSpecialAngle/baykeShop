@@ -105,19 +105,22 @@ class BaykeShopOrderSKUCommentAdmin(BaseModelAdmin):
     def ds_comment_choices(self, obj):
         return obj.get_comment_choices_display()
     
-    @admin.display(description="操作")
-    def operate(self, obj):
-        hs = '{} | <a class="button" href="{}">编辑</a> | <a class="button" href="{}"><span class="deletelink">删除</span></a>'
-        h1 = mark_safe('''
-            <a class="related-widget-wrapper-link add-related" id="add_id_menus" data-popup="yes" 
-                href="/baykeadmin/baykeshop/baykemenu/add/?_to_field=id&amp;_popup=1" title="回复评论">
-            回复
-            </a>
-        ''')
-        h2 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=(obj.pk, ))
-        h3 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_delete', args=(obj.pk, ))
-        return format_html(hs, h1, h2, h3)
-
+    # @admin.display(description="操作")
+    # def operate(self, obj):
+    #     hs = '{} | <a class="button" href="{}">编辑</a> | <a class="button" href="{}"><span class="deletelink">删除</span></a>'
+    #     h1 = mark_safe('''
+    #         <a class="related-widget-wrapper-link add-related" id="add_id_menus" data-popup="yes" 
+    #             href="/baykeadmin/baykeshop/baykemenu/add/?_to_field=id&amp;_popup=1" title="回复评论">
+    #         回复
+    #         </a>
+    #     ''')
+    #     h2 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=(obj.pk, ))
+    #     h3 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_delete', args=(obj.pk, ))
+    #     return format_html(hs, h1, h2, h3)
+    
+    def has_add_permission(self, request):
+        return False
+    
 
 @admin.register(BaykeShopSKU, site=bayke_site)
 class BaykeShopSKUAdmin(BaseModelAdmin):
@@ -134,7 +137,7 @@ class BaykeShopSpecAdmin(BaseModelAdmin):
     inlines = (BaykeShopSpecOptionInline, )
 
 
-@admin.register(BaykeBanner)
+@admin.register(BaykeBanner, site=bayke_site)
 class BaykeShopBannerAdmin(BaseModelAdmin):
     list_display = ('id', 'imgformat', 'target_url', 'operate')
     
@@ -142,6 +145,8 @@ class BaykeShopBannerAdmin(BaseModelAdmin):
     def imgformat(self, obj):
         return format_html(f'<img src="{obj.img.url}" width="auto" height="100px" />')
 
+    class Media:
+        css = {'all': ['baykeadmin/css/ordersku.css']}
 
 # admin.site.register(BaykeShopSKU)
 # admin.site.register(BaykeSPUCarousel)

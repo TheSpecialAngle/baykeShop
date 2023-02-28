@@ -73,21 +73,21 @@ class GroupAdmin(BaseGroupAdmin, BaseModelAdmin):
     pass
 
 
-# @admin.register(Permission, site=bayke_site)
-# class PermissionAdmin(BaseModelAdmin):
-#     '''Admin View for BaykePermission'''
+@admin.register(Permission, site=bayke_site)
+class PermissionAdmin(BaseModelAdmin):
+    '''Admin View for BaykePermission'''
 
-#     list_display = ('id', 'name',)
-#     search_fields = ('name', )
-#     readonly_fields = ('codename', 'content_type')
-    # inlines = (BaykePermissionInline, )
+    list_display = ('id', 'name',)
+    search_fields = ('name', )
+    readonly_fields = ('codename', 'content_type')
+    inlines = (inline.BaykePermissionInline, )
 
 
 @admin.register(BaykePermission, site=bayke_site)
 class BaykePermissionAdmin(BaseModelAdmin):
     '''Admin View for BaykePermission'''
 
-    list_display = ('id','menus_name', 'verbose_name')
+    list_display = ('id','menus_name', 'verbose_name', 'operate')
 
     @admin.display(description='权限菜单')
     def permission_name(self, obj):

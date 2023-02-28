@@ -10,8 +10,9 @@
 {% if breadcrumbs %}
     {% for k, v in breadcrumbs.items %}
     &rsaquo; <a href="#">{{ k }}</a>
-    &rsaquo; {{ v.name }}
+    &rsaquo; <a href="{% url opts|admin_urlname:'changelist' %}">{{ v.name }}</a>
     {% endfor %} 
+    &rsaquo; {% if add %}{% blocktranslate with name=opts.verbose_name %}Add {{ name }}{% endblocktranslate %}{% else %}{{ original|truncatewords:"18" }}{% endif %}
 {% else %}
 &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
 &rsaquo; {% if has_view_permission %}

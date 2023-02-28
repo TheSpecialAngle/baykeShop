@@ -19,6 +19,15 @@ class BaykePermissionInline(admin.TabularInline):
     max_num = 20
     extra = 1
     # raw_id_fields = (,)
+    
+class PermissionInline(admin.TabularInline):
+    '''Tabular Inline View for BaykePermission'''
+
+    model = BaykePermission
+    min_num = 1
+    max_num = 20
+    extra = 1
+    # raw_id_fields = (,)
 
 
 class BaykeShopCategoryInline(admin.TabularInline):

@@ -16,6 +16,8 @@ class BaykeAdminSite(admin.AdminSite):
     site_header = bayke_settings.SITE_HEADER
     site_title = bayke_settings.SITE_TITLE
     
+    index_template = "baykeadmin/index.html"
+    
     def get_app_list(self, request):
         # 判断是否启用了自定义菜单
         if request.user.is_authenticated and bayke_settings.ADMIN_MENUS:

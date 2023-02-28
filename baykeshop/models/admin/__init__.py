@@ -19,7 +19,7 @@ User = get_user_model()
 
 class BaykeMenu(AbstractModel):
     """ 菜单 """
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField("菜单名称", max_length=50, unique=True)
     parent = models.ForeignKey(
         'self',
         on_delete=models.CASCADE,
@@ -27,12 +27,12 @@ class BaykeMenu(AbstractModel):
         null=True,
         editable=False
     )
-    sort = models.PositiveSmallIntegerField(default=1)
+    sort = models.PositiveSmallIntegerField("排序", default=1)
 
     class Meta:
         ordering = ['-sort']
-        verbose_name = 'BaykeMenu'
-        verbose_name_plural = 'BaykeMenus'
+        verbose_name = '菜单'
+        verbose_name_plural = verbose_name
 
     def __str__(self):
         return self.name
@@ -48,7 +48,7 @@ class BaykePermission(AbstractModel):
         null=True
     )
     # owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
-    url = models.CharField("url", max_length=150, blank=True, default="")
+    url = models.CharField("url", max_length=150, blank=True, default="", editable=False)
     menus = models.ForeignKey(BaykeMenu, on_delete=models.CASCADE)
     icon = models.CharField(blank=True, default="", max_length=50)
     is_show = models.BooleanField(default=True)

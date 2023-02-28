@@ -12,7 +12,8 @@ class BaseModelAdmin(admin.ModelAdmin):
     重写并新增了一些全局方法
     """
     
-    # change_list_template = "baykeadmin/change_list.html"
+    change_list_template = "baykeadmin/change_list.html"
+    change_form_template = "baykeadmin/change_form.html"
     actions = ["mark_delete", "export_as_csv"]
     action_form = ActionForm
 

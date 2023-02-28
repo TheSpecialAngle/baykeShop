@@ -8,6 +8,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.contenttypes.models import ContentType
 from django.template.response import TemplateResponse
 
+from baykeshop.admin.actions import shipped_order
 from baykeshop.admin.base import BaseModelAdmin
 from baykeshop.admin.sites import bayke_site
 from baykeshop.models import (
@@ -42,11 +43,16 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
     # list_editable = ('pay_status', )
     search_fields = ('owner__username', 'order_sn',)
     search_help_text = "支持通过用户名和订单号搜索"
+    # list_editable = ('total_amount', )
     list_filter = ('pay_status', 'pay_method')
     list_display_links = ('order_sn',)
     list_select_related = ('owner',)
     readonly_fields = ('pay_status', 'dis_order_sku',)
     actions = ['dis_acticon_order']
+    
+    def get_action(self, action):
+        print(action)
+        return super().get_action(action)
     
     @admin.display(description="用户")
     def dis_owner(self, obj):
@@ -102,6 +108,12 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
         return TemplateResponse(request, 'baykeadmin/action_order.html')
     
     def has_add_permission(self, request) -> bool:
+        return False
+    
+    def has_change_permission(self, request, obj=None) -> bool:
+        # 订单处于待支付状态允许修改，其他状态不允许修改
+        if obj and obj.pay_status == 1:
+            return super().has_change_permission(request, obj)
         return False
         
     class Media:
