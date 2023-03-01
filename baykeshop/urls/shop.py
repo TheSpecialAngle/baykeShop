@@ -12,7 +12,7 @@ app_name = "baykeshop"
 
 urlpatterns = [
     # home
-    path('', home.HomeView.as_view(), name="home"),
+    path('home/', home.HomeView.as_view(), name="home"),
     path("search/", home.SearchView.as_view(), name="search"),
     path('goods/<int:pk>/skus/', home.GoodsListView.as_view(), name='goods'),
     path('goods/<int:pk>/detail/<int:sku_id>/', home.GoodDetailView.as_view(), name='detail'),
