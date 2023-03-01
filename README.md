@@ -48,6 +48,14 @@ Liunx: source venv/bin/activate
 ```
 python3 manage.py runserver
 ```
+5、查看项目
+```
+前台：http://127.0.0.1:8000
+后台：http://127.0.0.1:8000/baykeadmin/
+后台账号：admin  密码：admin123qwe
+```
+
+
 项目默认配置了sqllite3数据库，项目中已包含，因此上无需再创建数据库迁移命令和数据库同步命令！
 
 > 备注：如果你要配置Mysql或其他数据库命令，可使用django的导出数据库命令把除过contenttypes相关的数据全部导出，配置好其他数据库之后再自行导入！
