@@ -6,7 +6,7 @@ For full documentation visit [bayke.shop（拜客商城系统）](http://www.bay
 
 - **曾用名**：[django-happy-shop](https://gitee.com/xingfugz/happy-shop)【不再维护】
 - **现用名**：[baykeShop](https://gitee.com/bayke/bayke-shop/)
-- **baykeShop（拜客商城系统）**的由来：
+- **baykeShop(拜客商城系统)** 的由来：
 > `django-happy-shop`诞生于2022年，作为django框架的一个包出现，但商城作为一个综合性和定制性很强的项目，
 单纯已三方包的形式维护并实现更多的功能就会显得非常臃肿，部署也变得更加困难，另外`django-happy-shop`在开发之初缺乏合理的架构设计，
 很多地方设计并不合理，也不利于后期扩展，于是便萌生了重构的念想，也就有了现在的**拜客商城系统**，英文名称直接已域名命名为：**baykeShop**。
