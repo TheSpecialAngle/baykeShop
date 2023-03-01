@@ -33,7 +33,7 @@ class HomeView(View):
     template_name = None
     
     def get(self, request, *args, **kwargs):
-        print(request.scheme, request.get_host(), reverse(bayke_settings.ALIPAY_RETURN_URL))
+        
         category_qs = BaykeShopCategory.objects.filter(parent__isnull=True, is_home=True)
         for cate in category_qs:
             sub_cates = BaykeShopCategory.objects.filter(parent=cate).values_list('id', flat=True)
