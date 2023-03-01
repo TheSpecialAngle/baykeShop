@@ -4,6 +4,6 @@ from .shop import urlpatterns
 from baykeshop.views.docs import index
 
 urlpatterns += [
-    path("", index.HomeView.as_view(), name="doc_index"),
+    path("docs/", index.HomeView.as_view(), name="doc_index"),
     path('pages/', include('django.contrib.flatpages.urls')),
 ]
