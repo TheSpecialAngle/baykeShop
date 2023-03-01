@@ -7,7 +7,6 @@ from baykeshop.views.shop import user
 
 from baykeshop.pay.alipay.notify import AlipayNotifyView
 
-from baykeshop.views.admin.mixins import TryView
 
 app_name = "baykeshop"
 
@@ -39,7 +38,5 @@ urlpatterns = [
     
     # pay,支付宝回调
     path("alipay/", AlipayNotifyView.as_view(), name="alipay_notify"),
-    
-    path("try/", TryView.as_view(), name="try")
     
 ]

@@ -1,14 +1,9 @@
 from django.contrib import admin
 from django.utils.html import format_html, format_html_join
-from django.utils.safestring import mark_safe
 from django.contrib import messages
 from django.utils.translation import ngettext
 
-from django.http import HttpResponseRedirect
-from django.contrib.contenttypes.models import ContentType
-from django.template.response import TemplateResponse
 
-from baykeshop.admin.actions import shipped_order
 from baykeshop.admin.base import BaseModelAdmin
 from baykeshop.admin.sites import bayke_site
 from baykeshop.models import (
@@ -93,18 +88,6 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
             '%d 商品支付状态已成功标记为待收货.',
             updated,
         ) % updated, messages.SUCCESS)
-        
-        
-    def get_urls(self):
-        urls = super().get_urls()
-        from django.urls import path
-        urls += [
-            path('action_order/', self.acticon_order_view, name='action_order'),
-        ]
-        return urls
-    
-    def acticon_order_view(self, request):
-        return TemplateResponse(request, 'baykeadmin/action_order.html')
     
     def has_add_permission(self, request) -> bool:
         return False

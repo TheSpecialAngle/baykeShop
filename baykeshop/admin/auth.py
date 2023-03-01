@@ -22,7 +22,6 @@ admin.site.unregister(User)
 admin.site.unregister(Group)
 
 
-
 @admin.register(User, site=bayke_site)
 class UserAdmin(BaseUserAdmin, BaseModelAdmin):
     inlines = (inline.BaykeUserInfoInline, )

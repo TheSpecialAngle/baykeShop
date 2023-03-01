@@ -1,3 +1,15 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+@文件    :sites.py
+@说明    :自定义AdminSite
+@时间    :2023/03/01 09:45:56
+@作者    :幸福关中&轻编程
+@版本    :1.0
+@微信    :baywanyun
+'''
+
+
 from django.contrib import admin
 from django.db.models import Q
 from django.contrib.auth.models import Permission
@@ -52,7 +64,11 @@ class BaykeAdminSite(admin.AdminSite):
                 try:
                     model_admin = self._registry[model]
                 except KeyError:
-                    messages.add_message(request, messages.INFO, f'{model._meta.model_name}【{model._meta.verbose_name}】未在baykeadmin中注册，请先注册模型')
+                    messages.add_message(
+                        request, 
+                        messages.INFO,
+                        f'{model._meta.model_name}【{model._meta.verbose_name}】未在baykeadmin中注册，请先注册模型'
+                    )
                 app_label = model._meta.app_label
                 
                 has_module_perms = model_admin.has_module_permission(request)

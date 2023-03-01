@@ -1,7 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html, format_html_join
 from django.utils.safestring import mark_safe
-from django.urls import reverse
 # Register your models here.
 from baykeshop.admin.base import BaseModelAdmin
 from baykeshop.models import (
