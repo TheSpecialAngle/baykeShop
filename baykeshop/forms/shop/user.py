@@ -3,8 +3,12 @@ from django import forms
 from django.core.exceptions import ValidationError
 
 from baykeshop.conf.bayke import bayke_settings
-from baykeshop.models import BaykeShopAddress, BaykeUserInfo, BaykeShopSPU
+from baykeshop.models import (
+    BaykeShopAddress, BaykeUserInfo, BaykeShopSPU, BaykeUpload
+)
 from baykeshop.forms.widgets import HTMLTextarea
+
+
 
 class BaykeShopAddressForm(forms.ModelForm):
     # 地址表单
@@ -35,10 +39,17 @@ class BaykeUserInfoForm(forms.ModelForm):
     
 
 class BaykeShopSPUForm(forms.ModelForm):
-    
+    # 商品表单
     class Meta:
         model = BaykeShopSPU
         fields = "__all__"
         widgets = {
             'content': HTMLTextarea(),
         }
+
+
+class BaykeUploadModelForm(forms.ModelForm):
+    
+    class Meta:
+        model = BaykeUpload
+        fields = ('img',)

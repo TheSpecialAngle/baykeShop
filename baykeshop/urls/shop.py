@@ -6,7 +6,7 @@ from baykeshop.views.shop import order
 from baykeshop.views.shop import user
 
 from baykeshop.pay.alipay.notify import AlipayNotifyView
-
+from baykeshop.utils.upload import WangEditorUploadImg
 
 app_name = "baykeshop"
 
@@ -39,4 +39,6 @@ urlpatterns = [
     # pay,支付宝回调
     path("alipay/", AlipayNotifyView.as_view(), name="alipay_notify"),
     
+    # 上传图片
+    path("upload/", WangEditorUploadImg.as_view(), name="upload")
 ]

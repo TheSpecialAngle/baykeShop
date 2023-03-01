@@ -47,7 +47,7 @@ class BaykeShopSPUAdmin(BaseModelAdmin):
     )
     list_display_links = ('title', )
     filter_horizontal = ('category',)
-    # form = BaykeShopSPUForm
+    form = BaykeShopSPUForm
     inlines = (BaykeShopSKUInline, BaykeSPUCarouselInline)
     
     class Media:
