@@ -50,10 +50,6 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
     readonly_fields = ('pay_status', 'dis_order_sku',)
     actions = ['dis_acticon_order']
     
-    def get_action(self, action):
-        print(action)
-        return super().get_action(action)
-    
     @admin.display(description="用户")
     def dis_owner(self, obj):
         return obj.owner.username
@@ -66,15 +62,18 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
     def dis_pay_method(self, obj):
         if obj.pay_method == 4:
             return format_html(
-                "<span style='color:red'>{}</span>", obj.get_pay_method_display()
+                "<span style='color:red'>{}</span>", 
+                obj.get_pay_method_display()
             )
         elif obj.pay_method == 2:
             return format_html(
-                "<span style='color:blue;'>{}</span>", obj.get_pay_method_display()
+                "<span style='color:blue;'>{}</span>", 
+                obj.get_pay_method_display()
             )
         elif obj.pay_method == 3:
             return format_html(
-                "<span style='color:green'>{}</span>", obj.get_pay_method_display()
+                "<span style='color:green'>{}</span>", 
+                obj.get_pay_method_display()
             )
         return obj.get_pay_method_display()
     

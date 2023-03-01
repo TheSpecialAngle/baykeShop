@@ -16,6 +16,7 @@ from baykeshop.admin.inline import (
 )
 from baykeshop.forms.shop.user import BaykeShopSPUForm
 
+
 @admin.register(BaykeShopCategory, site=bayke_site)
 class BaykeShopCategoryAdmin(BaseModelAdmin):
     list_display = ('id', 'name', 'parent', 'operate')
@@ -134,7 +135,7 @@ class BaykeShopSKUAdmin(BaseModelAdmin):
 @admin.register(BaykeShopSpec, site=bayke_site)
 class BaykeShopSpecAdmin(BaseModelAdmin):
     list_display = ('id', 'name', 'operate')
-    # search_fields = ('name',)
+    search_fields = ('name',)
     inlines = (BaykeShopSpecOptionInline, )
 
 
@@ -148,9 +149,3 @@ class BaykeShopBannerAdmin(BaseModelAdmin):
 
     class Media:
         css = {'all': ['baykeadmin/css/ordersku.css']}
-
-# admin.site.register(BaykeShopSKU)
-# admin.site.register(BaykeSPUCarousel)
-# admin.site.register(BaykeShopSpecOption)
-# bayke_site.register(BaykeShopOrderInfo)
-# admin.site.register(BaykeShopOrderSKU)

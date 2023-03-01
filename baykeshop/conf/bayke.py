@@ -37,7 +37,7 @@ class BaykeSettings:
         from baykeshop.conf.bayke import bayke_settings
         print(bayke_settings.BAYKE_TITLE)
         
-    备注：这是一个仅与命名空间设置兼容的内部类在 HAPPY_SHOP 名称下。
+    备注：这是一个仅与命名空间设置兼容的内部类在 BAYKE_SHOP 名称下。
     """
     
     def __init__(self, user_settings=None, defaults=None) -> None:
