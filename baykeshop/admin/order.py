@@ -94,10 +94,9 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
     
     def has_change_permission(self, request, obj=None) -> bool:
         # 订单处于待支付状态允许修改，其他状态不允许修改
-        if obj and obj.pay_status == 1:
-            return super().has_change_permission(request, obj)
-        return False
-        
+        if obj is not None and obj.pay_status != 1:
+            return False
+        return super().has_change_permission(request, obj)
     class Media:
         css = {'all': ['baykeadmin/css/ordersku.css']}
         

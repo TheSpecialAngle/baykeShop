@@ -11,8 +11,6 @@ class BaseModelAdmin(admin.ModelAdmin):
     
     change_list_template = "baykeadmin/change_list.html"
     change_form_template = "baykeadmin/change_form.html"
-    actions = ["mark_delete", "export_as_csv"]
-    # form = 
     
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
@@ -22,7 +20,6 @@ class BaseModelAdmin(admin.ModelAdmin):
     
     def change_view(self, request, object_id, form_url="", extra_context=None):
         return super().change_view(request, object_id, form_url, extra_context)
-    
     
     @admin.display(description="操作")
     def operate(self, obj):

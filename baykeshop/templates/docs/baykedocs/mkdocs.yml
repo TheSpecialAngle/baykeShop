@@ -1,7 +1,15 @@
 site_name: BaykeShop Docs
-site_url: https://example.com/
+site_url: http://www.bayke.shop/
+# repo_url: https://github.com/example/repository/
+site_description: "baykeShop（拜客商城系统使用文档）"
+site_author: "幸福关中"
+
 nav: 
-    - Home: index.md
-    - About: about.md
+    - 首页: index.md
+    - 使用说明: 
+        - 后台自定义菜单: menus.md
+
+extra:
+    version: 1.0
 
 # theme: readthedocs

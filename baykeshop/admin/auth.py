@@ -34,7 +34,7 @@ class UserAdmin(BaseUserAdmin, BaseModelAdmin):
                 defaults={'owner': obj},
             )
             cache.set(f'{obj.username}_balance', obj.baykeuserinfo.balance)
-            cache_balance = cache.get(f"{obj.username}_balance")
+            # cache_balance = cache.get(f"{obj.username}_balance")
         return super().get_inline_formsets(request, formsets, inline_instances, obj)
 
     def save_formset(self, request, form, formset, change):
