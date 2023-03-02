@@ -6,10 +6,16 @@ site_author: "幸福关中"
 
 nav: 
     - 首页: index.md
-    - 使用说明: 
+    - 开发文档: code/index.md
+    - 后台操作: 
         - 后台自定义菜单: menus.md
-
-extra:
-    version: 1.0
-
+        - 商品模块: 
+            - 商品分类: shop/category.md
+            - 商品规格: shop/spec.md
+            - 商品管理: shop/product.md
+            - 商品评价: shop/comment.md
+        - 订单管理: shop/order.md
 # theme: readthedocs
+extra:
+    version: v1.0
+
