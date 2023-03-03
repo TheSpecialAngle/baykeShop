@@ -15,8 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from baykeshop.public.sites import bayke_site
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('baykeadmin/', bayke_site.urls),
     path('', include('baykeshop.urls'))
 ]

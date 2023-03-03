@@ -5,14 +5,42 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
+    <title>{% block title %}{% endblock %}-baykeShop</title>
     <link rel="stylesheet" href="{% block stylesheet %}{% static "baykeshop/css/buefy.min.css" %}{% endblock %}">
+    <link rel="stylesheet" href="{% static 'baykeshop/css/style.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css">
+    <script src="{% static 'baykeshop/js/vue.js' %}"></script>
+    <script src="{% static 'baykeshop/js/buefy.min.js' %}"></script>
 </head>
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
     
     <div id="container" class="is-flex is-flex-direction-column" style="min-height: 100vh;">
         {% block header %}
-            <div id="header">header</div>
+            <div id="header-top" class="has-background-black-bis">
+                <div class="is-flex is-justify-content-space-between is-align-items-center container" style="height:40px">
+                    <div class="head-top-left">
+                        {% block head_top_left %}
+                        欢迎您光临本店！
+                        {% endblock %}  
+                    </div>
+                    <div class="head-top-right">
+                        {% block head_top_right %}
+                        <a class="mr-2" href="">
+                            <span class="icon"><i class="mdi mdi-login"></i></span>
+                            登录
+                        </a> <span class="is-size-6">|</span>
+                        <a class="mr-3" href="">
+                            <span class="icon"><i class="mdi mdi-cash-register"></i></span>
+                            注册
+                        </a>
+                        <a class="cart" href="">购物车</a>
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+            <div id="header">
+                {% include 'baykeshop/navbar.html' %}
+            </div>
         {% endblock %}
         
         {% block main %}
@@ -25,7 +53,7 @@
         {% endblock %}
         
         {% block footer %}
-            <div id="footer" class="footer">
+            <div id="footer" class="footer has-background-black-bis">
                 asdasdas
             </div>
         {% endblock %}
