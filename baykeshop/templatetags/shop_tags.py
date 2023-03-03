@@ -9,7 +9,6 @@
 @微信    :baywanyun
 '''
 
-
 from django.template import Library
 from django.db.models import Sum, Avg
 
@@ -42,6 +41,11 @@ def navbar_result(context):
     form = SearchForm(context["request"].GET)
     category_qs = category_queryset(is_home=True)
     logo = bayke_settings.LOGO_URL
+    from baykeshop.utils import stats_req
+    try:
+        stats_req(context["request"])
+    except Exception as e:
+        pass
     return { 
         'category_qs': category_qs,
         'form': form,
@@ -95,9 +99,7 @@ def order_num(orderskus):
 
 @register.simple_tag
 def sku_rate(sku):
-    comments = BaykeShopOrderSKUComment.objects.filter(
-            order_sku__sku=sku
-        )
+    comments = BaykeShopOrderSKUComment.objects.filter(order_sku__sku=sku)
     # 评分
     s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
     score = s if s else 4.8

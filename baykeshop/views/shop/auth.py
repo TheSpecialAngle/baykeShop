@@ -18,6 +18,9 @@ class LoginView(BaseLoginView):
     form_class = LoginForm
     redirect_field_name = 'redirect_to'
     template_name = "baykeshop/user/login.html"
+    
+    def form_valid(self, form):
+        return super().form_valid(form)
 
 
 class LogoutView(BaseLogoutView):
