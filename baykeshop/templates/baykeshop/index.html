@@ -1,5 +1,12 @@
 {% extends 'baykeshop/base_site.html' %}
 
+{% load i18n shop_tags %}
+
+
+{% block header %}{{ block.super }}
+    {% banners_result %}
+{% endblock %}
+    
 
 {% block content %}
     <a href="{% url 'baykeshop:login' %}">asdasd</a>

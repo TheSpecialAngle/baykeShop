@@ -3,6 +3,9 @@ from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.translation import gettext as _
 
+from baykeshop.public.sites import bayke_site
+from baykeshop.models import BaykeBanner
+
 
 class BaseModelAdmin(admin.ModelAdmin):
     """继承了django的ModelAdmin
@@ -27,3 +30,15 @@ class BaseModelAdmin(admin.ModelAdmin):
         h1 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_change', args=(obj.pk, ))
         h2 = reverse(f'baykeadmin:{obj._meta.app_label}_{obj._meta.model_name}_delete', args=(obj.pk, ))
         return format_html(hs, h1, h2)
+    
+
+@admin.register(BaykeBanner, site=bayke_site)
+class BaykeShopBannerAdmin(BaseModelAdmin):
+    list_display = ('id', 'imgformat', 'target_url', 'operate')
+    
+    @admin.display(description="轮播图")
+    def imgformat(self, obj):
+        return format_html(f'<img src="{obj.img.url}" width="auto" height="100px" />')
+
+    class Media:
+        css = {'all': ['baykeadmin/css/ordersku.css']}

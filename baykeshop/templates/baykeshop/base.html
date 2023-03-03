@@ -1,4 +1,4 @@
-{% load i18n static %}<!DOCTYPE html>
+{% load i18n static shop_tags %}<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
 <head>
@@ -29,17 +29,65 @@
                             <span class="icon"><i class="mdi mdi-login"></i></span>
                             登录
                         </a> <span class="is-size-6">|</span>
-                        <a class="mr-3" href="" target="_blank">
+                        <a class="mr-3" href="{% url 'baykeshop:register' %}" target="_blank">
                             <span class="icon"><i class="mdi mdi-cash-register"></i></span>
                             注册
                         </a>
-                        <a class="cart" href="">购物车</a>
+                        <a class="cart" href="">
+                            <span class="icon"><i class="mdi mdi-cart-check"></i></span>
+                            购物车(0)
+                        </a>
                         {% endblock %}
                     </div>
                 </div>
             </div>
+
             <div id="header">
-                {% include 'baykeshop/navbar.html' %}
+                <div id="navbar">
+                    <template>
+                        <b-navbar spaced shadow transparent wrapper-class="{% block navclass %}container{% endblock %}">
+                            <template #brand>
+                                <b-navbar-item tag="div">
+                                    {% block navbar_logo %}
+                                    <h1 class="is-size-4 has-text-weight-medium">BaykeShop</h1>
+                                    {% endblock %} 
+                                </b-navbar-item>
+                            </template>
+                            <template #start>
+                                {% block navbar_start %}
+                                <b-navbar-item href="{% url 'baykeshop:home' %}">
+                                    首页
+                                </b-navbar-item>
+                                {% navbar_result as cates %}
+                                {% for cate in cates %}
+                                <b-navbar-dropdown label="{{ cate.name }}">
+                                    {% for sub_cate in cate.sub_cates %}
+                                    <b-navbar-item href="#">
+                                        {{ sub_cate.name }}
+                                    </b-navbar-item>
+                                    {% endfor %}
+                                </b-navbar-dropdown>
+                                {% endfor %}
+                                {% endblock %}             
+                            </template>
+                    
+                            <template #end>
+                                {% block navbar_end %}
+                                <b-navbar-item tag="div">
+                                    <div class="buttons">
+                                        <a class="button is-primary">
+                                            <strong>Sign up</strong>
+                                        </a>
+                                        <a class="button is-light">
+                                            Log in
+                                        </a>
+                                    </div>
+                                </b-navbar-item>
+                                {% endblock %} 
+                            </template>
+                        </b-navbar>
+                    </template>
+                </div>
             </div>
         {% endblock %}
         
@@ -75,12 +123,20 @@
             </b-notification>
         </div>
         {% endfor %}
+        <script>
+            var notification = new Vue({
+                el: '#notification',
+                delimiters: ['{$', '$}'],
+            })
+        </script>
     {% endif %}
 
     <script>
-        var notification = new Vue({
-            el: '#notification',
+        var navbar = new Vue({
+            el: '#navbar',
             delimiters: ['{$', '$}'],
+            data: {},
+            methods: {}
         })
     </script>
 </body>
