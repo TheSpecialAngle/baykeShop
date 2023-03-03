@@ -1,0 +1,35 @@
+{% load i18n static %}<!DOCTYPE html>
+{% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}" dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr,auto' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% block stylesheet %}{% static "baykeshop/css/buefy.min.css" %}{% endblock %}">
+</head>
+<body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
+    
+    <div id="container" class="is-flex is-flex-direction-column" style="min-height: 100vh;">
+        {% block header %}
+            <div id="header">header</div>
+        {% endblock %}
+        
+        {% block main %}
+            <div id="main" style="flex: 1;">
+                <p>asdas</p> 
+                <p>asdas</p> 
+                <p>asdas</p> 
+                <p>asdas</p>
+            </div>
+        {% endblock %}
+        
+        {% block footer %}
+            <div id="footer" class="footer">
+                asdasdas
+            </div>
+        {% endblock %}
+    </div>
+
+</body>
+</html>
