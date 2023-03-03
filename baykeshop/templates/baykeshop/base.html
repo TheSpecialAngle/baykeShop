@@ -14,7 +14,7 @@
 </head>
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
     
-    <div id="container" class="is-flex is-flex-direction-column" style="min-height: 100vh;">
+    <div id="container" class="is-flex is-flex-direction-column full-height">
         {% block header %}
             <div id="header-top" class="has-background-black-bis">
                 <div class="is-flex is-justify-content-space-between is-align-items-center container" style="height:40px">
@@ -25,11 +25,11 @@
                     </div>
                     <div class="head-top-right">
                         {% block head_top_right %}
-                        <a class="mr-2" href="">
+                        <a class="mr-2" href="{% url 'baykeshop:login' %}" target="_blank">
                             <span class="icon"><i class="mdi mdi-login"></i></span>
                             登录
                         </a> <span class="is-size-6">|</span>
-                        <a class="mr-3" href="">
+                        <a class="mr-3" href="" target="_blank">
                             <span class="icon"><i class="mdi mdi-cash-register"></i></span>
                             注册
                         </a>
@@ -44,11 +44,15 @@
         {% endblock %}
         
         {% block main %}
-            <div id="main" style="flex: 1;">
-                <p>asdas</p> 
-                <p>asdas</p> 
-                <p>asdas</p> 
-                <p>asdas</p>
+            <div id="main" class="full-height">
+                <div id="content" class="full-height">
+                    {% block content %}
+                    <p>asdas</p> 
+                    <p>asdas</p> 
+                    <p>asdas</p> 
+                    <p>asdas</p>
+                    {% endblock %}
+                </div>
             </div>
         {% endblock %}
         
@@ -58,6 +62,26 @@
             </div>
         {% endblock %}
     </div>
+    {% if messages %}
+        {% for message in messages %}
+        <div id="notification">
+            <b-notification
+                auto-close 
+                {% if message.tags %}type="is-{{ message.tags }} is-light"{% endif %}
+                :duration="3000"
+                position="is-top-right"
+                aria-close-label="Close notification">
+                {{ message }}
+            </b-notification>
+        </div>
+        {% endfor %}
+    {% endif %}
 
+    <script>
+        var notification = new Vue({
+            el: '#notification',
+            delimiters: ['{$', '$}'],
+        })
+    </script>
 </body>
 </html>
