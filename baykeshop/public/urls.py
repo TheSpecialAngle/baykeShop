@@ -1,6 +1,7 @@
 from django.urls import path
-from baykeshop.public.views import HomeTemplateView
+from baykeshop.public import views
 
 urlpatterns = [
-    path("", HomeTemplateView.as_view(), name="home")
+    path("", views.HomeTemplateView.as_view(), name="home"),
+    path("upload/", views.WangEditorUploadImg.as_view(), name="upload")
 ]
