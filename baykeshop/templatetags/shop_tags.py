@@ -5,12 +5,10 @@ from baykeshop.config.settings import bayke_settings
 
 register = Library()
 
+
 @register.simple_tag
 def navbar_result():
-    cates = BaykeShopCategory.objects.filter(is_home=True, parent__isnull=True)
-    for cate in cates:
-        cate.sub_cates = cate.baykeshopcategory_set.filter(is_home=True)
-    return cates
+    return BaykeShopCategory.get_cates()
 
 
 @register.inclusion_tag(filename="baykeshop/banner.html")

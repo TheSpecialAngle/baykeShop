@@ -27,13 +27,14 @@ class BaykeShopSKUInline(admin.TabularInline):
     # raw_id_fields = (,)
     
 
-class BaykeSPUCarouselInline(admin.TabularInline):
+class BaykeSPUCarouselInline(admin.StackedInline):
     '''Tabular Inline View for '''
 
     model = BaykeSPUCarousel
     min_num = 1
     max_num = 20
     extra = 1
+    exclude = ('target_url', 'desc')
     # raw_id_fields = (,)
     
 

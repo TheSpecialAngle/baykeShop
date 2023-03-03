@@ -38,6 +38,13 @@ class BaykeShopCategory(CategoryAbstractModel):
 
     def __str__(self):
         return self.name
+    
+    @classmethod
+    def get_cates(cls):
+        cates = cls.objects.filter(is_home=True, parent__isnull=True)
+        for cate in cates:
+            cate.sub_cates = cate.baykeshopcategory_set.filter(is_home=True)
+        return cates
 
 
 class BaykeShopSPU(AbstractModel):
