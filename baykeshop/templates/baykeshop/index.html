@@ -15,12 +15,12 @@
 {% banners_result %}
     <div class="container mt-4">
         {% for cate in cates %}
-        <div class="is-flex is-align-items-center is-justify-content-space-between">
+        <div class="is-flex is-align-items-center is-justify-content-space-between mb-2">
             <div class="">
-                <h1 class=" is-size-5">{{ cate.name }}</h1>
+                <h1 class=" has-text-weight-semibold is-size-5">{{ cate.name }}</h1>
             </div>
             <div class="">
-                <a href="">更多</a>
+                <a href="">更多>></a>
             </div>
         </div>
         <div class="columns is-multiline">
@@ -31,49 +31,9 @@
             </div>
             {% for spu in cate.spus %}
             <div class="column is-2">
-                <div class="is-relative full-height p-2 has-background-white">
-                    <figure class="image is-1by1">
-                        <a href=""><img src="{{ spu.cover_pic.url }}" alt="{{ spu.title }}"></a>
-                    </figure>
-                    <p class="has-text-justified"><a class=" has-text-black-ter">{{ spu.title|truncatechars:35 }}...</a></p> 
-                    <div class="is-flex is-align-items-center is-justify-content-space-between pt-1">
-                        <span class="is-size-5 has-text-danger-dark">¥1299</span>
-                        <span class="tag is-danger is-light is-size-7">券</span>
-                    </div>
-
-                    <div class="spu-foot">
-                        <div class="is-flex is-align-items-center is-justify-content-space-between p-2">
-                            <span class="is-size-7 has-text-grey-light">15人付款</span>
-                            <span class="is-size-7 has-text-grey-light">4.6分</span>
-                        </div>
-                    </div>
-                </div>
+                {% spu_box spu %}
             </div>
             {% endfor %}
-            <div class="column is-2 has-background-grey">
-                asd
-            </div>
-            <div class="column is-2 has-background-grey-light">
-                asd
-            </div>
-            <div class="column is-2 has-background-dark">
-                asd
-            </div>
-            <div class="column is-2">
-                asd
-            </div>
-            <div class="column is-2">
-                asd
-            </div>
-            <div class="column is-2">
-                asd
-            </div>
-            <div class="column is-2">
-                asd
-            </div>
-            <div class="column is-2">
-                asd
-            </div>
         </div>
         {% endfor %}
     </div>    

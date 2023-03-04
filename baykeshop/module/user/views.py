@@ -25,7 +25,7 @@ class LoginView(SuccessMessageMixin, BaseLoginView):
     form_class = LoginForm
     redirect_field_name = 'redirect_to'
     template_name = "baykeshop/user/login.html"
-    success_message = "%(username)s was created successfully"
+    success_message = "%(username)s 登录成功！"
 
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(

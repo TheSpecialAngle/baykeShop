@@ -35,3 +35,17 @@ def breadcrumbs(request, opts=None):
         return request.breadcrumbs
     else:
         return None
+    
+
+@register.inclusion_tag(filename="baykeshop/spu_box.html")
+def spu_box(spu):
+    
+    def skus(spu):
+        return spu.baykeshopsku_set.order_by('price')
+    
+    from django.db.models import Sum
+    return {
+        'spu': spu,
+        'price': skus(spu).first().price,
+        'sales': skus(spu).aggregate(Sum('sales'))['sales__sum'],
+    }
