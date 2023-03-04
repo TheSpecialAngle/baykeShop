@@ -1,5 +1,6 @@
 from django.template import Library
 
+from baykeshop.public.forms import SearchForm
 from baykeshop.models import BaykePermission, BaykeShopCategory, BaykeBanner
 from baykeshop.config.settings import bayke_settings
 
@@ -39,7 +40,6 @@ def breadcrumbs(request, opts=None):
 
 @register.inclusion_tag(filename="baykeshop/spu_box.html")
 def spu_box(spu):
-    
     def skus(spu):
         return spu.baykeshopsku_set.order_by('price')
     
@@ -49,3 +49,9 @@ def spu_box(spu):
         'price': skus(spu).first().price,
         'sales': skus(spu).aggregate(Sum('sales'))['sales__sum'],
     }
+    
+
+@register.simple_tag
+def search(request):
+    form = SearchForm(initial=request.GET)
+    return form

@@ -1,5 +1,6 @@
 from django import forms
 from django.forms.widgets import Textarea as BaseTextarea
+from baykeshop.config.settings import bayke_settings
 
 
 class HTMLTextarea(BaseTextarea):
@@ -17,10 +18,29 @@ class HTMLTextarea(BaseTextarea):
         css = {'all': ('baykeadmin/css/style.css','baykeadmin/css/editor.css')}
         js = ('baykeadmin/js/index.js',)
         
-
+        
 class BaykeUploadModelForm(forms.ModelForm):
-    
+    """ 上传图片表单 """
     class Meta:
         from baykeshop.models import BaykeUpload
         model = BaykeUpload
         fields = ('img',)
+        
+
+class SearchForm(forms.Form):
+    
+    template_name = "baykeshop/search_form.html"
+    
+    word = forms.CharField(
+        max_length=36, 
+        required=True, 
+        widget=forms.TextInput(
+            {
+                'type': 'search', 
+                'class': 'input',
+                'placeholder': f'{bayke_settings.SEARCH_VALUE}'
+            }
+        )
+    )
+    
+    

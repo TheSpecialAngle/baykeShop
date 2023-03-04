@@ -1,5 +1,8 @@
+from django.db.models import Q
 from django.http.response import JsonResponse
 from django.views.generic import View, TemplateView
+from django.contrib import messages
+from baykeshop.public.forms import SearchForm
 from baykeshop.config.settings import bayke_settings
 
 
@@ -19,6 +22,28 @@ class HomeTemplateView(TemplateView):
             cate.spus = BaykeShopSPU.objects.filter(category__in=cate.sub_cates)[:bayke_settings.HOME_GOODS_COUNT]
         return queryset
     
+
+class SearchTemplateView(TemplateView):
+    """ 商城首页 """
+    template_name = "baykeshop/search.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['spus'] = self.get_queryset()
+        return context
+
+    def get_queryset(self):
+        from baykeshop.models import BaykeShopSPU
+        form = SearchForm(self.request.GET)
+        queryset = None
+        if form.is_valid():
+            word = form.cleaned_data['word']
+            queryset = BaykeShopSPU.objects.filter(
+                Q(title__icontains=word)|Q(desc__icontains=word)|Q(keywords__icontains=word)
+            )
+            messages.add_message(self.request, messages.SUCCESS, f'共搜索到{queryset.count()}条数据')
+        return queryset
+
 
 class WangEditorUploadImg(View):
     """ 编辑器上传图片接口 """

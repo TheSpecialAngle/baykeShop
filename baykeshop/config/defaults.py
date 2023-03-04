@@ -6,7 +6,7 @@ BAYKE_DEFAULTS = {
     "LOGO_URL": "/static/baykeshop/img/logo.png",
     
     # 搜索框默认搜索词
-    "SEARCH_VALUE": "电脑",
+    "SEARCH_VALUE": "请输入搜索词...",
     
     # 手机号验证正则
     "PHONE_REGX": r"^1[35678]\d{9}$",
