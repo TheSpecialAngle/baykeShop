@@ -14,7 +14,7 @@
 </head>
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
     
-    <div id="container" class="is-flex is-flex-direction-column full-height">
+    <div id="header">
         {% block header %}
             <div id="header-top" class="has-background-black-bis">
                 <div class="is-flex is-justify-content-space-between is-align-items-center container" style="height:40px">
@@ -90,26 +90,16 @@
                 </div>
             </div>
         {% endblock %}
-        
-        {% block main %}
-            <div id="main" class="full-height">
-                <div id="content" class="full-height">
-                    {% block content %}
-                    <p>asdas</p> 
-                    <p>asdas</p> 
-                    <p>asdas</p> 
-                    <p>asdas</p>
-                    {% endblock %}
-                </div>
-            </div>
-        {% endblock %}
-        
-        {% block footer %}
-            <div id="footer" class="footer has-background-black-bis">
-                asdasdas
-            </div>
+    </div>
+
+    <div id="main">
+        {% block content %}
         {% endblock %}
     </div>
+
+    <div id="footer" class="footer">asdasda</div>
+
+   
     {% if messages %}
         {% for message in messages %}
         <div id="notification">
@@ -138,6 +128,6 @@
             data: {},
             methods: {}
         })
-    </script>
+    </script> 
 </body>
 </html>

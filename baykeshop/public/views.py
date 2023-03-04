@@ -16,7 +16,6 @@ class HomeTemplateView(TemplateView):
         from baykeshop.models import BaykeShopCategory, BaykeShopSPU
         queryset = BaykeShopCategory.get_cates()
         for cate in queryset:
-            # sub_ids = cate.sub_cates.values_list('id', flat=True)
             cate.spus = BaykeShopSPU.objects.filter(category__in=cate.sub_cates)[:bayke_settings.HOME_GOODS_COUNT]
         return queryset
     
