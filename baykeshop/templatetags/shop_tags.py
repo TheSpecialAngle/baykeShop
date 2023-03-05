@@ -55,3 +55,14 @@ def spu_box(spu):
 def search(request):
     form = SearchForm(initial=request.GET)
     return form
+
+@register.inclusion_tag(filename="baykeshop/goods/page_list.html")
+def page_list(request, page_obj):
+    return {
+        'page_obj': page_obj,
+        'paginator': page_obj.paginator,
+        'total': page_obj.paginator.num_pages,
+        'current': request.GET.get('page', 1),
+        'per_page': page_obj.paginator.per_page,
+        # 'tag': tag
+    }

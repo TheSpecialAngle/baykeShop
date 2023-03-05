@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@5.8.55/css/materialdesignicons.min.css">
     <script src="{% static 'baykeshop/js/vue.js' %}"></script>
     <script src="{% static 'baykeshop/js/buefy.min.js' %}"></script>
+    {% block extrastyle %}{% endblock %}
 </head>
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}" data-admin-utc-offset="{% now "Z" %}">
     
@@ -26,10 +27,6 @@
                     <div class="head-top-right">
                         {% block head_top_right %}
                         {% if request.user.is_authenticated %}
-                        <!-- <a class="mr-2" href="{% url 'baykeshop:login' %}" target="_blank">
-                            欢迎您，
-                            {{ request.user.username }}
-                        </a><span class="is-size-6">|</span> -->
                         <div class="dropdown is-hoverable usertools">
                             <div class="dropdown-trigger">
                               <button class="button is-radiusless is-shadowless" aria-haspopup="true" aria-controls="dropdown-menu4" 
@@ -124,8 +121,17 @@
     </div>
 
     <div id="main">
-        {% block content %}
-        {% endblock %}
+        {% block breadcrumb %}
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                <li><a href="#">Bulma</a></li>
+                <li><a href="#">Documentation</a></li>
+                <li><a href="#">Components</a></li>
+                <li class="is-active"><a href="#" aria-current="page">Breadcrumb</a></li>
+            </ul>
+        </nav>
+        {% endblock %}     
+        {% block content %}{% endblock %}
     </div>
 
     <div id="footer" class="footer has-background-black-bis">asdasda</div>

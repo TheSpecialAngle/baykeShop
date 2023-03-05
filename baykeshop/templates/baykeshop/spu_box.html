@@ -1,15 +1,15 @@
-<div class="is-relative full-height p-2 has-background-white">
+<div class="is-relative full-height p-2 has-background-white spu-box">
     <figure class="image is-1by1">
         <a href=""><img src="{{ spu.cover_pic.url }}" alt="{{ spu.title }}"></a>
     </figure>
-    <p class="has-text-justified"><a class=" has-text-black-ter">{{ spu.title|truncatechars:35 }}...</a></p> 
+    <p class="has-text-justified spu-title"><a class="has-text-black-ter">{{ spu.title|truncatechars:30 }}...</a></p> 
     <div class="is-flex is-align-items-center is-justify-content-space-between pt-1">
         <span class="is-size-5 has-text-danger-dark">¥{{ price }}</span>
         <span class="tag is-danger is-light is-size-7">券</span>
     </div>
 
     <div class="spu-foot">
-        <div class="is-flex is-align-items-center is-justify-content-space-between p-2">
+        <div class="is-flex is-align-items-center is-justify-content-space-between">
             <span class="is-size-7 has-text-grey-light">{{ sales }}人付款</span>
             <span class="is-size-7 has-text-grey-light">4.6分</span>
         </div>

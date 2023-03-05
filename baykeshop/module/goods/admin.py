@@ -73,12 +73,8 @@ class BaykeShopSPUAdmin(BaseModelAdmin):
     def dis_spec(self, obj):
         return format_html_join(
             '\n', '{}<br>',
-            (
-                (
-                    f"{k['spec__name']}:{k['name']}" 
-                    for k in u.options.values('spec__name','name',)
-                )
-                for u in self.get_skus(obj) if u
+            (   
+               (f"{k['spec__name']}:{k['name']}" for k in u.options.values('spec__name','name',)) for u in self.get_skus(obj) if u.options.exists() 
             )
         )
     

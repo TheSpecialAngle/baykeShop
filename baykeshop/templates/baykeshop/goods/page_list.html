@@ -1,0 +1,70 @@
+{% load shop_tags %}
+
+<div id="pageGoods">
+    <div class="columns is-multiline">
+        {% for spu in page_obj %}
+        <div class="column is-3">
+            {% spu_box spu %}
+        </div>
+        {% endfor %}
+    </div>
+    <b-pagination 
+        :total="total" 
+        v-model="current" 
+        :range-before="rangeBefore" 
+        :range-after="rangeAfter"
+        :order="order" 
+        :size="size" 
+        :simple="isSimple" 
+        :rounded="isRounded" 
+        :per-page="perPage"
+        :icon-prev="prevIcon" 
+        :icon-next="nextIcon" 
+        aria-next-label="Next page"
+        aria-previous-label="Previous page" 
+        aria-page-label="Page" 
+        aria-current-label="Current page"
+        :page-input="hasInput" 
+        @change="convertToRoman" 
+        :page-input-position="inputPosition"
+        :debounce-page-input="inputDebounce">
+        <template #default="props">
+            <b-pagination-button 
+                :page="props.page" 
+                :id="`page${props.page.number}`" 
+                tag="a"
+                href="`{{ request.path }}?page=${props.page.number}`"
+                class="is-block is-clickable">
+                {$ props.page.number $}
+            </b-pagination-button>
+        </template>
+    </b-pagination>
+</div>
+<script>
+    var current = '{{ current }}'
+    var pageGoods = new Vue({
+        el: '#pageGoods',
+        delimiters: ['{$', '$}'],
+        data: {
+            total: '{{ total }}',
+            current: Number(current),
+            perPage: '{{ per_page }}',
+            rangeBefore: 3,
+            rangeAfter: 1,
+            order: 'is-centered',
+            size: 'is-small',
+            isSimple: false,
+            isRounded: false,
+            hasInput: false,
+            prevIcon: 'chevron-left',
+            nextIcon: 'chevron-right',
+            inputPosition: '',
+            inputDebounce: '',
+        },
+        methods: {
+            convertToRoman(num){
+                location.href = `{{ request.path }}?page=${num}`
+            }
+        }
+    })
+</script>

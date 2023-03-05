@@ -1,17 +1,23 @@
 {% extends 'baykeshop/base_site.html' %}
 
 {% load i18n shop_tags %}
-    
 
-{% block content %}
+{% block extrastyle %}
 <style>
-    .spu-foot{
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-    }
+.spu-box .spu-title{
+    min-height: 45px;
+}
+.spu-foot{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: .5rem;
+}
 </style>
+
+{% endblock %}
+{% block content %}
 {% banners_result %}
     <div class="container mt-4">
         {% for cate in cates %}

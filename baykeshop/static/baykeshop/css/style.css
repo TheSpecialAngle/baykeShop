@@ -28,6 +28,12 @@ body{
     padding: 0 20px;
 }
 
+.spu-box:hover{
+    box-shadow: 0 0 15px rgba(210, 245, 255, 0.558);
+    /* border-radius: 3px; */
+    transition: all .5s;
+}
+
 #notification{
     position: absolute;
     top: 80px;

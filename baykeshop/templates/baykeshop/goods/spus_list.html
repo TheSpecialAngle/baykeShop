@@ -2,15 +2,61 @@
 
 {% load shop_tags %}
 
+{% block extrastyle %}
+<style>
+.goods .spu-box{min-height: 420px;}
+.goods .spu-box .spu-title{min-height: 40px;}
+.spu-foot{position: absolute;bottom: 0;left: 0;width: 100%;padding: .5rem;}
+.parent-cate, .sub-cate {min-height: 45px;}
+.parent-cate ul li{width: 80px; text-align: right;}
+.parent-cate ul li a{ display: inline-block; height: 45px; line-height: 45px;color: rgba(28, 28, 28, 0.818);}
+.parent-cate ul li a.active{border-bottom: 2px solid red; color: red;}
+</style>
+{% endblock %}
+
 {% block title %}全部商品{% endblock %}
 
+{% block breadcrumb %}
+<div class="container">
+  <nav class="breadcrumb is-marginless mt-3 mb-3 is-small" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="{% url 'baykeshop:home' %}">首页</a></li>
+      <li class="is-active"><a href="#" aria-current="page">{% if word %}{{ word }}{% else %}全部商品{% endif %}</a></li>
+    </ul>
+  </nav>
+</div>
+{% endblock %}
+
 {% block content %}
-    <div class="columns is-multiline">
-        {% for spu in spus %}
-        <div class="column is-3">
-            {% spu_box spu %}
-        </div>
+<div class="container goods">
+  <div class="cates mb-3">
+    <div class="parent-cate has-background-white">
+      <ul class="is-flex is-flex-wrap-wrap">
+        {% for cate in cates %}
+        <li><a class="active" href="{% url 'baykeshop:cate_detail' cate.id %}">{{ cate.name }}</a></li>
         {% endfor %}
+        <li style="margin-left: auto; text-align: left; width:110px;border-left: 1px solid rgb(218, 218, 218);">
+          <a href=""><span class="icon"><i class="mdi mdi-menu-swap-outline"></i></span> 全部分类</a>
+        </li>
+      </ul>
     </div>
+    <div class="sub-cate spu-filter has-background-white mt-3">
+      <ul class="is-flex is-flex-wrap-wrap pt-4 mb-1">
+        <li class="has-text-centered"><a class="has-text-grey-light">分类:</a></li>
+        <li class="has-text-left pl-3"><a href="{% url 'baykeshop:spus' %}">全部分类</a></li>
+        {% for sub_cate in sub_cates %}
+        <li class="has-text-left pl-3"><a href="{% url 'baykeshop:cate_detail' sub_cate.id %}">{{ sub_cate }}</a></li>
+        {% endfor %}
+      </ul>
+      <ul class="is-flex is-flex-wrap-wrap pb-3">
+        <li class="has-text-centered"><a class="has-text-grey-light">筛选:</a></li>
+        <li class="has-text-left pl-3"><a href="">销量</a></li>
+        <li class="has-text-left pl-3"><a href="">价位</a></li>
+      </ul>
+    </div>
+  </div>
+
+  {% page_list request page_obj %}
+</div>
 {% endblock %}
     
