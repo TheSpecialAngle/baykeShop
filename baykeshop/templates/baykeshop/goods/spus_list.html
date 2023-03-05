@@ -1,0 +1,16 @@
+{% extends 'baykeshop/base_site.html' %}
+
+{% load shop_tags %}
+
+{% block title %}全部商品{% endblock %}
+
+{% block content %}
+    <div class="columns is-multiline">
+        {% for spu in spus %}
+        <div class="column is-3">
+            {% spu_box spu %}
+        </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+    

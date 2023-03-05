@@ -1,7 +1,9 @@
 from django.db.models import Q
 from django.http.response import JsonResponse
-from django.views.generic import View, TemplateView
+from django.views.generic import View, TemplateView, ListView
 from django.contrib import messages
+
+from baykeshop.models import BaykeShopSPU
 from baykeshop.public.forms import SearchForm
 from baykeshop.config.settings import bayke_settings
 
@@ -21,24 +23,30 @@ class HomeTemplateView(TemplateView):
         for cate in queryset:
             cate.spus = BaykeShopSPU.objects.filter(category__in=cate.sub_cates)[:bayke_settings.HOME_GOODS_COUNT]
         return queryset
-    
 
-class SearchTemplateView(TemplateView):
-    """ 商城首页 """
-    template_name = "baykeshop/search.html"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['spus'] = self.get_queryset()
-        return context
+class BaykeShopSPUListView(ListView):
+    """ 全部商品 """
+    template_name = "baykeshop/spus_list.html"
+    context_object_name = "spus"
+    paginate_by = bayke_settings.GOODS_PAGINATE_BY
+    paginate_orphans = bayke_settings.GOODS_PAGINATE_ORPHANS
 
     def get_queryset(self):
-        from baykeshop.models import BaykeShopSPU
+        queryset = BaykeShopSPU.objects.all()
+        return queryset
+
+
+class SearchTemplateView(BaykeShopSPUListView):
+    """ 搜索视图 """
+    template_name = "baykeshop/search.html"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
         form = SearchForm(self.request.GET)
-        queryset = None
         if form.is_valid():
             word = form.cleaned_data['word']
-            queryset = BaykeShopSPU.objects.filter(
+            queryset = queryset.filter(
                 Q(title__icontains=word)|Q(desc__icontains=word)|Q(keywords__icontains=word)
             )
             messages.add_message(self.request, messages.SUCCESS, f'共搜索到{queryset.count()}条数据')
