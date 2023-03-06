@@ -1,6 +1,7 @@
 {% load static shop_tags %}
 
 <div id="pageGoods">
+    {{ params|json_script:"params" }}
     <div class="columns is-multiline">
         {% for spu in page_obj %}
         <div class="column is-3">
@@ -49,6 +50,7 @@
     {% endif %}
 </div>
 <script>
+    var params = JSON.parse(document.getElementById('params').textContent);
     var current = '{{ current }}'
     var pageGoods = new Vue({
         el: '#pageGoods',
@@ -68,10 +70,13 @@
             nextIcon: 'chevron-right',
             inputPosition: '',
             inputDebounce: '',
+            params: params
         },
         methods: {
             convertToRoman(num){
-                location.href = `{{ request.path }}?page=${num}`
+                console.log(this.params)
+                let order = '{% if params.order %}&order={{ params.order }}{% endif %}'
+                location.href = `{{ request.path }}?page=${num}${order}`
             }
         }
     })
