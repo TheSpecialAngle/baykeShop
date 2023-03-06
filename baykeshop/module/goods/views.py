@@ -18,19 +18,9 @@ class BaykeShopSPUListView(ListView):
         params = self.request.GET.dict()
         # 默认按日期排序
         queryset = BaykeShopSPU.objects.order_by('-add_date')
-        # 按价格排序
-        if params and params['order'].replace('-', '') == 'price':
-            queryset = []
-            skus = BaykeShopSKU.objects.order_by(*list(params.values()))
-            for sku in skus:
-                if sku.spu not in queryset:
-                    queryset.append(sku.spu)
-        # 按销量排序
-        elif params and params['order'].replace('-', '') == 'sales':
-            from django.db.models import Sum
-            datas = [{'spu': spu, 'sales': spu.baykeshopsku_set.aggregate(Sum('sales'))['sales__sum']} for spu in queryset if spu]
-            datas.sort(key=lambda s: s['sales'], reverse=True)
-            queryset = [data['spu'] for data in datas ]
+        # 按销量或价格排序
+        if params:
+            queryset = self.get_order_queryset(params, spus=queryset)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -38,11 +28,27 @@ class BaykeShopSPUListView(ListView):
         context['cates'] = BaykeShopCategory.get_cates().order_by('-add_date')
         context['sub_cates'] = context['cates'].first().baykeshopcategory_set.all()
         return context
+    
+    def get_order_queryset(self, params, spus, filter={}):
+        # 按销量或价格排序
+        queryset = []
+        # 按价格排序
+        if params and params['order'].replace('-', '') == 'price':
+            skus = BaykeShopSKU.objects.filter(**filter).order_by(*list(params.values()))
+            for sku in skus:
+                if sku.spu not in queryset:
+                    queryset.append(sku.spu)
+        # 按销量排序
+        elif params and params['order'].replace('-', '') == 'sales':
+            from django.db.models import Sum
+            datas = [{'spu': spu, 'sales': spu.baykeshopsku_set.aggregate(Sum('sales'))['sales__sum']} for spu in spus if spu]
+            datas.sort(key=lambda s: s['sales'], reverse=True)
+            queryset = [data['spu'] for data in datas ]
+        return queryset
 
-
+    
 class BaykeShopCategoryDetailView(SingleObjectMixin, BaykeShopSPUListView):
     """ 商品分类 """
-    
     def get(self, request, *args, **kwargs):
         self.object = self.get_object(queryset=BaykeShopCategory.objects.all())
         return super().get(request, *args, **kwargs)
@@ -57,45 +63,16 @@ class BaykeShopCategoryDetailView(SingleObjectMixin, BaykeShopSPUListView):
         cate = self.object
         params = self.request.GET.dict()
         if cate.parent is None:
-            spus = BaykeShopSPU.objects.filter(
-                category__in=cate.baykeshopcategory_set.all()
-                ).order_by('-add_date')
-            
-            # 按价格排序
-            if params and params['order'].replace('-', '') == 'price':
-                queryset = []
-                skus = BaykeShopSKU.objects.filter(spu__category__in=cate.baykeshopcategory_set.all()).order_by(*list(params.values()))
-                for sku in skus:
-                    if sku.spu not in queryset:
-                        queryset.append(sku.spu)
-                spus = queryset
-            
-            # 按销量排序
-            elif params and params['order'].replace('-', '') == 'sales':
-                from django.db.models import Sum
-                datas = [{'spu': spu, 'sales': spu.baykeshopsku_set.aggregate(Sum('sales'))['sales__sum']} for spu in spus if spu]
-                datas.sort(key=lambda s: s['sales'], reverse=True)
-                queryset = [data['spu'] for data in datas ]
-                spus = queryset
+            spus = BaykeShopSPU.objects.filter(category__in=cate.baykeshopcategory_set.all()).order_by('-add_date')
+            # 按销量或价格排序
+            if params:
+                cates = cate.baykeshopcategory_set.all()
+                spus = self.get_order_queryset(params, spus=spus, filter={'spu__category__in': cates})
         else:
             spus = BaykeShopSPU.objects.filter(category__id=self.kwargs['pk']).order_by('-add_date')
-            # 按价格排序
-            if params and params['order'].replace('-', '') == 'price':
-                queryset = []
-                skus = BaykeShopSKU.objects.filter(spu__category__id=self.kwargs['pk']).order_by(*list(params.values()))
-                for sku in skus:
-                    if sku.spu not in queryset:
-                        queryset.append(sku.spu)
-                spus = queryset
-            
-            # 按销量排序
-            elif params and params['order'].replace('-', '') == 'sales':
-                from django.db.models import Sum
-                datas = [{'spu': spu, 'sales': spu.baykeshopsku_set.aggregate(Sum('sales'))['sales__sum']} for spu in spus if spu]
-                datas.sort(key=lambda s: s['sales'], reverse=True)
-                queryset = [data['spu'] for data in datas ]
-                spus = queryset
-            
+            # 按销量或价格排序
+            if params:
+                spus = self.get_order_queryset(params, spus=spus, filter={'spu__category__id':self.kwargs['pk']})
         return spus
     
     def get_sub_cates(self):
