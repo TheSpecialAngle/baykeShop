@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.views.generic import ListView
 
 from baykeshop.config.settings import bayke_settings
-from baykeshop.models import BaykeShopSPU, BaykeShopCategory
+from baykeshop.models import BaykeShopSPU, BaykeShopSKU, BaykeShopCategory
 from baykeshop.public.forms import SearchForm
 
 
@@ -15,7 +15,22 @@ class BaykeShopSPUListView(ListView):
     paginate_orphans = bayke_settings.GOODS_PAGINATE_ORPHANS
 
     def get_queryset(self):
+        params = self.request.GET.dict()
+        # 默认按日期排序
         queryset = BaykeShopSPU.objects.order_by('-add_date')
+        # 按价格排序
+        if params and params['order'].replace('-', '') == 'price':
+            queryset = []
+            skus = BaykeShopSKU.objects.order_by(*list(params.values()))
+            for sku in skus:
+                if sku.spu not in queryset:
+                    queryset.append(sku.spu)
+        # 按销量排序
+        elif params and params['order'].replace('-', '') == 'sales':
+            from django.db.models import Sum
+            datas = [{'spu': spu, 'sales': spu.baykeshopsku_set.aggregate(Sum('sales'))['sales__sum']} for spu in queryset if spu]
+            datas.sort(key=lambda s: s['sales'], reverse=True)
+            queryset = [data['spu'] for data in datas ]
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -34,21 +49,61 @@ class BaykeShopCategoryDetailView(SingleObjectMixin, BaykeShopSPUListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['cate'] = self.object
+        context['cate_obj'] = self.object
+        context['sub_cates'] = self.get_sub_cates()
         return context
-
+    
     def get_queryset(self):
         cate = self.object
+        params = self.request.GET.dict()
         if cate.parent is None:
             spus = BaykeShopSPU.objects.filter(
                 category__in=cate.baykeshopcategory_set.all()
-            ).order_by('-add_date')
+                ).order_by('-add_date')
+            
+            # 按价格排序
+            if params and params['order'].replace('-', '') == 'price':
+                queryset = []
+                skus = BaykeShopSKU.objects.filter(spu__category__in=cate.baykeshopcategory_set.all()).order_by(*list(params.values()))
+                for sku in skus:
+                    if sku.spu not in queryset:
+                        queryset.append(sku.spu)
+                spus = queryset
+            
+            # 按销量排序
+            elif params and params['order'].replace('-', '') == 'sales':
+                from django.db.models import Sum
+                datas = [{'spu': spu, 'sales': spu.baykeshopsku_set.aggregate(Sum('sales'))['sales__sum']} for spu in spus if spu]
+                datas.sort(key=lambda s: s['sales'], reverse=True)
+                queryset = [data['spu'] for data in datas ]
+                spus = queryset
         else:
-            spus = BaykeShopSPU.objects.filter(
-                category__id=self.kwargs['pk']
-            ).order_by('-add_date')
+            spus = BaykeShopSPU.objects.filter(category__id=self.kwargs['pk']).order_by('-add_date')
+            # 按价格排序
+            if params and params['order'].replace('-', '') == 'price':
+                queryset = []
+                skus = BaykeShopSKU.objects.filter(spu__category__id=self.kwargs['pk']).order_by(*list(params.values()))
+                for sku in skus:
+                    if sku.spu not in queryset:
+                        queryset.append(sku.spu)
+                spus = queryset
+            
+            # 按销量排序
+            elif params and params['order'].replace('-', '') == 'sales':
+                from django.db.models import Sum
+                datas = [{'spu': spu, 'sales': spu.baykeshopsku_set.aggregate(Sum('sales'))['sales__sum']} for spu in spus if spu]
+                datas.sort(key=lambda s: s['sales'], reverse=True)
+                queryset = [data['spu'] for data in datas ]
+                spus = queryset
+            
         return spus
-
+    
+    def get_sub_cates(self):
+        if self.object.parent:
+            return self.object.parent.baykeshopcategory_set.all()
+        elif self.object.parent is None:
+            return self.object.baykeshopcategory_set.all()
+    
     
 class SearchTemplateView(BaykeShopSPUListView):
     """ 搜索视图 """

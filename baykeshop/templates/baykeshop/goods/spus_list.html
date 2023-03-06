@@ -33,19 +33,20 @@
     <div class="parent-cate has-background-white">
       <ul class="is-flex is-flex-wrap-wrap">
         {% for cate in cates %}
-        <li><a class="active" href="{% url 'baykeshop:cate_detail' cate.id %}">{{ cate.name }}</a></li>
-        {% endfor %}
-        <li style="margin-left: auto; text-align: left; width:110px;border-left: 1px solid rgb(218, 218, 218);">
-          <a href=""><span class="icon"><i class="mdi mdi-menu-swap-outline"></i></span> 全部分类</a>
+        <li>
+          <a class="{% if cate_obj.id == cate.id or cate_obj.parent.id == cate.id %} active {% endif %}" 
+              href="{% url 'baykeshop:cate_detail' cate.id %}">{{ cate.name }}
+          </a>
         </li>
+        {% endfor %}
       </ul>
     </div>
-    <div class="sub-cate spu-filter has-background-white mt-3">
+    <div class="sub-cate spu-filter has-background-white mt-3 pl-5 pr-3">
       <ul class="is-flex is-flex-wrap-wrap pt-4 mb-1">
         <li class="has-text-centered"><a class="has-text-grey-light">分类:</a></li>
-        <li class="has-text-left pl-3"><a href="{% url 'baykeshop:spus' %}">全部分类</a></li>
+        <li class="has-text-left pl-3"><a class="{% if not cate_obj %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{% url 'baykeshop:spus' %}">全部分类</a></li>
         {% for sub_cate in sub_cates %}
-        <li class="has-text-left pl-3"><a href="{% url 'baykeshop:cate_detail' sub_cate.id %}">{{ sub_cate }}</a></li>
+        <li class="has-text-left pl-3"><a class="{% if cate_obj.id == sub_cate.id %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{% url 'baykeshop:cate_detail' sub_cate.id %}">{{ sub_cate }}</a></li>
         {% endfor %}
       </ul>
       <ul class="is-flex is-flex-wrap-wrap pb-3">

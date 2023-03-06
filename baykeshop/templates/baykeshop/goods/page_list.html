@@ -1,4 +1,4 @@
-{% load shop_tags %}
+{% load static shop_tags %}
 
 <div id="pageGoods">
     <div class="columns is-multiline">
@@ -6,8 +6,15 @@
         <div class="column is-3">
             {% spu_box spu %}
         </div>
+        {% empty %}
+        <div class="is-flex is-align-items-center is-justify-content-center is-flex-direction-column" style="min-height:600px; width:100%">
+            <img src="{% static 'baykeshop/img/noGoods.png' %}" alt="" srcset="">
+            <p class=" has-text-grey-light">亲，该分类暂无商品哟~</p>
+        </div>
         {% endfor %}
     </div>
+    
+    {% if page_obj %}
     <b-pagination 
         :total="total" 
         v-model="current" 
@@ -39,6 +46,7 @@
             </b-pagination-button>
         </template>
     </b-pagination>
+    {% endif %}
 </div>
 <script>
     var current = '{{ current }}'

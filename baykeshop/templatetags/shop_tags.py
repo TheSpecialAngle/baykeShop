@@ -49,7 +49,7 @@ def spu_box(spu):
         'price': skus(spu).first().price,
         'sales': skus(spu).aggregate(Sum('sales'))['sales__sum'],
     }
-    
+
 
 @register.simple_tag
 def search(request):
