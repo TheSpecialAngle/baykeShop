@@ -19,8 +19,8 @@ class BaykeShopSPUListView(ListView):
         # 默认按日期排序
         queryset = BaykeShopSPU.objects.order_by('-add_date')
         # 按销量或价格排序
-        if params:
-            queryset = self.get_order_queryset(params, spus=queryset)
+        if self.get_params_filed(params):
+            queryset = self.get_order_queryset(self.get_params_filed(params), spus=queryset)
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -45,7 +45,11 @@ class BaykeShopSPUListView(ListView):
             datas.sort(key=lambda s: s['sales'], reverse=True)
             queryset = [data['spu'] for data in datas ]
         return queryset
-
+    
+    def get_params_filed(self, params):
+        if params.get('order'):
+            return {'order':params.get('order')}
+        return None
     
 class BaykeShopCategoryDetailView(SingleObjectMixin, BaykeShopSPUListView):
     """ 商品分类 """
@@ -65,14 +69,14 @@ class BaykeShopCategoryDetailView(SingleObjectMixin, BaykeShopSPUListView):
         if cate.parent is None:
             spus = BaykeShopSPU.objects.filter(category__in=cate.baykeshopcategory_set.all()).order_by('-add_date')
             # 按销量或价格排序
-            if params:
+            if self.get_params_filed(params):
                 cates = cate.baykeshopcategory_set.all()
-                spus = self.get_order_queryset(params, spus=spus, filter={'spu__category__in': cates})
+                spus = self.get_order_queryset(self.get_params_filed(params), spus=spus, filter={'spu__category__in': cates})
         else:
             spus = BaykeShopSPU.objects.filter(category__id=self.kwargs['pk']).order_by('-add_date')
             # 按销量或价格排序
-            if params:
-                spus = self.get_order_queryset(params, spus=spus, filter={'spu__category__id':self.kwargs['pk']})
+            if self.get_params_filed(params):
+                spus = self.get_order_queryset(self.get_params_filed(params), spus=spus, filter={'spu__category__id':self.kwargs['pk']})
         return spus
     
     def get_sub_cates(self):
