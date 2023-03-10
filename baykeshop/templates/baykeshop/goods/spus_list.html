@@ -36,7 +36,7 @@
         {% for cate in cates %}
         <li>
           <a class="{% if cate_obj.id == cate.id or cate_obj.parent.id == cate.id %} active {% endif %}" 
-              href="{% url 'baykeshop:cate_detail' cate.id %}">{{ cate.name }}
+              href="{% url 'baykeshop:cate_detail' cate.id %}?order={{ params.order }}">{{ cate.name }}
           </a>
         </li>
         {% endfor %}
@@ -45,7 +45,7 @@
     <div class="sub-cate spu-filter has-background-white mt-3 pl-5 pr-3">
       <ul class="is-flex is-flex-wrap-wrap pt-4 mb-1">
         <li class="has-text-centered"><a class="has-text-grey-light">分类:</a></li>
-        <li class="has-text-left pl-3"><a class="{% if not cate_obj %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{% url 'baykeshop:spus' %}">全部分类</a></li>
+        <li class="has-text-left pl-3"><a class="{% if not cate_obj %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{% url 'baykeshop:spus' %}?order={{ params.order }}">全部分类</a></li>
         {% for sub_cate in sub_cates %}
         <li class="has-text-left pl-3">
           <a class="{% if cate_obj.id == sub_cate.id %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" 
@@ -55,8 +55,8 @@
       </ul>
       <ul class="is-flex is-flex-wrap-wrap pb-3">
         <li class="has-text-centered"><a class="has-text-grey-light">筛选:</a></li>
-        <li class="has-text-left pl-3"><a href="{{ request.path }}?order=sales&page={{ params.page }}">销量</a></li>
-        <li class="has-text-left pl-3"><a href="{{ request.path }}?order=-price&page={{ params.page }}">价位</a></li>
+        <li class="has-text-left pl-3"><a class="{% if 'sales' in request.get_full_path %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{{ request.path }}?order=sales{% if params.page %}&page={{ params.page }}{% endif %}">销量</a></li>
+        <li class="has-text-left pl-3"><a class="{% if 'price' in request.get_full_path %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{{ request.path }}?order=-price{% if params.page %}&page={{ params.page }}{% endif %}">价位</a></li>
       </ul>
     </div>
   </div>

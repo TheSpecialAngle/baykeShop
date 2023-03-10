@@ -28,7 +28,6 @@ class BaykeShopSPUListView(ListView):
         context['cates'] = BaykeShopCategory.get_cates().order_by('-add_date')
         context['sub_cates'] = context['cates'].first().baykeshopcategory_set.all()
         context['params'] = self.request.GET.dict()
-        print(context['params'])
         return context
     
     def get_order_queryset(self, params, spus, filter={}):
