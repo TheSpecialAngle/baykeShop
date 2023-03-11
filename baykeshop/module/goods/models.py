@@ -68,6 +68,7 @@ class BaykeShopSPU(AbstractModel):
 
     def __str__(self):
         return self.title
+       
     
 class BaykeShopSpec(AbstractModel):
     """ 规格 """

@@ -1,0 +1,36 @@
+{% extends 'baykeshop/base_site.html' %}
+
+
+{% block title %}{{ spu.title }}{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+  <nav class="breadcrumb is-marginless mt-3 mb-3 is-small" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="{% url 'baykeshop:home' %}">首页</a></li>
+      <li><a href="{% url 'baykeshop:cate_detail' spu.category.first.parent.id %}">{{ spu.category.first.parent.name }}</a></li>
+      <li><a href="{% url 'baykeshop:cate_detail' spu.category.first.id %}">{{ spu.category.first.name }}</a></li>
+      <li class="is-active"><a href="#" aria-current="page">{{ spu.title }}</a></li>
+    </ul>
+  </nav>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="columns">
+        <div class="column is-3">
+            asda
+        </div>
+        <div class="column">
+            asda
+        </div>
+        <div class="column is-2">
+            asda
+        </div>
+    </div>
+</div>
+{% endblock %}
+    
+    

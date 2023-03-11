@@ -14,14 +14,29 @@
 </style>
 {% endblock %}
 
-{% block title %}全部商品{% endblock %}
+{% block title %}
+  {% if cate_obj and cate_obj.parent %}
+    {{ cate_obj.parent.name }}-{{ cate_obj.name }}
+  {% elif cate_obj and cate_obj.parent is None %}
+    {{ cate_obj.name }}
+  {% else %}
+    全部商品
+  {% endif %}
+{% endblock %}
 
 {% block breadcrumb %}
 <div class="container">
   <nav class="breadcrumb is-marginless mt-3 mb-3 is-small" aria-label="breadcrumbs">
     <ul>
       <li><a href="{% url 'baykeshop:home' %}">首页</a></li>
+      {% if cate_obj and cate_obj.parent %}
+      <li><a href="{% url 'baykeshop:cate_detail' cate_obj.parent.id %}">{{ cate_obj.parent.name }}</a></li>
+      <li class="is-active"><a href="#" aria-current="page">{{ cate_obj.name }}</a></li>
+      {% elif cate_obj and cate_obj.parent is None %}
+      <li class="is-active"><a href="#" aria-current="page">{{ cate_obj.name }}</a></li>
+      {% else %}
       <li class="is-active"><a href="#" aria-current="page">{% if word %}{{ word }}{% else %}全部商品{% endif %}</a></li>
+      {% endif %}
     </ul>
   </nav>
 </div>
@@ -55,8 +70,36 @@
       </ul>
       <ul class="is-flex is-flex-wrap-wrap pb-3">
         <li class="has-text-centered"><a class="has-text-grey-light">筛选:</a></li>
-        <li class="has-text-left pl-3"><a class="{% if 'sales' in request.get_full_path %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{{ request.path }}?order=sales{% if params.page %}&page={{ params.page }}{% endif %}">销量</a></li>
-        <li class="has-text-left pl-3"><a class="{% if 'price' in request.get_full_path %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{{ request.path }}?order=-price{% if params.page %}&page={{ params.page }}{% endif %}">价位</a></li>
+        <li class="has-text-left pl-3">
+          {% if params.order == '-sales' %}
+          <a class="{% if 'sales' in request.get_full_path %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{{ request.path }}?order=sales{% if params.page %}&page={{ params.page }}{% endif %}">
+            销量
+            <span class="mdi mdi-arrow-down"></span>
+          </a>
+          {% else %}
+          <a class="{% if 'sales' in request.get_full_path %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{{ request.path }}?order=-sales{% if params.page %}&page={{ params.page }}{% endif %}">
+            销量
+            {% if params.order == 'sales' %}
+            <span class="mdi mdi-arrow-up"></span>
+            {% endif %}
+          </a>
+          {% endif %}
+        </li>
+        <li class="has-text-left pl-3">
+          {% if params.order == '-price' %}
+          <a class="{% if 'price' in request.get_full_path %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{{ request.path }}?order=price{% if params.page %}&page={{ params.page }}{% endif %}">
+            价位
+            <span class="mdi mdi-arrow-down"></span>
+          </a>
+          {% else %}
+          <a class="{% if 'price' in request.get_full_path %} has-text-danger-dark {% else %} has-text-black-ter {% endif %}" href="{{ request.path }}?order=-price{% if params.page %}&page={{ params.page }}{% endif %}">
+            价位
+            {% if params.order == 'price' %}
+            <span class="mdi mdi-arrow-up"></span>
+            {% endif %}
+          </a>
+          {% endif %}
+        </li>
       </ul>
     </div>
   </div>

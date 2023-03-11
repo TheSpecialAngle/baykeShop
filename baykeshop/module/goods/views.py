@@ -1,10 +1,10 @@
 from django.db.models import Q
 from django.views.generic.detail import SingleObjectMixin
 from django.contrib import messages
-from django.views.generic import ListView
+from django.views.generic import ListView, DetailView
 
 from baykeshop.config.settings import bayke_settings
-from baykeshop.models import BaykeShopSPU, BaykeShopSKU, BaykeShopCategory
+from baykeshop.models import BaykeShopSPU, BaykeShopSKU, BaykeShopCategory, BaykeShopSpecOption
 from baykeshop.public.forms import SearchForm
 
 
@@ -43,8 +43,9 @@ class BaykeShopSPUListView(ListView):
         elif params and params['order'].replace('-', '') == 'sales':
             from django.db.models import Sum
             datas = [{'spu': spu, 'sales': spu.baykeshopsku_set.aggregate(Sum('sales'))['sales__sum']} for spu in spus if spu]
-            datas.sort(key=lambda s: s['sales'], reverse=True)
-            queryset = [data['spu'] for data in datas ]
+            order_reverse = True if params['order'] == '-sales' else False
+            datas.sort(key=lambda s: s['sales'], reverse=order_reverse)
+            queryset = [ data['spu'] for data in datas ]
         return queryset
     
     def get_params_filed(self, params):
@@ -105,3 +106,69 @@ class SearchTemplateView(BaykeShopSPUListView):
             )
             messages.add_message(self.request, messages.SUCCESS, f'共搜索到{queryset.count()}条数据')
         return queryset
+
+
+class BaykeShopSPUDetailView(DetailView):
+    """ 商品详情页 """
+    model = BaykeShopSPU
+    template_name = "baykeshop/goods/spu_detail.html"
+    context_object_name = "spu"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['skus'], context['specs'] = self.get_skus()
+        return context
+    
+    def get_banners(self, sku_id=None):
+        # 轮播图
+        spu = self.get_object()
+        banners = [ban.img.url for ban in spu.baykespucarousel_set.all()]
+        if sku_id is not None:
+            try:
+                sku = BaykeShopSKU.objects.get(id=sku_id)
+                banners.insert(0, sku.cover_pic.url) 
+            except BaykeShopSKU.DoesNotExist:
+                pass
+        return banners
+        
+    def get_skus(self):
+        # 规格商品
+        spu = self.get_object()
+        skus_queryset = spu.baykeshopsku_set.order_by('price')
+        
+        # 当前spu下的规格选项
+        specs = []
+        # 规格选项对应的sku
+        skus = {}
+        for sku in skus_queryset:
+            sku_options_names = sku.options.values_list('name', flat=True)
+            options = ','.join(sku_options_names)
+            skus[options] = {
+                'sku_id': sku.id,
+                'price': sku.price.to_eng_string(),
+                'org_price': sku.org_price.to_eng_string(),
+                'stock': sku.stock,
+                'sales': sku.sales,
+                'cover_pic': sku.cover_pic.url,
+                'banners': self.get_banners(sku_id=sku.id)
+            }
+            
+            # 返回当前spu下的specs
+            for op in sku.options.all():
+                spec_dict = {
+                    'spec': op.spec.name, 
+                    'options': list(
+                        BaykeShopSpecOption.objects.filter(
+                            spec=op.spec
+                            ).values_list('name', flat=True)
+                        )
+                }
+                # 防止重复加入 
+                if spec_dict not in specs:
+                    specs.append(spec_dict)
+        print(skus, specs)
+        return skus, specs
+    
+    
+        
+        
