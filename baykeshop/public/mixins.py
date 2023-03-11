@@ -1,4 +1,4 @@
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.http import JsonResponse
 from django.contrib.auth.mixins import (
     LoginRequiredMixin as BaseLoginRequiredMixin
@@ -12,6 +12,15 @@ class LoginRequiredMixin(BaseLoginRequiredMixin):
     # 验证类登录
     login_url = reverse_lazy('baykeshop:login')
     redirect_field_name = 'redirect_to'
+
+
+class JsonLoginRequiredMixin(BaseLoginRequiredMixin):
+    
+    def dispatch(self, request, *args, **kwargs):
+        if (not self.request.accepts('text/html')) and (not request.user.is_authenticated):
+            return JsonResponse({'code':'err', 'message': '请登录后操作！', 'login_url': reverse('baykeshop:login')})
+        return super().dispatch(request, *args, **kwargs)
+    
 
 
 class JsonableResponseMixin:
@@ -36,6 +45,7 @@ class JsonableResponseMixin:
         else:
             data = {
                 'pk': self.object.pk,
+                'code': 'ok'
             }
             return JsonResponse(data)
 

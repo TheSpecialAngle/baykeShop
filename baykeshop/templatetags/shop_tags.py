@@ -3,6 +3,7 @@ from django.template import Library
 from baykeshop.public.forms import SearchForm
 from baykeshop.models import BaykePermission, BaykeShopCategory, BaykeBanner
 from baykeshop.config.settings import bayke_settings
+from baykeshop.models import BaykeShopingCart
 
 register = Library()
 
@@ -50,7 +51,6 @@ def spu_box(spu):
         'sales': skus(spu).aggregate(Sum('sales'))['sales__sum'],
     }
 
-
 @register.simple_tag
 def search(request):
     form = SearchForm(initial=request.GET)
@@ -64,5 +64,8 @@ def page_list(request, page_obj):
         'total': page_obj.paginator.num_pages,
         'current': request.GET.get('page', 1),
         'per_page': page_obj.paginator.per_page,
-        # 'tag': tag
     }
+    
+@register.simple_tag
+def cart_num(user):
+    return BaykeShopingCart.get_cart_count(user) if user.is_authenticated else 0

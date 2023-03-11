@@ -171,7 +171,5 @@ class BaykeShopSPUDetailView(DetailView):
         if skus_queryset.first():
             current_ops = list(skus_queryset.first().options.values_list('name', flat=True))
         return skus, specs, current_ops
-    
-    
         
         

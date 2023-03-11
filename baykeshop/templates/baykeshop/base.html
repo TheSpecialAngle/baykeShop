@@ -67,7 +67,7 @@
                         {% endif %}
                         <a class="cart" href="">
                             <span class="icon"><i class="mdi mdi-cart-check"></i></span>
-                            购物车(0)
+                            购物车({% cart_num request.user %})
                         </a>
                         {% endblock %}
                     </div>
@@ -166,7 +166,14 @@
             el: '#navbar',
             delimiters: ['{$', '$}'],
             data: {},
-            methods: {}
+            methods: {
+                toastMessage(type, message){
+                    return this.$buefy.toast.open({
+                        message: message,
+                        type: type
+                    })
+                },
+            }
         })
     </script>
 

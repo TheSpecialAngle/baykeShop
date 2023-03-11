@@ -1,8 +1,12 @@
 {% extends 'baykeshop/base_site.html' %}
 
+{% load static %}
+
 {% block title %}{{ spu.title }}{% endblock %}
 
 {% block extrastyle %}
+    <script src="{% static 'baykeshop/js/axios.min.js' %}"></script>
+    <script src="{% static 'baykeshop/js/request.js' %}"></script>
     <style>
         [v-cloak] {
             display: none !important;
@@ -58,7 +62,7 @@
             </div>
         </div>
         <div class="column">
-            <h1 class="is-size-5 has-text-justified">{{ spu.title }}</h1>
+            <h1 class="is-size-5 has-text-justified has-text-weight-bold mb-2">{{ spu.title }}</h1>
             <div class="box is-marginless is-radiusless has-background-primary-dark has-text-white-ter">
                 <div class="is-flex is-justify-content-space-between is-align-items-center">
                     <div>
@@ -72,6 +76,7 @@
                 </div>
             </div>
 
+            {% comment %} 规格 {% endcomment %}
             <div class="box is-radiusless is-shadowless is-marginless" v-if="currentOps.length > 0" >
                 <div class="is-flex is-flex-direction-column is-justify-content-space-around" style="min-height:80px">
                     <div class="is-flex" v-for="spec, index in specs" :key="index">
@@ -97,31 +102,34 @@
                         <b-numberinput 
                             controls-position="compact" 
                             min="1" 
-                            :max="goods.stock" 
+                            :max="stock" 
                             v-model="num"
                             size="is-small"
                             :editable="false">
                         </b-numberinput> 
                     </b-field>
                 </div>
-                <div class="ml-3">(库存{$ goods.stock $})</div>
+                <div class="ml-3">(库存{$ stock $})</div>
             </div>
 
             <!-- 操作 -->
             <div class="buttons box is-radiusless">
                 <b-button 
                     type="is-primary" 
-                    @click="" 
-                    :disabled="goods.stock ? false : true ">加入购物车
+                    @click="addCart" 
+                    :disabled="stock ? false : true">加入购物车
                 </b-button>
                 <b-button 
                     type="is-primary" 
-                    :disabled="goods.stock ? false : true " 
+                    :disabled="stock ? false : true" 
                     @click=""
                     outlined>
                     立即购买
                 </b-button>
             </div>
+
+            <div class="content">{{ spu.content|safe }}</div>
+
         </div>
         <div class="column is-2">
             asda
@@ -143,15 +151,36 @@
                 specs:specs,
                 currentOps: currentOps,
                 goods: null,
-                num: 1
+                num: 1,
+                isDisabled: false,
+                stock:0
             },
             created(){
-               this.goods = this.currentOps.length > 0 ? this.skus[this.currentOps.join(',')] : this.skus[this.currentOps]
+                this.goods = this.currentOps.length > 0 ? this.skus[this.currentOps.join(',')] : this.skus[this.currentOps]
+                this.stock = this.goods.stock
             },
             methods: {
                 getImgUrl(value) {
                     return `${value}`
                 },
+                addCart(){
+                    const sendData = new FormData()
+                    sendData.append('sku', this.goods.sku_id)
+                    sendData.append('num', this.num)
+                    request({
+                        method: 'post',
+                        url: '{% url "baykeshop:add_cart" %}',
+                        headers: {'Accept': 'application/json'},
+                        data: sendData
+                    }).then(res => {
+                        if (res.data.code == 'ok') {
+                            navbar.toastMessage('is-success', res.data.message)
+                            location.reload()
+                        }else{
+                            navbar.toastMessage('is-danger', res.data.message)
+                        }
+                    })
+                }
             },
             watch:{
                 currentOps:{
@@ -159,12 +188,25 @@
                         let strVal = val.join();
                         goods = this.skus[strVal]
                         if (goods) {
-                            this.goods = goods
-                        } else {
-                            this.goods.stock = 0
+                            this.isDisabled = false
+                            this.stock = goods.stock
+                            this.goods = {
+                                'sku_id': this.skus[strVal]['sku_id'],
+                                'price': goods.price,
+                                'org_price': goods.org_price,
+                                'stock': this.stock,
+                                'sales': goods.sales,
+                                'cover_pic': goods.cover_pic,
+                                'banners': goods.banners
+                            }
+                            console.log(this.goods)
+                        }else if (goods == undefined) {
+                            this.stock = 0
+                            this.isDisabled = true
                         }
                     },
                     deep: true,
+                    
                 }
             }
         })

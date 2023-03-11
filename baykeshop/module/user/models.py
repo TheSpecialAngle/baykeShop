@@ -94,3 +94,23 @@ class BaykeUserBalanceLog(AbstractModel):
 
     def __str__(self):
         return f"{self.owner.username}-{self.amount}"
+
+
+class BaykeShopAddress(AbstractModel):
+    """ 收货地址 """
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="用户")
+    name = models.CharField("签收人", max_length=50)
+    phone = models.CharField("手机号", max_length=11)
+    email = models.EmailField("邮箱", blank=True, default="", max_length=50)
+    province = models.CharField(max_length=150, verbose_name="省")
+    city = models.CharField(max_length=150, verbose_name="市")
+    county = models.CharField(max_length=150, verbose_name="区/县")
+    address = models.CharField(max_length=150, verbose_name="详细地址")
+    is_default = models.BooleanField(default=False, verbose_name="设为默认")
+    
+    class Meta:
+        verbose_name = "收货地址"
+        verbose_name_plural = verbose_name
+       
+    def __str__(self):
+        return f'{self.name} {self.address}'
