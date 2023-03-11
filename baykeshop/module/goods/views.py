@@ -116,7 +116,7 @@ class BaykeShopSPUDetailView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['skus'], context['specs'] = self.get_skus()
+        context['skus'], context['specs'], context['current_ops'] = self.get_skus()
         return context
     
     def get_banners(self, sku_id=None):
@@ -166,8 +166,11 @@ class BaykeShopSPUDetailView(DetailView):
                 # 防止重复加入 
                 if spec_dict not in specs:
                     specs.append(spec_dict)
-        print(skus, specs)
-        return skus, specs
+        # 默认规格
+        current_ops = ''
+        if skus_queryset.first():
+            current_ops = list(skus_queryset.first().options.values_list('name', flat=True))
+        return skus, specs, current_ops
     
     
         
