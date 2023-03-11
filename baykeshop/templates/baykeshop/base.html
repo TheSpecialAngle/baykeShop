@@ -65,7 +65,7 @@
                             注册
                         </a>
                         {% endif %}
-                        <a class="cart" href="">
+                        <a class="cart" href="{% url 'baykeshop:carts' %}">
                             <span class="icon"><i class="mdi mdi-cart-check"></i></span>
                             购物车({% cart_num request.user %})
                         </a>
