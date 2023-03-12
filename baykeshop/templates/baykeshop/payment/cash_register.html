@@ -24,8 +24,70 @@
 {% block content %}
     <div class="container">
         {% address_result request.user %}
+
+        <div class="box">
+            <h1 class="is-size-5">订单信息</h1>
+            <div class=" dropdown-divider"></div>
+            {% for cart in carts %}
+            <div class="columns">
+                <div class="column is-2 is-flex is-justify-content-center">
+                    <figure class="image is-128x128">
+                        {% if cart.spu %}
+                        <img src="{{ cart.cover_pic.url }}" alt="{{ cart.spu.title }}">
+                        {% else %}
+                        <img src="{{ cart.sku.cover_pic.url }}" alt="{{ cart.sku.spu.title }}">
+                        {% endif %}
+                    </figure>
+                </div>
+                <div class="column is-flex is-flex-direction-column is-justify-content-center">
+                    {% if cart.spu %}
+                     {{ cart.spu.title }}
+                    {{ cart.options.all }}
+                    {% else %}
+                        <h1 class=" has-text-weight-bold">{{ cart.sku.spu.title }}</h1> 
+                        
+                        {% if cart.sku.options.all %}
+                        <span class="has-text-grey-light"> 规格：{{ cart.sku.options.all|join:' ' }}</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                <div class="column is-2 is-flex is-justify-content-center is-align-items-center">
+                    {% if cart.spu %}¥{{ cart.price  }} x {{ cart.num }}{% else %}¥{{ cart.sku.price}} x {{ cart.num }}{% endif %}
+                </div>
+                
+
+            </div>
+            {% empty %}
+            未选择任何商品！
+            {% endfor %}
+                
+            
+        </div>
+
+        <div id="saveOrder">
+            <button @click="ceshi">提交</button>
+        </div>
     </div>
 
+{% endblock %}
+
+
+{% block vue %}
+    <script>
+        var saveOrder = new Vue({
+            el: '#saveOrder',
+            delimiters: ['{$', '$}'],
+            data:{
+                
+            },
+            methods:{
+                ceshi(){
+                    // 选择的地址
+                    console.log(address._data.formProps)
+                }
+            }
+        })
+    </script>
 {% endblock %}
     
     

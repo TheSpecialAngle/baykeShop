@@ -76,7 +76,8 @@ def cart_num(user):
 
 @register.inclusion_tag(filename="baykeshop/user/address.html")
 def address_result(user):
-    # .values('id', 'name', 'phone', 'email', 'province', 'city', 'county')
     return {
-        'address_list': BaykeShopAddress.objects.filter(owner=user)
+        'address_list': list(BaykeShopAddress.objects.filter(owner=user).values(
+            'id', 'name', 'phone', 'email', 'province', 'city', 'county', 'address', 'is_default')
+        )
     }

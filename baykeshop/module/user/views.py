@@ -59,11 +59,13 @@ class RegisterView(SuccessMessageMixin, FormView):
         
 
 class BaykeShopAddressCreateView(JsonLoginRequiredMixin, JsonableResponseMixin, CreateView):
-    
+    """ 添加地址 """
     model = BaykeShopAddress
     fields = ['name', 'phone', 'email', 'province', 'city', 'county', 'address', 'is_default']
     success_url = reverse_lazy('baykeshop:carts')
     
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        if form.cleaned_data['is_default']:
+            BaykeShopAddress.objects.filter(owner=self.request.user, is_default=True).update(is_default=False)
         return super().form_valid(form)

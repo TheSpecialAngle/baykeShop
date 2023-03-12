@@ -11,7 +11,6 @@ class CashRegisterTemplateView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['carts'] = self.get_carts()
-        context['address_list'] = self.get_user_address()
         return context
     
     def get_carts(self):
@@ -26,8 +25,3 @@ class CashRegisterTemplateView(LoginRequiredMixin, TemplateView):
                 cart.num = int(cleaned_data.get('num'))
         return carts
     
-    def get_user_address(self):
-        return BaykeShopAddress.objects.filter(owner=self.request.user)
-        
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
