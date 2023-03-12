@@ -5,7 +5,9 @@ from baykeshop.public.models import (
     BaykeMenu, BaykePermission, BaykeBanner, BaykeUpload
 )
 
-from baykeshop.module.user.models import BaykeUserInfo, BaykeUserBalanceLog, BaykeShopAddress
+from baykeshop.module.user.models import (
+    BaykeUserInfo, BaykeUserBalanceLog, BaykeShopAddress
+)
 
 from baykeshop.module.goods.models import (
     BaykeShopCategory, BaykeShopSPU, BaykeShopSpec,
@@ -13,3 +15,4 @@ from baykeshop.module.goods.models import (
 )
 
 from baykeshop.module.cart.models import BaykeShopingCart
+from baykeshop.module.order.models import BaykeShopOrderInfo, BaykeShopOrderSKU

@@ -8,4 +8,5 @@ urlpatterns = [
     path("goods/", include('baykeshop.module.goods.urls')),
     path("cart/", include('baykeshop.module.cart.urls')),
     path("payment/", include('baykeshop.module.payment.urls')),
+    path("order/", include('baykeshop.module.order.urls')),
 ]
