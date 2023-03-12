@@ -54,14 +54,15 @@
                 <div class="column is-2 is-flex is-justify-content-center is-align-items-center">
                     {% if cart.spu %}¥{{ cart.price  }} x {{ cart.num }}{% else %}¥{{ cart.sku.price}} x {{ cart.num }}{% endif %}
                 </div>
-                
+                <div class="column is-2 is-flex is-justify-content-center is-align-items-center">
+                    ¥{{ cart.total_price }}
+                </div>
 
             </div>
+            <div class="dropdown-divider"></div>
             {% empty %}
             未选择任何商品！
             {% endfor %}
-                
-            
         </div>
 
         <div id="saveOrder">
