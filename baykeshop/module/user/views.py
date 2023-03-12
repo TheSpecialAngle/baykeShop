@@ -1,5 +1,4 @@
-from django.views.generic import FormView
-
+from django.views.generic import FormView, CreateView
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
 from django.urls import reverse_lazy
@@ -9,14 +8,11 @@ from django.contrib.auth.views import (
     LogoutView as BaseLogoutView
 )
 
-
-
 from baykeshop.config.settings import bayke_settings
-
-
-
 from baykeshop.module.user.forms import LoginForm, RegisterForm
-from baykeshop.models import BaykeUserInfo
+from baykeshop.models import BaykeUserInfo, BaykeShopAddress
+from baykeshop.public.mixins import JsonLoginRequiredMixin, JsonableResponseMixin
+
 
 
 class LoginView(SuccessMessageMixin, BaseLoginView):
@@ -60,3 +56,14 @@ class RegisterView(SuccessMessageMixin, FormView):
             cleaned_data,
             username=cleaned_data['username'],
         )
+        
+
+class BaykeShopAddressCreateView(JsonLoginRequiredMixin, JsonableResponseMixin, CreateView):
+    
+    model = BaykeShopAddress
+    fields = ['name', 'phone', 'email', 'province', 'city', 'county', 'address', 'is_default']
+    success_url = reverse_lazy('baykeshop:carts')
+    
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        return super().form_valid(form)

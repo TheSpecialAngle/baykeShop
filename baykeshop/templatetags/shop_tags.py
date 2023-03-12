@@ -3,7 +3,7 @@ from django.template import Library
 from baykeshop.public.forms import SearchForm
 from baykeshop.models import BaykePermission, BaykeShopCategory, BaykeBanner
 from baykeshop.config.settings import bayke_settings
-from baykeshop.models import BaykeShopingCart
+from baykeshop.models import BaykeShopingCart, BaykeShopAddress
 
 register = Library()
 
@@ -15,8 +15,11 @@ def navbar_result():
 
 @register.inclusion_tag(filename="baykeshop/banner.html")
 def banners_result():
-    queryset = BaykeBanner.objects.values('id', 'img', 'desc', 'target_url')
-    return {'carousels': list(queryset)}
+    queryset = [
+        {'id': b.id, 'img': b.img.url, 'desc': b.desc, 'target_url': b.target_url } 
+        for b in BaykeBanner.objects.all()
+    ]
+    return {'carousels': queryset}
 
 
 @register.simple_tag
@@ -69,3 +72,11 @@ def page_list(request, page_obj):
 @register.simple_tag
 def cart_num(user):
     return BaykeShopingCart.get_cart_count(user) if user.is_authenticated else 0
+
+
+@register.inclusion_tag(filename="baykeshop/user/address.html")
+def address_result(user):
+    # .values('id', 'name', 'phone', 'email', 'province', 'city', 'county')
+    return {
+        'address_list': BaykeShopAddress.objects.filter(owner=user)
+    }

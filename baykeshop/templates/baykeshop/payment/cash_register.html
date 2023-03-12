@@ -1,0 +1,31 @@
+{% extends 'baykeshop/base_site.html' %}
+
+{% load static shop_tags %}
+
+{% block title %}结算中心{% endblock %}
+
+{% block extrastyle %}
+<script src="{% static 'baykeshop/js/axios.min.js' %}"></script>
+<script src="{% static 'baykeshop/js/request.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumb %}
+<div class="container">
+  <nav class="breadcrumb is-marginless mt-3 mb-3 is-small" aria-label="breadcrumbs">
+    <ul>
+      <li><a href="{% url 'baykeshop:home' %}">首页</a></li>
+      <li><a href="{% url 'baykeshop:carts' %}">购物车</a></li>
+      <li class="is-active"><a href="#" aria-current="page">订单确认</a></li>
+    </ul>
+  </nav>
+</div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {% address_result request.user %}
+    </div>
+
+{% endblock %}
+    
+    

@@ -101,7 +101,7 @@
                         <div class=" is-flex is-align-items-center has-text-danger-dark ">
                             <span class="is-size-5">合计：</span> <span class="is-size-3 pr-5">¥ {$ total $}</span>
                             <button class="button is-primary is-radiusless is-large pl-6 pr-6" :disabled="checkedRows.length > 0 ? false : true"
-                                v-on:click.capture="doThis">
+                                v-on:click.capture="cashRegister(checkedRows)">
                                 去结算
                             </button>
                         </div>
@@ -193,6 +193,15 @@
                         }
                     })
                     
+                },
+
+                // 跳转到结算中心
+                cashRegister(rows){
+                    let cart_ids = []
+                    rows.forEach(element => {
+                        cart_ids.push(element.id)
+                    })
+                    location.href = `{% url 'baykeshop:cash_register' %}?cartsID=${cart_ids.join()}`
                 }
             },
             watch: {

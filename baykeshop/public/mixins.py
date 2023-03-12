@@ -45,7 +45,8 @@ class JsonableResponseMixin:
         else:
             data = {
                 'pk': self.object.pk,
-                'code': 'ok'
+                'code': 'ok',
+                'message': '保存成功！'
             }
             return JsonResponse(data)
 

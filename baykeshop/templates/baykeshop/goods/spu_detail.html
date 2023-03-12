@@ -122,7 +122,7 @@
                 <b-button 
                     type="is-primary" 
                     :disabled="stock ? false : true" 
-                    @click=""
+                    @click="cashRegister"
                     outlined>
                     立即购买
                 </b-button>
@@ -163,6 +163,7 @@
                 getImgUrl(value) {
                     return `${value}`
                 },
+                // 加入购物车
                 addCart(){
                     const sendData = new FormData()
                     sendData.append('sku', this.goods.sku_id)
@@ -180,6 +181,11 @@
                             navbar.toastMessage('is-danger', res.data.message)
                         }
                     })
+                },
+
+                // 立即购买
+                cashRegister(){
+                    location.href = `{% url 'baykeshop:cash_register' %}?skuID=${this.goods.sku_id}&num=${this.num}`
                 }
             },
             watch:{
