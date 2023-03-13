@@ -41,8 +41,10 @@
                 </div>
                 <div class="column is-flex is-flex-direction-column is-justify-content-center">
                     {% if cart.spu %}
-                     {{ cart.spu.title }}
-                    {{ cart.options.all }}
+                    <h1 class=" has-text-weight-bold">{{ cart.spu.title }}</h1> 
+                        {% if cart.options.all %}
+                            <span class="has-text-grey-light"> 规格：{{ cart.options.all|join:' ' }}</span>
+                        {% endif %}
                     {% else %}
                         <h1 class=" has-text-weight-bold">{{ cart.sku.spu.title }}</h1> 
                         

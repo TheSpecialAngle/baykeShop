@@ -1,4 +1,4 @@
-from django.views.generic import FormView, CreateView
+from django.views.generic import FormView, CreateView, TemplateView
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
 from django.urls import reverse_lazy
@@ -10,8 +10,8 @@ from django.contrib.auth.views import (
 
 from baykeshop.config.settings import bayke_settings
 from baykeshop.module.user.forms import LoginForm, RegisterForm
-from baykeshop.models import BaykeUserInfo, BaykeShopAddress
-from baykeshop.public.mixins import JsonLoginRequiredMixin, JsonableResponseMixin
+from baykeshop.models import BaykeUserInfo, BaykeShopAddress, BaykeUserBalanceLog
+from baykeshop.public.mixins import JsonLoginRequiredMixin, JsonableResponseMixin, LoginRequiredMixin
 
 
 
@@ -69,3 +69,35 @@ class BaykeShopAddressCreateView(JsonLoginRequiredMixin, JsonableResponseMixin, 
         if form.cleaned_data['is_default']:
             BaykeShopAddress.objects.filter(owner=self.request.user, is_default=True).update(is_default=False)
         return super().form_valid(form)
+    
+
+class BaykeUserInfoTemplateView(LoginRequiredMixin, TemplateView):
+    """ 个人中心 """
+    
+    template_name = "baykeshop/user/userinfo.html"
+    
+    
+class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
+    """ 余额记录 """
+    template_name = "baykeshop/user/balance.html"
+    
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs)
+    
+    def get_queryset(self):
+        return BaykeUserBalanceLog.objects.filter(owner=self.request.user)
+    
+    def get_minus_balance(self):
+        return self.get_queryset().filter(change_status=2)
+    
+    def get_add_balance(self):
+        return self.get_queryset().filter(change_status=1)
+    
+    def get_amount_minus(self):
+        from django.db.models import Sum 
+        return self.get_queryset().aggregate(Sum('amount'))
+    
+    def get_amount_add(self):
+        
+        return 
+    
