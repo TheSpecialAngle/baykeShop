@@ -1,12 +1,13 @@
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 from django.urls import reverse
 from django.core.cache import cache
 from django.db.models import F
 
-from baykeshop.public.mixins import LoginRequiredMixin, JsonResponse
+from baykeshop.public.mixins import LoginRequiredMixin, JsonResponse, JsonLoginRequiredMixin
 from baykeshop.models import (
     BaykeShopingCart, BaykeShopSKU, BaykeShopOrderInfo, 
-    BaykeShopAddress, BaykeShopOrderSKU
+    BaykeShopAddress, BaykeShopOrderSKU, BaykeUserBalanceLog,
+    BaykeUserInfo
 )
 
 
@@ -136,3 +137,68 @@ class CashRegisterTemplateView(LoginRequiredMixin, TemplateView):
                 
         pay_url = reverse("baykeshop:order_detail", args=[orderinfo.order_sn])
         return JsonResponse({'code': 'ok', 'message': 'ok', 'pay_url': pay_url})
+    
+
+class PayNowView(JsonLoginRequiredMixin, View):
+    """ 收款 """
+    
+    def post(self, request, *args, **kwargs):
+        cleaned_data = request.POST.dict()
+        if (not cleaned_data) or (cleaned_data.get('order_sn') is None) or (cleaned_data.get('paymethod') is None):
+            return JsonResponse({'code':'err', 'message': '未获取到任何订单信息或支付信息有误！'})
+        
+        code = ""
+        message = ""
+        
+        order_sn = cleaned_data['order_sn']
+        paymethod = cleaned_data['paymethod']
+        userinfo = request.user.baykeuserinfo
+        order = BaykeShopOrderInfo.objects.filter(owner=request.user, order_sn=order_sn).first()
+        # 支付宝支付
+        if order and int(paymethod) == 2:
+            from baykeshop.module.payment.alipay.pay import alipay
+            from baykeshop.config.settings import bayke_settings
+            url_params = alipay.api_alipay_trade_page_pay(
+                subject=order_sn,
+                total_amount=order.total_amount.to_eng_string(),
+                out_trade_no=order_sn,
+                return_url=f"{request.scheme}://{request.get_host()}{reverse(bayke_settings.ALIPAY_RETURN_URL)}",
+                notify_url=f"{request.scheme}://{request.get_host()}{reverse(bayke_settings.ALIPAY_NOTIFY_URL)}"
+            )
+            
+            code = "ok",
+            message = "支付宝支付地址返回成功！"
+            kwargs['alipay_url'] = f"{alipay._gateway}?{url_params}"
+        
+        # 余额支付
+        elif order and int(paymethod) == 4:
+            from django.utils import timezone
+            if userinfo.balance < order.total_amount:
+                return JsonResponse({'code':'err', 'message': '余额不足！'})
+            # 扣除余额  
+            BaykeUserInfo.objects.filter(owner=request.user).update(
+                balance=F('balance')-order.total_amount
+            )
+            
+            order.pay_status = 2
+            order.trade_sn = f"YE{order_sn}"
+            order.pay_method = 4
+            order.pay_time=timezone.now()
+            order.save()
+            # 余额变动日志
+            BaykeUserBalanceLog.objects.create(
+                owner=request.user, 
+                amount=order.total_amount, 
+                change_status=2,
+                change_way=3
+            )
+            code = "ok",
+            message = "支付地址返回成功！"
+            kwargs['alipay_url'] = f"{reverse('baykeshop:order_detail', args=[order.order_sn])}"
+        else:
+            code = "err"
+            message = "暂不支持该支付方式"
+
+        context = {"code": code, "message": message, **kwargs}
+        
+        return JsonResponse(context)
