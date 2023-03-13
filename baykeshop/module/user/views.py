@@ -11,7 +11,7 @@ from django.contrib.auth.views import (
 from baykeshop.config.settings import bayke_settings
 from baykeshop.module.user.forms import LoginForm, RegisterForm
 from baykeshop.models import BaykeUserInfo, BaykeShopAddress, BaykeUserBalanceLog
-from baykeshop.public.mixins import JsonLoginRequiredMixin, JsonableResponseMixin, LoginRequiredMixin
+from baykeshop.public.mixins import JsonLoginRequiredMixin, JsonableResponseMixin, LoginRequiredMixin, JsonResponse
 
 
 
@@ -66,6 +66,20 @@ class BaykeShopAddressCreateView(JsonLoginRequiredMixin, JsonableResponseMixin, 
     
     def form_valid(self, form):
         form.instance.owner = self.request.user
+        
+        # 修改
+        if self.request.POST.get('id') and self.request.POST.get('id').isdigit():
+            # 查找默认的
+            addr_default = BaykeShopAddress.objects.filter(owner=self.request.user, is_default=True)
+            # 修改
+            addr = BaykeShopAddress.objects.filter(id=int(self.request.POST.get('id')))
+            addr.update(**form.cleaned_data)
+            # 处理默认只能有一个
+            if form.cleaned_data['is_default']:
+                addr_default.exclude(id=addr.first().id).update(is_default=False)
+            return JsonResponse({'code':'ok', 'message': '修改成功！'})
+        
+        # 新增 
         if form.cleaned_data['is_default']:
             BaykeShopAddress.objects.filter(owner=self.request.user, is_default=True).update(is_default=False)
         return super().form_valid(form)
@@ -113,9 +127,28 @@ class BaykeShopAddressListView(LoginRequiredMixin, ListView):
     
     model = BaykeShopAddress
     template_name = "baykeshop/user/addr_list.html"
-    context_object_name = "addrs"
+    context_object_name = "address_list"
     
     def get_queryset(self):
-        return super().get_queryset().filter(owner=self.request.user)
+        return list(super().get_queryset().filter(owner=self.request.user).values(
+            'id', 'name', 'phone', 'email', 'province', 'city', 'county', 'address', 'is_default'))
+    
+    def post(self, request, *args, **kwargs):
+        code = ''
+        message = ''
+        addr_id = request.POST.get('addr_id')
+        if addr_id:
+            addr = BaykeShopAddress.objects.filter(id=int(addr_id))
+            if addr.exists():
+                addr.delete()     
+                code = 'ok'
+                message = '删除成功!'
+            else:
+                code = 'err'
+                message = '该地址不存在！'
+        else:
+            code = 'err'
+            message = '未传入有效参数！'
+        return JsonResponse({'code': code, 'message': message})
     
     
