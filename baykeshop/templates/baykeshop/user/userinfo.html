@@ -40,7 +40,7 @@
                         <ul class="menu-list">
                           <li><a href="{% url 'baykeshop:userinfo' %}" class="{% if 'userinfo' in request.path %} is-active {% endif %}">个人信息</a></li>
                           <li><a href="{% url 'baykeshop:balance' %}" class="{% if 'balance' in request.path %} is-active {% endif %}">我的余额</a></li>
-                          <li><a>地址管理</a></li>
+                          <li><a href="{% url 'baykeshop:addrs_list' %}" class="{% if 'address' in request.path %} is-active {% endif %}">地址管理</a></li>
                         </ul>
                     </aside>
                 </div>

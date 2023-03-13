@@ -7,6 +7,7 @@ urlpatterns = [
     path("logout/", views.LogoutView.as_view(), name="logout"),
     path("add/address/", views.BaykeShopAddressCreateView.as_view(), name="add_address"),
     
+    path("address/", views.BaykeShopAddressListView.as_view(), name="addrs_list"),
     path("userinfo/", views.BaykeUserInfoTemplateView.as_view(), name="userinfo"),
     
     path("balance/", views.BaykeUserBalanceLogTemplateView.as_view(), name="balance"),

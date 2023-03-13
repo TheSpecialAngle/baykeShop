@@ -1,4 +1,4 @@
-from django.views.generic import FormView, CreateView, TemplateView
+from django.views.generic import FormView, CreateView, TemplateView, ListView
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
 from django.urls import reverse_lazy
@@ -82,7 +82,13 @@ class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "baykeshop/user/balance.html"
     
     def get_context_data(self, **kwargs):
-        return super().get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        context['qs'] = self.get_queryset()
+        context['minus_balance'] = self.get_minus_balance()
+        context['add_balance'] = self.get_add_balance()
+        context['amount_minus'] = round((self.get_amount_minus()['amount__sum'] or 0), 2)
+        context['amount_add'] = self.get_amount_add()
+        return context
     
     def get_queryset(self):
         return BaykeUserBalanceLog.objects.filter(owner=self.request.user)
@@ -94,10 +100,22 @@ class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
         return self.get_queryset().filter(change_status=1)
     
     def get_amount_minus(self):
+        # 累计支出
         from django.db.models import Sum 
         return self.get_queryset().aggregate(Sum('amount'))
     
     def get_amount_add(self):
-        
-        return 
+        # 累计充值
+        return self.request.user.baykeuserinfo.balance + (self.get_amount_minus()['amount__sum'] or 0)
+    
+
+class BaykeShopAddressListView(LoginRequiredMixin, ListView):
+    
+    model = BaykeShopAddress
+    template_name = "baykeshop/user/addr_list.html"
+    context_object_name = "addrs"
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(owner=self.request.user)
+    
     
