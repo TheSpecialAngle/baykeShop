@@ -1,7 +1,29 @@
-from django.views.generic import DetailView
+from django.views.generic import ListView, DetailView
 
+from baykeshop.config.settings import bayke_settings
 from baykeshop.public.mixins import LoginRequiredMixin
-from baykeshop.models import BaykeShopOrderInfo, BaykeShopOrderSKU
+from baykeshop.models import BaykeShopOrderInfo
+
+
+class BaykeshopOrderInfoListView(LoginRequiredMixin, ListView):
+    """ 订单列表 """
+    model = BaykeShopOrderInfo
+    template_name = "baykeshop/order/order_list.html"
+    context_object_name = "order_list"
+    paginate_by = bayke_settings.USER_ORDERINFO_PAGINATE_BY
+    paginate_orphans = 2
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['status'] = self.request.GET.get('status') if self.request.GET.get('status') else ''
+        return context
+    
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(owner=self.request.user)
+        cleaned_data = self.request.GET.dict()
+        if cleaned_data and (cleaned_data.get('status') in ['1', '2', '3', '4', '5', '6']):
+            queryset = queryset.filter(pay_status=int(cleaned_data['status']))
+        return queryset
 
 
 class BaykeShopOrderInfoDetailView(LoginRequiredMixin, DetailView):

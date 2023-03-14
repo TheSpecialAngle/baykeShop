@@ -18,11 +18,11 @@ BAYKE_DEFAULTS = {
     "HOME_GOODS_COUNT": 10,
     
     # 商品列表页每页显示个数
-    "GOODS_PAGINATE_BY": 1,
+    "GOODS_PAGINATE_BY": 24,
     
     # 商品列表页最后一页剩余几个
     # 自动添加到上一页的个数，该值必须小于分页值
-    "GOODS_PAGINATE_ORPHANS": 1,
+    "GOODS_PAGINATE_ORPHANS": 4,
     
     # 商品详情页评论每页显示数量
     "DETAIL_COMMENTS_PAGINATE_BY": 24,
@@ -47,5 +47,8 @@ BAYKE_DEFAULTS = {
     "ALIPAY_TIMOUT": 15,
     
     # 支付宝回调页模版，一个模版路径字符串
-    "ALIPAYNOTIFY_TEMPLATE_NAME": None
+    "ALIPAYNOTIFY_TEMPLATE_NAME": None,
+    
+    # 用户中心订单列表数量，必须大于2
+    "USER_ORDERINFO_PAGINATE_BY": 3   
 }

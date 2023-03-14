@@ -14,7 +14,7 @@ class LoginRequiredMixin(BaseLoginRequiredMixin):
     redirect_field_name = 'redirect_to'
 
 
-class JsonLoginRequiredMixin(BaseLoginRequiredMixin):
+class JsonLoginRequiredMixin(LoginRequiredMixin):
     
     def dispatch(self, request, *args, **kwargs):
         if (not self.request.accepts('text/html')) and (not request.user.is_authenticated):
