@@ -1,4 +1,7 @@
+from django.http.response import HttpResponseRedirect
 from django.views.generic import ListView, DetailView
+from django.contrib import messages
+
 
 from baykeshop.config.settings import bayke_settings
 from baykeshop.public.mixins import LoginRequiredMixin
@@ -25,9 +28,15 @@ class BaykeshopOrderInfoListView(LoginRequiredMixin, ListView):
             queryset = queryset.filter(pay_status=int(cleaned_data['status']))
         return queryset
 
+    def post(self, request, *args, **kwargs):
+        orders = BaykeShopOrderInfo.objects.filter(owner=request.user, order_sn=request.POST['order_sn'])
+        orders.update(pay_status=4)
+        messages.add_message(request, messages.SUCCESS, f'订单{orders.first()}已确认收货！')
+        return HttpResponseRedirect(f"{request.path}?status=4")
+    
 
 class BaykeShopOrderInfoDetailView(LoginRequiredMixin, DetailView):
-    """ 订单详情页 """
+    """ 订单结算支付 """
     
     model = BaykeShopOrderInfo
     template_name = "baykeshop/order/order_detail.html"
@@ -71,3 +80,8 @@ class BaykeShopOrderInfoDetailView(LoginRequiredMixin, DetailView):
             }
         ]
         return pay_list
+    
+
+class BaykeShopOrderInfoUserDetailView(BaykeShopOrderInfoDetailView):
+    
+    template_name = "baykeshop/order/user_order_detail.html"

@@ -46,7 +46,7 @@
                           订单管理
                         </p>
                         <ul class="menu-list">
-                          <li><a href="{% url 'baykeshop:order_list' %}" class="{% if '/order/list/' in request.path %} is-active {% endif %}">我的订单</a></li>
+                          <li><a href="{% url 'baykeshop:order_list' %}" class="{% if 'order' in request.path %} is-active {% endif %}">我的订单</a></li>
                         </ul>
 
                     </aside>

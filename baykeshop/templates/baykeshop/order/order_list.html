@@ -4,30 +4,31 @@
 
 {% block title %}我的订单{% endblock %}
 
-
 {% block userinfo_content %}
-    
     <div class="box is-radiusless mb-3">
+        <h1 class="is-size-4">我的订单</h1>
+        <div class="dropdown-divider"></div>
+
         <div class="tabs is-boxed is-fullwidth">
             <ul>
-            <li class="{% if 'status' not in request.get_full_path or status == '' %} is-active {% endif %}" ><a href="{% url 'baykeshop:order_list' %}">全部订单</a></li>
-            <li class="{% if 'status=1' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=1">待支付</a></li>
-            <li class="{% if 'status=2' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=2">待发货</a></li>
-            <li class="{% if 'status=3' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=3">待收货</a></li>
-            <li class="{% if 'status=4' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=4">待评价</a></li>
-            <li class="{% if 'status=5' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=5">已完成</a></li>
+                <li class="{% if 'status' not in request.get_full_path or status == '' %} is-active {% endif %}" ><a href="{% url 'baykeshop:order_list' %}">全部订单</a></li>
+                <li class="{% if 'status=1' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=1">待支付</a></li>
+                <li class="{% if 'status=2' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=2">待发货</a></li>
+                <li class="{% if 'status=3' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=3">待收货</a></li>
+                <li class="{% if 'status=4' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=4">待评价</a></li>
+                <li class="{% if 'status=5' in request.get_full_path %} is-active {% endif %}"><a href="{% url 'baykeshop:order_list' %}?status=5">已完成</a></li>
             </ul>
         </div>
         
         {% for order in page_obj %}
-        <div class="box has-background-light">
+        <div class="box has-background-light is-shadowless">
         <div class="is-flex is-justify-content-space-between">
             <div class=" has-text-grey-light1">订单日期：{{ order.add_date }}</div>
             <div class=" has-text-danger-dark">
                 {{ order.get_pay_status_display }}
             </div>
         </div>
-        <div class=" dropdown-divider"></div>
+        <div class="dropdown-divider"></div>
         {% for osku in order.baykeshopordersku_set.all %}
         <div class="is-flex is-justify-content-space-between">
             <div>
@@ -43,22 +44,26 @@
                 <p class=" has-text-danger-dark">¥ {{ osku.price }} x {{ osku.count }}</p>
             </div>
         </div>
-        {% endfor %}
         <div class=" dropdown-divider"></div>
+        {% endfor %}
+
         <div class="">
             <p class=" has-text-weight-bold pt-1 pb-1 has-text-right">共{% order_num order.baykeshopordersku_set.all %}件商品，总金额{{ order.total_amount }}元（含运费）</p>
             <div class=" buttons is-justify-content-end">
-                
                 {% if order.pay_status == 1 %}
-                    <button class=" button is-primary is-small">立即支付</button>
+                    <a class="button is-primary is-small" href="{% url 'baykeshop:order_detail' order.order_sn %}">立即支付</a>
                 {% elif order.pay_status == 3 %}
-                    <button class=" button is-primary is-small">确认收货</button>
+                    {% comment %} <button class="button is-primary is-small">确认收货</button> {% endcomment %}
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_sn" value="{{ order.order_sn }}">
+                        <button class="button is-primary is-small" type="submit">确认收货</button>
+                    </form>
                 {% elif order.pay_status == 4 %}
-                    <button class=" button is-primary is-small">立即评级</button>
+                    <button class=" button is-primary is-small">立即评价</button>
                 {% endif %}
-                <a href="" class="button is-small">订单详情</a>
+                <a href="{% url 'baykeshop:user_order_detail' order.order_sn %}" class="button is-small">订单详情</a>
             </div>
-                
         </div>
 
         </div>

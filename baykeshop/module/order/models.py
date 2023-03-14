@@ -114,13 +114,6 @@ class BaykeShopOrderInfo(AbstractModel):
         # 获取支付方式的默认值
         return cls._meta.get_field('pay_method').default
 
-    @classmethod
-    def get_tabs_label(cls, pay_status):
-        if pay_status is not None:
-            label_dict = dict(cls.OrderStatusChoices.choices)
-            return label_dict.get(int(pay_status))
-        return "全部订单"
-
 
 class BaykeShopOrderSKU(AbstractModel):
     """订单商品"""
