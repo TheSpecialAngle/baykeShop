@@ -19,7 +19,7 @@ class BaykeshopOrderInfoListView(LoginRequiredMixin, ListView):
         return context
     
     def get_queryset(self):
-        queryset = super().get_queryset().filter(owner=self.request.user)
+        queryset = super().get_queryset().order_by('-add_date').filter(owner=self.request.user)
         cleaned_data = self.request.GET.dict()
         if cleaned_data and (cleaned_data.get('status') in ['1', '2', '3', '4', '5', '6']):
             queryset = queryset.filter(pay_status=int(cleaned_data['status']))

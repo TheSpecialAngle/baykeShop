@@ -81,3 +81,9 @@ def address_result(user):
             'id', 'name', 'phone', 'email', 'province', 'city', 'county', 'address', 'is_default')
         )
     }
+    
+    
+@register.simple_tag
+def order_num(orderskus):
+    from django.db.models import Sum
+    return orderskus.aggregate(Sum("count")).get('count__sum')
