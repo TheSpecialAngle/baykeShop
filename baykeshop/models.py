@@ -16,3 +16,4 @@ from baykeshop.module.goods.models import (
 
 from baykeshop.module.cart.models import BaykeShopingCart
 from baykeshop.module.order.models import BaykeShopOrderInfo, BaykeShopOrderSKU
+from baykeshop.module.comments.models import BaykeOrderInfoComments

@@ -11,6 +11,10 @@
 
 
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.utils.translation import gettext_lazy as _
+
 from baykeshop.public.manager import BaseManager
 # Create your models here.
 
@@ -58,3 +62,16 @@ class CarouselAbstractModel(AbstractModel):
     class Meta:
         ordering = ['-add_date']
         abstract = True
+        
+    
+class ContentTypeAbstract(AbstractModel):
+    """ 模型的通用关系 """
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        abstract = True
+        indexes = [
+            models.Index(fields=["content_type", "object_id"]),
+        ]

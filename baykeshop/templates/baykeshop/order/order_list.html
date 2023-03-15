@@ -60,7 +60,7 @@
                         <button class="button is-primary is-small" type="submit">确认收货</button>
                     </form>
                 {% elif order.pay_status == 4 %}
-                    <button class=" button is-primary is-small">立即评价</button>
+                    <a class=" button is-primary is-small" href="{% url 'baykeshop:comments_create' order.order_sn %}">立即评价</a>
                 {% endif %}
                 <a href="{% url 'baykeshop:user_order_detail' order.order_sn %}" class="button is-small">订单详情</a>
             </div>
