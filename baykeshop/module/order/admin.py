@@ -97,6 +97,7 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
         if obj is not None and obj.pay_status != 1:
             return False
         return super().has_change_permission(request, obj)
+    
     class Media:
         css = {'all': ['baykeadmin/css/ordersku.css']}
         

@@ -4,7 +4,10 @@ from django.contrib import messages
 from django.views.generic import ListView, DetailView
 
 from baykeshop.config.settings import bayke_settings
-from baykeshop.models import BaykeShopSPU, BaykeShopSKU, BaykeShopCategory, BaykeShopSpecOption
+from baykeshop.models import (
+    BaykeShopSPU, BaykeShopSKU, BaykeShopCategory, BaykeShopSpecOption,
+    BaykeOrderInfoComments
+)
 from baykeshop.public.forms import SearchForm
 
 
@@ -117,6 +120,10 @@ class BaykeShopSPUDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['skus'], context['specs'], context['current_ops'] = self.get_skus()
+        
+        context['tabs_active'] = self.request.GET.get('tabsActive', 'content')
+        context['page_comments'] = self.get_comments_page()
+        context['like_rate'], context['score'] = self.get_good_rate()
         return context
     
     def get_banners(self, sku_id=None):
@@ -171,5 +178,35 @@ class BaykeShopSPUDetailView(DetailView):
         if skus_queryset.first():
             current_ops = list(skus_queryset.first().options.values_list('name', flat=True))
         return skus, specs, current_ops
+    
+    
+    def get_comments(self):
+        # 评价列表
+        from django.contrib.contenttypes.models import ContentType
+        content_type = ContentType.objects.get_for_model(BaykeShopSKU)
+        skus_id = self.get_object().baykeshopsku_set.values_list('id', flat=True)
+        comments = BaykeOrderInfoComments.objects.filter(content_type=content_type, object_id__in=list(skus_id))
+        return comments
         
-        
+    def get_comments_page(self):
+        # 留言分页
+        from django.core.paginator import Paginator
+        paginator = Paginator(self.get_comments(), 5)
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        return page_obj
+    
+    def get_good_rate(self):
+        # 评分及满意度
+        comments = self.get_comments()
+        # 总评价数
+        rates = comments.count()
+        # 大于等于3分的人数
+        rate_gte_3 = comments.filter(comment_choices__gte=3).count()
+        # 满意度,大于三分的占比数
+        like_rate = (rate_gte_3 / rates) * 100 if rates else 98
+        # 评分
+        from django.db.models import Avg
+        s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
+        score = s if s else 4.8
+        return round(like_rate), round(score, 1)

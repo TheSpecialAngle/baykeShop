@@ -8,6 +8,22 @@ from baykeshop.models import BaykeShopingCart, BaykeShopAddress
 register = Library()
 
 
+def sku_rate(skus):
+    from django.db.models import Avg
+    from baykeshop.models import BaykeOrderInfoComments, BaykeShopSKU
+    from django.contrib.contenttypes.models import ContentType
+    content_type = ContentType.objects.get_for_model(BaykeShopSKU)
+    skus_id = skus.values_list('id', flat=True)
+    comments = BaykeOrderInfoComments.objects.filter(
+        content_type=content_type, object_id__in=list(skus_id)).aggregate(
+            Avg('comment_choices')
+        ).get('comment_choices__avg')
+        
+    score = comments if comments else 4.8
+    
+    return round(score, 1)
+
+
 @register.simple_tag
 def navbar_result():
     return BaykeShopCategory.get_cates()
@@ -52,6 +68,7 @@ def spu_box(spu):
         'spu': spu,
         'price': skus(spu).first().price,
         'sales': skus(spu).aggregate(Sum('sales'))['sales__sum'],
+        'score': sku_rate(skus(spu))
     }
 
 @register.simple_tag
@@ -71,11 +88,13 @@ def page_list(request, page_obj):
     
 @register.simple_tag
 def cart_num(user):
+    # 购物车商品数量
     return BaykeShopingCart.get_cart_count(user) if user.is_authenticated else 0
 
 
 @register.inclusion_tag(filename="baykeshop/user/address.html")
 def address_result(user):
+    # 订单确认页面地址
     return {
         'address_list': list(BaykeShopAddress.objects.filter(owner=user).values(
             'id', 'name', 'phone', 'email', 'province', 'city', 'county', 'address', 'is_default')
@@ -85,5 +104,21 @@ def address_result(user):
     
 @register.simple_tag
 def order_num(orderskus):
+    # 计算该订单下的订单商品数量
+    # orderskus,订单关联订单商品queryset
     from django.db.models import Sum
     return orderskus.aggregate(Sum("count")).get('count__sum')
+
+
+def commented_func(order):
+    # 判断订单商品是否已经全部评价方法
+    # order 订单对象
+    commenteds = order.baykeshopordersku_set.values_list('is_commented', flat=True)
+    return all(list(commenteds)) if commenteds else False
+
+
+@register.simple_tag
+def is_order_commented(order):
+    return commented_func(order)
+
+

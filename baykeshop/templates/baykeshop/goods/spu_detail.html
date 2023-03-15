@@ -128,7 +128,69 @@
                 </b-button>
             </div>
 
-            <div class="content">{{ spu.content|safe }}</div>
+            {% comment %} 商品详情及评论 {% endcomment %}
+            <div class="box is-radiusless">
+                <b-tabs class="block" @input="tabsChange" v-model="activeTab">
+                    <b-tab-item label="商品详情" icon="comment" value="content">
+                        <div class="content">{{ spu.content|safe }}</div>
+                    </b-tab-item>
+                    <b-tab-item label="商品评价" icon="library-music" value="comment">
+                        <div class="is-flex is-justify-content-space-between p-2">
+                            <div class="">满意度：{{ like_rate }}%</div>
+                            <div class="is-flex is-align-items-center">
+                                <span> 评分：</span>
+                                <b-rate 
+                                    :value="{{ score }}" 
+                                    disabled 
+                                    custom-text="{{ score }}分">
+                                </b-rate>
+                            </div>
+                        </div>
+                        <div class=" dropdown-divider"></div>
+
+                        {% for comment in page_comments %}
+                            <article class="media">
+                                <figure class="media-left">
+                                    <p class="image is-32x32">
+                                        <img class="is-rounded" src="{{ comment.owner.baykeuserinfo.avatar.url }}">
+                                    </p>
+                                </figure>
+                                <div class="media-content">
+                                    <p>
+                                        {{ comment.owner.username }}
+                                        <b-rate size="is-small" :value="{{ comment.comment_choices }}" disabled custom-text="{{ comment.comment_choices }}分"></b-rate>
+                                    </p>
+                                    <p class=" is-size-7">{{ comment.add_date|timesince }}前</p>
+                                    <p class=" has-text-grey-light">{{ comment }}</p>
+                                </div>
+                            </article>
+                        {% endfor %}
+
+                        {% if page_comments %}
+                        <nav class="pagination is-centered1 is-small" role="navigation" aria-label="pagination">
+                            {% if page_comments.has_previous %}
+                            <a class="pagination-previous" href="?page={{ page_comments.previous_page_number }}&tabsActive=comment">Previous</a>
+                            {% endif %}
+                            {% if page_comments.has_next %}
+                            <a class="pagination-next" href="?page={{ page_comments.next_page_number }}&tabsActive=comment">Next page</a>
+                            {% endif %}
+                            <ul class="pagination-list">
+                                {% for p in page_obj.paginator.get_elided_page_range %}
+                                    {% if p != '...' %}
+                                    <li><a href="?page={{ p }}&tabsActive=comment" class="pagination-link {% if page_comments.number == p %} is-current {% endif %}" {% if page_comments.number == p %}aria-current="page"{% endif %} aria-label="Goto page {{ p }}">{{ p }}</a></li>
+                                    {% else %}
+                                    <li><span class="pagination-ellipsis">&hellip;</span></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+
+                    </b-tab-item>
+                </b-tabs>
+            </div>
+
+            
 
         </div>
         <div class="column is-2">
@@ -153,7 +215,9 @@
                 goods: null,
                 num: 1,
                 isDisabled: false,
-                stock:0
+                stock:0,
+
+                activeTab: '{{ tabs_active }}'
             },
             created(){
                 this.goods = this.currentOps.length > 0 ? this.skus[this.currentOps.join(',')] : this.skus[this.currentOps]
@@ -186,6 +250,11 @@
                 // 立即购买
                 cashRegister(){
                     location.href = `{% url 'baykeshop:cash_register' %}?skuID=${this.goods.sku_id}&num=${this.num}`
+                },
+
+                // tabs
+                tabsChange(value){
+                    location.href = `{{ request.path }}?tabsActive=${value}`
                 }
             },
             watch:{

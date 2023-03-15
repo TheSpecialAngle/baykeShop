@@ -107,6 +107,8 @@
 {% endblock %}
 
 {% block vue %}
+{% if order.pay_status > 1 and order.pay_status != 6 %}
+{% else %}
     <script>
 
         var pay_methods = JSON.parse(document.getElementById('pay-methods-data').textContent);
@@ -165,6 +167,7 @@
             }
         })
     </script>
+{% endif %}
 {% endblock %}
     
     
