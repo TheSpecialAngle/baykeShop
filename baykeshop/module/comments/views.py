@@ -36,6 +36,6 @@ class BaykeOrderInfoCommentsFormView(BaykeShopOrderInfoDetailView):
                 obj.pay_status = 5
                 obj.save()
             messages.add_message(request, messages.SUCCESS, f'评价发表成功！')
-        return HttpResponseRedirect(reverse("baykeshop:spu_detail", args=[oskus.first().sku.spu.id]))
+        return HttpResponseRedirect(f'{reverse("baykeshop:spu_detail", args=[oskus.first().sku.spu.id])}?tabsActive=comment')
     
     
