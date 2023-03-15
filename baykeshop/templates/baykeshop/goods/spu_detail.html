@@ -131,10 +131,10 @@
             {% comment %} 商品详情及评论 {% endcomment %}
             <div class="box is-radiusless">
                 <b-tabs class="block" @input="tabsChange" v-model="activeTab">
-                    <b-tab-item label="商品详情" icon="comment" value="content">
+                    <b-tab-item label="商品详情" value="content">
                         <div class="content">{{ spu.content|safe }}</div>
                     </b-tab-item>
-                    <b-tab-item label="商品评价" icon="library-music" value="comment">
+                    <b-tab-item label="商品评价" value="comment">
                         <div class="is-flex is-justify-content-space-between p-2">
                             <div class="">满意度：{{ like_rate }}%</div>
                             <div class="is-flex is-align-items-center">
