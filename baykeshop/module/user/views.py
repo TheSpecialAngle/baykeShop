@@ -101,7 +101,7 @@ class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
         context['minus_balance'] = self.get_minus_balance()
         context['add_balance'] = self.get_add_balance()
         context['amount_minus'] = round((self.get_amount_minus()['amount__sum'] or 0), 2)
-        context['amount_add'] = self.get_amount_add()
+        context['amount_add'] = round(self.get_amount_add(), 2)
         return context
     
     def get_queryset(self):
@@ -120,7 +120,12 @@ class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
     
     def get_amount_add(self):
         # 累计充值
-        return self.request.user.baykeuserinfo.balance + (self.get_amount_minus()['amount__sum'] or 0)
+        try:
+            amount_add = self.request.user.baykeuserinfo.balance + (self.get_amount_minus()['amount__sum'] or 0)
+        except BaykeUserInfo.DoesNotExist:
+            BaykeUserInfo.objects.create(owner=self.request.user)
+            amount_add = self.request.user.baykeuserinfo.balance + (self.get_amount_minus()['amount__sum'] or 0)
+        return amount_add
     
 
 class BaykeShopAddressListView(LoginRequiredMixin, ListView):

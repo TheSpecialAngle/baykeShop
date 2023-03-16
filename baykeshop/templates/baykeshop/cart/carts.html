@@ -161,7 +161,8 @@
                     }).then(res => {
                         if (res.data.code == 'ok') {
                             navbar.toastMessage('is-success', res.data.message)
-                            location.reload()
+                            cartNum._data.cart_num = data.sales
+                            // location.reload()
                         }else{
                             navbar.toastMessage('is-danger', res.data.message)
                         }

@@ -6,7 +6,7 @@ from django.urls import reverse_lazy
 from baykeshop.models import BaykeShopingCart, BaykeShopAddress
 from baykeshop.public.mixins import (
     JsonableResponseMixin, JsonLoginRequiredMixin, JsonResponse,
-    LoginRequiredMixin, JSONView
+    LoginRequiredMixin
 )
 
 

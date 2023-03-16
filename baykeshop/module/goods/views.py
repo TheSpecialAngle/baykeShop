@@ -29,7 +29,7 @@ class BaykeShopSPUListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['cates'] = BaykeShopCategory.get_cates().order_by('-add_date')
-        context['sub_cates'] = context['cates'].first().baykeshopcategory_set.all()
+        context['sub_cates'] = context['cates'].first().baykeshopcategory_set.all() if context['cates'].first() else []
         context['params'] = self.request.GET.dict()
         return context
     
@@ -55,6 +55,7 @@ class BaykeShopSPUListView(ListView):
         if params.get('order'):
             return {'order':params.get('order')}
         return None
+    
     
 class BaykeShopCategoryDetailView(SingleObjectMixin, BaykeShopSPUListView):
     """ 商品分类 """
@@ -133,7 +134,8 @@ class BaykeShopSPUDetailView(DetailView):
         if sku_id is not None:
             try:
                 sku = BaykeShopSKU.objects.get(id=sku_id)
-                banners.insert(0, sku.cover_pic.url) 
+                if sku.cover_pic:
+                    banners.insert(0, sku.cover_pic.url) 
             except BaykeShopSKU.DoesNotExist:
                 pass
         return banners
@@ -156,7 +158,7 @@ class BaykeShopSPUDetailView(DetailView):
                 'org_price': sku.org_price.to_eng_string(),
                 'stock': sku.stock,
                 'sales': sku.sales,
-                'cover_pic': sku.cover_pic.url,
+                'cover_pic': sku.cover_pic.url if sku.cover_pic else spu.cover_pic.url,
                 'banners': self.get_banners(sku_id=sku.id)
             }
             
@@ -178,7 +180,6 @@ class BaykeShopSPUDetailView(DetailView):
         if skus_queryset.first():
             current_ops = list(skus_queryset.first().options.values_list('name', flat=True))
         return skus, specs, current_ops
-    
     
     def get_comments(self):
         # 评价列表

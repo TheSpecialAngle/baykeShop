@@ -117,9 +117,7 @@ class BaykeShopSKU(AbstractModel):
     cover_pic = models.ImageField(
         "封面图",
         upload_to="cover/sku/%Y/%m",
-        max_length=200,
-        blank=True,
-        null=True
+        max_length=200
     )
     price = models.DecimalField("售价", max_digits=8, decimal_places=2)
     cost_price = models.DecimalField("成本价", max_digits=8, decimal_places=2)

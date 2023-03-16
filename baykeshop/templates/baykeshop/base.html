@@ -65,9 +65,9 @@
                             注册
                         </a>
                         {% endif %}
-                        <a class="cart" href="{% url 'baykeshop:carts' %}">
+                        <a class="cart" href="{% url 'baykeshop:carts' %}" id="cartNum">
                             <span class="icon"><i class="mdi mdi-cart-check"></i></span>
-                            购物车({% cart_num request.user %})
+                            购物车({$ cart_num $})
                         </a>
                         {% endblock %}
                     </div>
@@ -173,6 +173,15 @@
                         type: type
                     })
                 },
+            }
+        })
+    </script>
+    <script>
+        var cartNum = new Vue({
+            el: '#cartNum',
+            delimiters: ['{$', '$}'],
+            data: {
+                cart_num: '{% cart_num request.user %}'
             }
         })
     </script>
