@@ -73,7 +73,7 @@ class BaykeShopCategoryDetailView(SingleObjectMixin, BaykeShopSPUListView):
         cate = self.object
         params = self.request.GET.dict()
         if cate.parent is None:
-            spus = BaykeShopSPU.objects.filter(category__in=cate.baykeshopcategory_set.all()).order_by('-add_date')
+            spus = BaykeShopSPU.objects.filter(category__in=cate.baykeshopcategory_set.all()).order_by('-add_date').distinct()
             # 按销量或价格排序
             if self.get_params_filed(params):
                 cates = cate.baykeshopcategory_set.all()

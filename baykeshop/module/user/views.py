@@ -1,7 +1,8 @@
 from django.views.generic import FormView, CreateView, TemplateView, ListView
 from django.contrib.auth import login
 from django.contrib.auth import authenticate
-from django.urls import reverse_lazy
+from django.http.response import HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.views import (
     LoginView as BaseLoginView,
@@ -11,7 +12,9 @@ from django.contrib.auth.views import (
 from baykeshop.config.settings import bayke_settings
 from baykeshop.module.user.forms import LoginForm, RegisterForm
 from baykeshop.models import BaykeUserInfo, BaykeShopAddress, BaykeUserBalanceLog
-from baykeshop.public.mixins import JsonLoginRequiredMixin, JsonableResponseMixin, LoginRequiredMixin, JsonResponse
+from baykeshop.public.mixins import (
+    JsonLoginRequiredMixin, JsonableResponseMixin, LoginRequiredMixin, JsonResponse
+)
 
 
 
@@ -90,6 +93,11 @@ class BaykeUserInfoTemplateView(LoginRequiredMixin, TemplateView):
     
     template_name = "baykeshop/user/userinfo.html"
     
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        
+        return HttpResponseRedirect(reverse("baykeshop:userinfo"))
+    
     
 class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
     """ 余额记录 """
@@ -121,15 +129,15 @@ class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
     def get_amount_add(self):
         # 累计充值
         try:
-            amount_add = self.request.user.baykeuserinfo.balance + (self.get_amount_minus()['amount__sum'] or 0)
+            self.request.user.baykeuserinfo.balance
         except BaykeUserInfo.DoesNotExist:
             BaykeUserInfo.objects.create(owner=self.request.user)
-            amount_add = self.request.user.baykeuserinfo.balance + (self.get_amount_minus()['amount__sum'] or 0)
+        amount_add = self.request.user.baykeuserinfo.balance + (self.get_amount_minus()['amount__sum'] or 0)
         return amount_add
     
 
 class BaykeShopAddressListView(LoginRequiredMixin, ListView):
-    
+    """ 地址列表 """
     model = BaykeShopAddress
     template_name = "baykeshop/user/addr_list.html"
     context_object_name = "address_list"
@@ -139,6 +147,7 @@ class BaykeShopAddressListView(LoginRequiredMixin, ListView):
             'id', 'name', 'phone', 'email', 'province', 'city', 'county', 'address', 'is_default'))
     
     def post(self, request, *args, **kwargs):
+        # 删除地址
         code = ''
         message = ''
         addr_id = request.POST.get('addr_id')
