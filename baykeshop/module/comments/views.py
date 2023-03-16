@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from django.http.response import HttpResponseRedirect
+from django.http.response import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.contrib import messages
 
@@ -19,6 +19,11 @@ class BaykeOrderInfoCommentsFormView(BaykeShopOrderInfoDetailView):
         return context
     
     def post(self, request, *args, **kwargs):
+        
+        # 判断评论时机
+        if self.get_object().pay_status != 4:
+            raise Http404
+        
         form = BaykeOrderInfoCommentsModelForm(request.POST)
         content_type = ContentType.objects.get_for_model(BaykeShopSKU)
         form.instance.content_type = content_type

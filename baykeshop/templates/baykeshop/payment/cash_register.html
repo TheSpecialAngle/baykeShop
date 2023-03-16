@@ -115,6 +115,11 @@
             },
             methods:{
                 paySave(){
+                    if (!address._data.formProps.id){
+                        navbar.toastMessage('is-danger', '请选择有效收货地址！')
+                        return
+                    }
+
                     // 提交订单
                     const sendData = new FormData()
                     sendData.append('addr_id', address._data.formProps.id)

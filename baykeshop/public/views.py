@@ -18,7 +18,7 @@ class HomeTemplateView(TemplateView):
         from baykeshop.models import BaykeShopSPU
         queryset = BaykeShopCategory.get_cates()
         for cate in queryset:
-            cate.spus = BaykeShopSPU.objects.filter(category__in=cate.sub_cates)[:bayke_settings.HOME_GOODS_COUNT]
+            cate.spus = BaykeShopSPU.objects.filter(category__in=cate.sub_cates).distinct()[:bayke_settings.HOME_GOODS_COUNT]
         return queryset
 
 

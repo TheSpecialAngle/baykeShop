@@ -1,14 +1,15 @@
-<div class="is-relative full-height p-2 has-background-white spu-box">
-    <figure class="image is-1by1">
-        <a href="{% url 'baykeshop:spu_detail' spu.id %}"><img src="{{ spu.cover_pic.url }}" alt="{{ spu.title }}"></a>
-    </figure>
-    <p class="has-text-justified spu-title"><a href="{% url 'baykeshop:spu_detail' spu.id %}" class="has-text-black-ter">{{ spu.title|truncatechars:45 }}...</a></p> 
-    <div class="is-flex is-align-items-center is-justify-content-space-between pt-1">
-        <span class="is-size-5 has-text-danger-dark">¥{{ price }}</span>
-        <span class="tag is-danger is-light is-size-7">券</span>
+<div class="full-height has-background-white is-flex is-flex-direction-column p-2">
+    <div class=" is-flex-grow-1">
+        <figure class="image is-1by1">
+            <a href="{% url 'baykeshop:spu_detail' spu.id %}"><img src="{{ spu.cover_pic.url }}" alt="{{ spu.title }}"></a>
+        </figure>
+        <p class="has-text-justified spu-title"><a href="{% url 'baykeshop:spu_detail' spu.id %}" class="has-text-black-ter">{{ spu.title|truncatechars:45 }}...</a></p> 
+        <div class="is-flex is-align-items-center is-justify-content-space-between pt-1">
+            <span class="is-size-5 has-text-danger-dark">¥{{ price }}</span>
+            <span class="tag is-danger is-light is-size-7">券</span>
+        </div>
     </div>
-
-    <div class="spu-foot">
+    <div class="spu-foot mt-2">
         <div class="is-flex is-align-items-center is-justify-content-space-between">
             <span class="is-size-7 has-text-grey-light">{{ sales }}人付款</span>
             <span class="is-size-7 has-text-grey-light">{{ score }}分</span>

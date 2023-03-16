@@ -46,7 +46,7 @@ class CashRegisterTemplateView(LoginRequiredMixin, TemplateView):
                 # 粗略计算运费
                 cart.freight = cart.spu.freight
         # 缓存订单信息        
-        cache.set('carts', carts, None)
+        cache.set(f'carts{self.request.user.id}', carts, None)
         return carts
     
     def get_count(self, carts):
@@ -91,9 +91,17 @@ class CashRegisterTemplateView(LoginRequiredMixin, TemplateView):
     
     def post(self, request, *args, **kwargs):
         cleaned_data = request.POST.dict()
-        addr = BaykeShopAddress.objects.get(id=int(cleaned_data['addr_id']))
-        carts = cache.get('carts')
         
+        # 收货地址验证
+        if not cleaned_data.get('addr_id'):
+            return JsonResponse({'code': 'err', 'message': '收货地址不能为空！'})
+        try:
+            addr = BaykeShopAddress.objects.get(id=int(cleaned_data['addr_id'])) 
+        except BaykeShopAddress.DoesNotExist:
+            return JsonResponse({'code': 'err', 'message': '收货地址无效！'})
+        
+        # 缓存中的订单数据是否存在   
+        carts = cache.get(f'carts{self.request.user.id}')
         if not carts:
             return JsonResponse({'code': 'err', 'message': '订单过期，请刷新重试！'})
         
@@ -108,6 +116,7 @@ class CashRegisterTemplateView(LoginRequiredMixin, TemplateView):
             "email": addr.email,
             "address": f"{addr.province}{addr.city}{addr.county}{addr.address}"
         }
+        
         # 创建订单
         orderinfo = BaykeShopOrderInfo.objects.create(**datas)
         
@@ -173,25 +182,29 @@ class PayNowView(JsonLoginRequiredMixin, View):
         # 余额支付
         elif order and int(paymethod) == 4:
             from django.utils import timezone
+            # 余额存量判断
             if userinfo.balance < order.total_amount:
                 return JsonResponse({'code':'err', 'message': '余额不足！'})
+            
             # 扣除余额  
             BaykeUserInfo.objects.filter(owner=request.user).update(
                 balance=F('balance')-order.total_amount
             )
-            
+            # 修改订单信息
             order.pay_status = 2
             order.trade_sn = f"YE{order_sn}"
             order.pay_method = 4
             order.pay_time=timezone.now()
             order.save()
-            # 余额变动日志
+            
+            # 记录余额变动日志
             BaykeUserBalanceLog.objects.create(
                 owner=request.user, 
                 amount=order.total_amount, 
                 change_status=2,
                 change_way=3
             )
+            # 返回支付结果页
             code = "ok",
             message = "支付地址返回成功！"
             kwargs['alipay_url'] = f"{reverse('baykeshop:order_detail', args=[order.order_sn])}"

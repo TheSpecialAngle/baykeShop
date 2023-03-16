@@ -164,6 +164,8 @@
                                     <p class=" has-text-grey-light">{{ comment }}</p>
                                 </div>
                             </article>
+                        {% empty %}
+                        <p class=" has-text-centered has-text-danger mt-6">还没有任何评价内容哦！</p>
                         {% endfor %}
 
                         {% if page_comments %}
