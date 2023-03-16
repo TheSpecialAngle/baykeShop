@@ -67,7 +67,7 @@ class BaykeAdminSite(admin.AdminSite):
                 except KeyError:
                     messages.add_message(
                         request, 
-                        messages.INFO,
+                        messages.ERROR,
                         f'{model._meta.model_name}【{model._meta.verbose_name}】未在baykeadmin中注册，请先注册模型'
                     )
                 app_label = model._meta.app_label

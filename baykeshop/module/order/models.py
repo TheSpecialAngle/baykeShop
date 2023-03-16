@@ -119,7 +119,7 @@ class BaykeShopOrderSKU(AbstractModel):
     """订单商品"""
     order = models.ForeignKey(
         BaykeShopOrderInfo,
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         verbose_name="订单",
         editable=False
     )

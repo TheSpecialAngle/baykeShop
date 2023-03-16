@@ -45,7 +45,7 @@ class BaykePermission(AbstractModel):
     is_show = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = '菜单'
+        verbose_name = '菜单权限'
         verbose_name_plural = verbose_name
 
     def __str__(self):
@@ -62,6 +62,7 @@ class BaykeUpload(AbstractModel):
 
     def __str__(self):
         return self.img.name
+
 
 class BaykeBanner(CarouselAbstractModel):
     """ 全局banner模型 """
