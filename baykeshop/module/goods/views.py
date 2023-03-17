@@ -125,6 +125,8 @@ class BaykeShopSPUDetailView(DetailView):
         context['tabs_active'] = self.request.GET.get('tabsActive', 'content')
         context['page_comments'] = self.get_comments_page()
         context['like_rate'], context['score'] = self.get_good_rate()
+        
+        context['hot_spus'] = BaykeShopSPU.get_hots()
         return context
     
     def get_banners(self, sku_id=None):

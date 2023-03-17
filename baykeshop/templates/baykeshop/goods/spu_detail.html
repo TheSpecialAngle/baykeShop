@@ -1,6 +1,6 @@
 {% extends 'baykeshop/base_site.html' %}
 
-{% load static %}
+{% load static shop_tags %}
 
 {% block title %}{{ spu.title }}{% endblock %}
 
@@ -191,12 +191,15 @@
                     </b-tab-item>
                 </b-tabs>
             </div>
-
-            
-
         </div>
         <div class="column is-2">
-            asda
+            <h1 class="has-text-centered has-background-white pt-3 is-size-6 pb-3 has-text-weight-bold">热销排行</h1>
+            <div class=" dropdown-divider is-marginless"></div>
+            {% for spu in hot_spus %}
+                {% spu_box spu %}
+                <div class="dropdown-divider"></div>
+            {% endfor %}
+                
         </div>
     </div>
 </div>

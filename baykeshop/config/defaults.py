@@ -50,5 +50,8 @@ BAYKE_DEFAULTS = {
     "ALIPAYNOTIFY_TEMPLATE_NAME": None,
     
     # 用户中心订单列表数量，必须大于2
-    "USER_ORDERINFO_PAGINATE_BY": 5
+    "USER_ORDERINFO_PAGINATE_BY": 5,
+    
+    # 热销显示数量
+    "HOT_SPUS_LEN": 4
 }
