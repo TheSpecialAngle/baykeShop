@@ -1,8 +1,17 @@
 {% extends 'baykeshop/base_site.html' %}
 
+{% load static %}
+
 {% block title %}
 {{ request.user.username }} - 个人中心    
 {% endblock %}
+
+
+{% block extrastyle %}
+<script src="{% static 'baykeshop/js/axios.min.js' %}"></script>
+<script src="{% static 'baykeshop/js/request.js' %}"></script>
+{% endblock %}
+    
 
 {% block breadcrumb %}
 <div class="container">
@@ -95,9 +104,9 @@
                                         <div class="column is-2 has-text-grey-light">手机号</div>
                                         <div class="column is-flex is-justify-content-space-between is-align-items-center">
                                             <p>{% if request.user.baykeuserinfo.phone %}{{ request.user.baykeuserinfo.phone }}{% else %}暂未添加...{% endif %}</p>
-                                            <p><button class=" button is-primary is-light is-small">
-                                                <span class="icon"><i class="mdi mdi-cellphone-cog"></i></span> <span class="text">修改</span>
-                                            </button></p>
+                                        
+                                            {% include 'baykeshop/user/update_phone.html' %}
+                                            
                                         </div>
                                     </div>
                                     <div class="dropdown-divider is-marginless"></div>
@@ -106,11 +115,7 @@
                                         <div class="column is-2 has-text-grey-light">邮箱</div>
                                         <div class="column is-flex is-justify-content-space-between is-align-items-center">
                                             <p>{{ request.user.email }}</p>
-                                            <p>
-                                                <button class=" button is-primary is-light is-small">
-                                                    <span class="icon"><i class="mdi mdi-email-edit-outline"></i></span> <span class="text">修改</span>
-                                                </button>
-                                            </p>
+                                            {% include 'baykeshop/user/update_email.html' %}
                                         </div>
                                     </div>
                                     <div class="dropdown-divider is-marginless"></div>
@@ -119,12 +124,12 @@
                                         <div class="column is-2 has-text-grey-light">余额</div>
                                         <div class="column is-flex is-justify-content-space-between is-align-items-center">
                                             <p>¥ {{ request.user.baykeuserinfo.balance }}</p>
-                                            <p>
+                                            <!-- <p>
                                                 <button class=" button is-primary is-light is-small">
                                                     <span class="icon"><i class="mdi mdi-credit-card-settings-outline"></i></span> 
                                                     <span class="text">充值</span> 
                                                 </button>
-                                            </p>
+                                            </p> -->
                                         </div>
                                     </div>
                                     <div class="dropdown-divider is-marginless"></div>

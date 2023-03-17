@@ -16,14 +16,14 @@
                 <a href="{% url 'baykeshop:cate_detail' cate.id %}">更多>></a>
             </div>
         </div>
-        <div class="columns is-multiline">
-            <div class="column is-4">
+        <div class="columns is-multiline is-mobile">
+            <div class="column is-4-fullhd is-6-tablet is-12-mobile">
                 <figure class="image is-4by3">
                     <img src="{{ cate.img_map.url }}" alt="" srcset="">
                 </figure>
             </div>
             {% for spu in cate.spus %}
-            <div class="column is-2">
+            <div class="column is-2-fullhd is-3-tablet is-6-mobile">
                 {% spu_box spu %}
             </div>
             {% endfor %}

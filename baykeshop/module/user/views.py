@@ -94,11 +94,33 @@ class BaykeUserInfoTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "baykeshop/user/userinfo.html"
     
     def post(self, request, *args, **kwargs):
-        user = request.user
+        instance, created = BaykeUserInfo.objects.get_or_create(
+            owner=self.request.user,
+            defaults={'owner': self.request.user}, 
+        )
+        # 单独修改邮箱
+        if request.POST.get('email'):
+            return self.update_user(request.POST.get('email'))
         
-        return HttpResponseRedirect(reverse("baykeshop:userinfo"))
+        return self.update_userinfo(instance)
     
+    def update_userinfo(self, instance):
+        from baykeshop.module.user.forms import UpdateUserInfoForm
+        
+        form = UpdateUserInfoForm(self.request.POST, self.request.FILES, instance=instance)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'code':'ok', 'message':'修改成功'})
+        else:
+            return JsonResponse({'code':'err', 'message':'数据验证未通过！'})
     
+    def update_user(self, email):
+        user = self.request.user
+        user.email = email
+        user.save()
+        return JsonResponse({'code':'ok', 'message':'修改成功'})
+     
+     
 class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
     """ 余额记录 """
     template_name = "baykeshop/user/balance.html"

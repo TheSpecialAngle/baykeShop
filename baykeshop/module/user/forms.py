@@ -7,6 +7,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html_join, format_html
 
+from baykeshop.models import BaykeUserInfo
 
 User = get_user_model()
 
@@ -78,3 +79,15 @@ class RegisterForm(UserCreationForm):
         model = User
         fields = ("username",)
         field_classes = {'username': BaykeShopUsernameField}
+        
+        
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['email',]
+
+class UpdateUserInfoForm(forms.ModelForm):
+    
+    class Meta:
+        model = BaykeUserInfo
+        fields = ['owner', 'avatar', 'phone', 'balance', 'nickname']
