@@ -6,7 +6,7 @@ Django==4.1.7
 mysqlclient==2.1.1
 Pillow==9.4.0
 pycparser==2.21
-pycrypto==2.6.1
+pycryptodomex==3.17
 pyOpenSSL==23.0.0
 redis==4.5.1
 sqlparse==0.4.3

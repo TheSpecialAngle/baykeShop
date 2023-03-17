@@ -145,8 +145,8 @@ class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
     
     def get_amount_minus(self):
         # 累计支出
-        from django.db.models import Sum 
-        return self.get_queryset().aggregate(Sum('amount'))
+        from django.db.models import Sum
+        return self.get_minus_balance().aggregate(Sum('amount'))
     
     def get_amount_add(self):
         # 累计充值

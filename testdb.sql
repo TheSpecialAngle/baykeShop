@@ -327,7 +327,7 @@ CREATE TABLE `baykeshop_baykeshoporderinfo` (
   UNIQUE KEY `trade_sn` (`trade_sn`),
   KEY `baykeshop_baykeshoporderinfo_owner_id_ae55cd62_fk_auth_user_id` (`owner_id`),
   CONSTRAINT `baykeshop_baykeshoporderinfo_owner_id_ae55cd62_fk_auth_user_id` FOREIGN KEY (`owner_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -356,7 +356,7 @@ CREATE TABLE `baykeshop_baykeshopordersku` (
   KEY `baykeshop_baykeshopo_sku_id_b2f6c7fe_fk_baykeshop` (`sku_id`),
   CONSTRAINT `baykeshop_baykeshopo_order_id_cb850175_fk_baykeshop` FOREIGN KEY (`order_id`) REFERENCES `baykeshop_baykeshoporderinfo` (`id`),
   CONSTRAINT `baykeshop_baykeshopo_sku_id_b2f6c7fe_fk_baykeshop` FOREIGN KEY (`sku_id`) REFERENCES `baykeshop_baykeshopsku` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -548,7 +548,7 @@ CREATE TABLE `baykeshop_baykeuserbalancelog` (
   CONSTRAINT `baykeshop_baykeuserbalancelog_owner_id_7de12bb5_fk_auth_user_id` FOREIGN KEY (`owner_id`) REFERENCES `auth_user` (`id`),
   CONSTRAINT `baykeshop_baykeuserbalancelog_chk_1` CHECK ((`change_status` >= 0)),
   CONSTRAINT `baykeshop_baykeuserbalancelog_chk_2` CHECK ((`change_way` >= 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -572,7 +572,7 @@ CREATE TABLE `baykeshop_baykeuserinfo` (
   UNIQUE KEY `owner_id` (`owner_id`),
   UNIQUE KEY `phone` (`phone`),
   CONSTRAINT `baykeshop_baykeuserinfo_owner_id_0a438220_fk_auth_user_id` FOREIGN KEY (`owner_id`) REFERENCES `auth_user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -597,7 +597,7 @@ CREATE TABLE `django_admin_log` (
   CONSTRAINT `django_admin_log_content_type_id_c4bce8eb_fk_django_co` FOREIGN KEY (`content_type_id`) REFERENCES `django_content_type` (`id`),
   CONSTRAINT `django_admin_log_user_id_c564eba6_fk_auth_user_id` FOREIGN KEY (`user_id`) REFERENCES `auth_user` (`id`),
   CONSTRAINT `django_admin_log_chk_1` CHECK ((`action_flag` >= 0))
-) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -657,4 +657,4 @@ CREATE TABLE `django_session` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2023-03-16 10:06:59
+-- Dump completed on 2023-03-17  5:47:36
