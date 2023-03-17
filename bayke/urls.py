@@ -15,18 +15,18 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
 from django.conf import settings
 from django.conf.urls.static import static
-from baykeshop.admin.sites import bayke_site
+
+
+from baykeshop.public.sites import bayke_site
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('baykeadmin/', bayke_site.urls),
-    path('', include('baykeshop.urls')),
-    path('api-auth/', include('rest_framework.urls')),
+    path('', include('baykeshop.urls'))
 ]
 
-
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

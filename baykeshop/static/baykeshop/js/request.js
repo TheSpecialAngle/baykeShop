@@ -1,9 +1,3 @@
-// 获取cookie
-// function getCookie(name) {
-//     var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
-//     return r ? r[1] : undefined;
-// }
-
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -29,11 +23,10 @@ function request(config) {
         headers: {
             'X-Requested-With': 'XMLHttpRequest',
             'X-CSRFToken': getCookie('csrftoken'),
-            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+            // 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         }
     });
     
-
     // 拦截请求
     instance.interceptors.request.use(
         config => {

@@ -1,109 +1,41 @@
-#!/usr/bin/env python
-# -*- encoding: utf-8 -*-
-'''
-@文件    :shop_tags.py
-@说明    :商城tags
-@时间    :2023/02/19 18:29:38
-@作者    :幸福关中&轻编程
-@版本    :1.0
-@微信    :baywanyun
-'''
-
 from django.template import Library
-from django.db.models import Sum, Avg
 
-from baykeshop.models import BaykeBanner
-from baykeshop.models import (
-    BaykeShopCategory, BaykeShopingCart,
-    BaykeShopOrderSKUComment, BaykePermission
-)
-from baykeshop.forms.shop.search import SearchForm
-from baykeshop.conf.bayke import bayke_settings
-
+from baykeshop.public.forms import SearchForm
+from baykeshop.models import BaykePermission, BaykeShopCategory, BaykeBanner
+from baykeshop.config.settings import bayke_settings
+from baykeshop.models import BaykeShopingCart, BaykeShopAddress
 
 register = Library()
 
 
-def category_queryset(is_home=None):
-    """
-    当参数is_home为None时返回所有的分类数据
-    当传递给is_home值为布尔值True或False时返回该字段对应的数据
-    """
-    queryset = BaykeShopCategory.objects.all()
-    if is_home is not None:
-        queryset = queryset.filter(is_home=is_home)
-    return queryset
-
-
-@register.inclusion_tag('baykeshop/navbar.html', takes_context=True)
-def navbar_result(context):
-    # 导航模块
-    form = SearchForm(context["request"].GET)
-    category_qs = category_queryset(is_home=True)
-    logo = bayke_settings.LOGO_URL
-    from baykeshop.utils import stats_req
-    try:
-        stats_req(context["request"])
-    except Exception as e:
-        pass
-    return { 
-        'category_qs': category_qs,
-        'form': form,
-        'logo': logo
-    }
+def sku_rate(skus):
+    from django.db.models import Avg
+    from baykeshop.models import BaykeOrderInfoComments, BaykeShopSKU
+    from django.contrib.contenttypes.models import ContentType
+    content_type = ContentType.objects.get_for_model(BaykeShopSKU)
+    skus_id = skus.values_list('id', flat=True)
+    comments = BaykeOrderInfoComments.objects.filter(
+        content_type=content_type, object_id__in=list(skus_id)).aggregate(
+            Avg('comment_choices')
+        ).get('comment_choices__avg')
+        
+    score = comments if comments else 4.8
     
-
-@register.inclusion_tag('baykeshop/carousel.html')
-def carousel_result():
-    # 轮播图模块
-    queryset = BaykeBanner.objects.values('id', 'img', 'desc', 'target_url')
-    return {
-        'carousels': list(queryset)
-    }
-
-
-@register.inclusion_tag('baykeshop/page.html', takes_context=True)
-def page_result(context, page_obj, **kwargs):
-    """分页组件
-    使用方法
-        {% load shop_tags %}
-        {% page_result page_obj tag=pay_satus %} 
-    接受参数：
-        page_obj 分页后的queryset
-        tag为关键字参数，当你要为特定的查询条件数据进行分页时使用
-        那么tag的值pay_satus的数据格式应为: `a=1&b=2`或者None这种方式
-    """
-    request = context['request']
-    current = request.GET.get('page', 1)
-    tag=""
-    if kwargs and kwargs['tag']:
-        tag = kwargs['tag']
-    return {
-        'paginator': page_obj.paginator,
-        'total': page_obj.paginator.num_pages,
-        'current': current,
-        'per_page': page_obj.paginator.per_page,
-        'tag': tag
-    }
-    
-
-@register.simple_tag
-def cart_num(user):
-    return BaykeShopingCart.get_cart_count(user) if user.is_authenticated else 0
-
-
-@register.simple_tag
-def order_num(orderskus):
-    return orderskus.aggregate(Sum("count")).get('count__sum')
-
-
-@register.simple_tag
-def sku_rate(sku):
-    comments = BaykeShopOrderSKUComment.objects.filter(order_sku__sku=sku)
-    # 评分
-    s = comments.aggregate(Avg('comment_choices')).get('comment_choices__avg')
-    score = s if s else 4.8
     return round(score, 1)
+
+
+@register.simple_tag
+def navbar_result():
+    return BaykeShopCategory.get_cates()
+
+
+@register.inclusion_tag(filename="baykeshop/banner.html")
+def banners_result():
+    queryset = [
+        {'id': b.id, 'img': b.img.url, 'desc': b.desc, 'target_url': b.target_url } 
+        for b in BaykeBanner.objects.all()
+    ]
+    return {'carousels': queryset}
 
 
 @register.simple_tag
@@ -125,3 +57,68 @@ def breadcrumbs(request, opts=None):
     else:
         return None
     
+
+@register.inclusion_tag(filename="baykeshop/spu_box.html")
+def spu_box(spu):
+    def skus(spu):
+        return spu.baykeshopsku_set.order_by('price')
+    
+    from django.db.models import Sum
+    return {
+        'spu': spu,
+        'price': skus(spu).first().price,
+        'sales': skus(spu).aggregate(Sum('sales'))['sales__sum'],
+        'score': sku_rate(skus(spu))
+    }
+
+@register.simple_tag
+def search(request):
+    form = SearchForm(initial=request.GET)
+    return form
+
+@register.inclusion_tag(filename="baykeshop/goods/page_list.html")
+def page_list(request, page_obj):
+    return {
+        'page_obj': page_obj,
+        'paginator': page_obj.paginator,
+        'total': page_obj.paginator.num_pages,
+        'current': request.GET.get('page', 1),
+        'per_page': page_obj.paginator.per_page,
+    }
+    
+@register.simple_tag
+def cart_num(user):
+    # 购物车商品数量
+    return BaykeShopingCart.get_cart_count(user) if user.is_authenticated else 0
+
+
+@register.inclusion_tag(filename="baykeshop/user/address.html")
+def address_result(user):
+    # 订单确认页面地址
+    return {
+        'address_list': list(BaykeShopAddress.objects.filter(owner=user).values(
+            'id', 'name', 'phone', 'email', 'province', 'city', 'county', 'address', 'is_default')
+        )
+    }
+    
+    
+@register.simple_tag
+def order_num(orderskus):
+    # 计算该订单下的订单商品数量
+    # orderskus,订单关联订单商品queryset
+    from django.db.models import Sum
+    return orderskus.aggregate(Sum("count")).get('count__sum')
+
+
+def commented_func(order):
+    # 判断订单商品是否已经全部评价方法
+    # order 订单对象
+    commenteds = order.baykeshopordersku_set.values_list('is_commented', flat=True)
+    return all(list(commenteds)) if commenteds else False
+
+
+@register.simple_tag
+def is_order_commented(order):
+    return commented_func(order)
+
+

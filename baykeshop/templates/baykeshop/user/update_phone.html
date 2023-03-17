@@ -1,104 +1,28 @@
-<div id="updatePhone">
- 
-    <b-button
-        label="修改"
-        type="is-primary is-inverted"
-        @click="phoneModal" />
-</div>
+<p id="updatePhone">
+    <button class="button is-primary is-light is-small" @click="cartModalPhone">
+        <span class="icon"><i class="mdi mdi-cellphone-cog"></i></span> <span class="text">修改</span>
+    </button>
+</p>
 
-<script>
-    const PhoneModalForm = {
-        props: ['phone'],
-        delimiters: ['{$', '$}'],
-        data(){
-            return {
-                formProps: {
-                    phone: '{{ request.user.baykeuserinfo.phone }}',
-                }
-            }
-        },
-        
-        template: `
-        <div class="box" style="min-width:300px">
-            <b-field label="我的手机">
-                <b-input
-                    type="text"
-                    v-model="formProps.phone"
-                    :hasCounter="false"
-                    :value="formProps.phone"
-                    :maxlength="11"
-                    validation-message="手机号必须为11位数字格式"
-                    pattern="[1][3,4,5,7,8,9][0-9]{9}"
-                    placeholder="我的手机号"
-                    required>
-                </b-input>
-            </b-field>
-            <b-button type="is-primary is-light" expanded @click="$emit('savePhone', formProps.phone)">立即修改</b-button>  
-        </div>
-        `
-    }
-</script>
-
+{% include 'baykeshop/user/phone_form.html' %}
 <script>
     var updatePhone = new Vue({
         el: '#updatePhone',
         delimiters: ['{$', '$}'],
         data:{
             formProps: {
-                phone: '',
+                phone: ''
             }
         },
-        methods: {
-            getCookie(name) {
-                var r = document.cookie.match("\\b" + name + "=([^;]*)\\b");
-                return r ? r[1] : undefined;
-            },
-            toastMessage(type, message){
-                return this.$buefy.toast.open({
-                    message: message,
-                    type: type
-                })
-            },
-
-            phoneModal() {
+        methods:{
+            cartModalPhone() {
                 this.$buefy.modal.open({
                     parent: this,
                     component: PhoneModalForm,
                     hasModalCard: true,
                     customClass: 'custom-class custom-class-2',
-                    trapFocus: true,
-                    events:{
-                        'savePhone': this.savePhone
-                    }
+                    trapFocus: true
                 })
-            },
-            
-            savePhone(phone){
-                
-               if (!phone){
-                    this.toastMessage('is-danger', '手机号不能为空！')
-                    return
-               }
-               const sendData = new FormData()
-               sendData.append('phone', phone)
-               sendData.append('owner', '{{ request.user.id }}')
-               axios({
-                   method: 'post',
-                   url: '{% url "baykeshop:user_profile" %}',
-                   data: sendData,
-                   headers: {
-                       'X-Requested-With': 'XMLHttpRequest',
-                       'X-CSRFToken': this.getCookie('csrftoken'),
-                       'Content-Type': 'multipart/form-data'
-                   }
-               }).then(res => {
-                   if (res.data.code == 'ok'){
-                       this.toastMessage('is-success', '修改成功！')
-                       location.reload()
-                   }else{
-                       this.toastMessage('is-success', '修改失败！')
-                   }
-               })
             }
         }
     })
