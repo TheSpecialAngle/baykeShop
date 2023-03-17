@@ -3,7 +3,7 @@ from django.template import Library
 from baykeshop.public.forms import SearchForm
 from baykeshop.models import BaykePermission, BaykeShopCategory, BaykeBanner
 from baykeshop.config.settings import bayke_settings
-from baykeshop.models import BaykeShopingCart, BaykeShopAddress
+from baykeshop.models import BaykeShopingCart, BaykeShopAddress, BaykeShopSPU
 
 register = Library()
 
@@ -20,7 +20,6 @@ def sku_rate(skus):
         ).get('comment_choices__avg')
         
     score = comments if comments else 4.8
-    
     return round(score, 1)
 
 
@@ -56,10 +55,8 @@ def breadcrumbs(request, opts=None):
         return request.breadcrumbs
     else:
         return None
-    
 
-@register.inclusion_tag(filename="baykeshop/spu_box.html")
-def spu_box(spu):
+def spu_box_func(spu):
     def skus(spu):
         return spu.baykeshopsku_set.order_by('price')
     
@@ -70,6 +67,10 @@ def spu_box(spu):
         'sales': skus(spu).aggregate(Sum('sales'))['sales__sum'],
         'score': sku_rate(skus(spu))
     }
+
+@register.inclusion_tag(filename="baykeshop/spu_box.html")
+def spu_box(spu):
+    return spu_box_func(spu)
 
 @register.simple_tag
 def search(request):
@@ -120,5 +121,4 @@ def commented_func(order):
 @register.simple_tag
 def is_order_commented(order):
     return commented_func(order)
-
 

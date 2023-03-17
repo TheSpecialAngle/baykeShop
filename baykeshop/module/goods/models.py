@@ -12,6 +12,7 @@
 from django.db import models
 
 # Create your models here.
+from baykeshop.config.settings import bayke_settings
 from baykeshop.public.abstract import (
     AbstractModel, CategoryAbstractModel, 
     CarouselAbstractModel
@@ -68,6 +69,10 @@ class BaykeShopSPU(AbstractModel):
 
     def __str__(self):
         return self.title
+    
+    @classmethod
+    def get_hots(cls):
+        return cls.objects.order_by('-baykeshopsku__sales')[:bayke_settings.HOT_SPUS_LEN]
        
     
 class BaykeShopSpec(AbstractModel):
