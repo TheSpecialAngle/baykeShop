@@ -20,7 +20,13 @@ class Command(BaseCommand):
             menus_json = f"{settings.BASE_DIR}/baykeshop/config/db/baykemenu.json"
             management.call_command('loaddata', menus_json, verbosity=0)
             menus = BaykeMenu.objects.all()
-            perms = Permission.objects.all()
-            print(menus)
-            print(perms)
+            perms = Permission.objects.all() 
+            for perm in perms:
+                if perm.codename in ['view_baykeshopcategory', 'view_baykeshopspec', 'view_baykeshopspu', 'view_baykebanner']:
+                    BaykePermission.objects.update_or_create(permission=perm, menus=menus.filter(name="商城").first(), defaults={'permission': perm})
+                elif perm.codename in ['view_group', 'view_user', 'view_baykemenu', 'view_logentry']:
+                    BaykePermission.objects.update_or_create(permission=perm, menus=menus.filter(name="认证和授权").first(), defaults={'permission': perm})
+                print(perm.codename)
+                
+                
             self.stdout.write(self.style.SUCCESS('Successfully "%s"' % 'push data'))
