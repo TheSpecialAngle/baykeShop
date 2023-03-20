@@ -17,7 +17,6 @@ from baykeshop.public.mixins import (
 )
 
 
-
 class LoginView(SuccessMessageMixin, BaseLoginView):
     """ 登录 """
     next_page = bayke_settings.NEXT_PAGE
@@ -106,13 +105,13 @@ class BaykeUserInfoTemplateView(LoginRequiredMixin, TemplateView):
     
     def update_userinfo(self, instance):
         from baykeshop.module.user.forms import UpdateUserInfoForm
-        
         form = UpdateUserInfoForm(self.request.POST, self.request.FILES, instance=instance)
         if form.is_valid():
             form.save()
             return JsonResponse({'code':'ok', 'message':'修改成功'})
         else:
-            return JsonResponse({'code':'err', 'message':'数据验证未通过！'})
+            errors = {**form.errors}
+            return JsonResponse({'code':'err', 'message':f'{list(errors.values())},数据验证未通过！'})
     
     def update_user(self, email):
         user = self.request.user

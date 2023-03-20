@@ -6,7 +6,9 @@ from django.utils.functional import lazy
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html_join, format_html
+from django.core.exceptions import ValidationError
 
+from baykeshop.config.settings import bayke_settings
 from baykeshop.models import BaykeUserInfo
 
 User = get_user_model()
@@ -86,8 +88,17 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ['email',]
 
+
 class UpdateUserInfoForm(forms.ModelForm):
     
     class Meta:
         model = BaykeUserInfo
         fields = ['owner', 'avatar', 'phone', 'balance', 'nickname']
+  
+    def clean_phone(self):
+        import re
+        phone = self.cleaned_data['phone']
+        reg = re.compile(bayke_settings.PHONE_REGX)
+        if not reg.search(phone):
+            raise ValidationError("手机号格式有误！")
+        return phone
