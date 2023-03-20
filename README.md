@@ -49,7 +49,8 @@ Liunx: source venv/bin/activate
 pip install -r requirements.txt
 ```
 5、配置Mysql数据库
-项目默认配置了Mysql数据库和redis缓存，需要你自行在运行项目前，配置安装好Mysql数据库及redis！
+
+> 项目默认配置了Mysql数据库和redis缓存，需要你自行在运行项目前，配置安装好Mysql数据库及redis！
 
 - 配置Mysql数据库
 项目根目录有个mysql.cnf的文件，修改其中的数据库信息为你自己的！
@@ -72,7 +73,9 @@ CACHES = {
 }
 ```
 ------------------------------------------------------------------
-> 小白救命招不使用mysql及redis也可以（不建议），高手可略过....
+### 小白救命招
+>不使用mysql及redis也可以（不建议），高手可略过....
+
 将`bayke/settings.py`中的mysql及redis配置改为sqlit3和内存缓存
 
 - 修改Mysql为sqlite3
@@ -96,7 +99,7 @@ CACHES = {
 ------------------------------------------------------------------
 
 6、同步数据库
-```
+```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
