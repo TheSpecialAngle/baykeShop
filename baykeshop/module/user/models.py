@@ -26,19 +26,9 @@ class BaykeUserInfo(AbstractModel):
         on_delete=models.CASCADE,
         verbose_name="用户"
     )
-    avatar = models.ImageField(
-        "头像",
-        upload_to="avatar/",
-        max_length=200,
-        blank=True,
-        default="avatar/default.jpg"
-    )
-    nickname = models.CharField(
-        max_length=30,
-        blank=True,
-        default="",
-        verbose_name="昵称"
-    )
+    avatar = models.ImageField("头像", upload_to="avatar/", max_length=200, blank=True, default="avatar/default.jpg")
+    nickname = models.CharField(max_length=30, blank=True, default="", verbose_name="昵称")
+    desc = models.CharField("描述", max_length=150, blank=True, default="")
     phone = models.CharField(
         max_length=11,
         blank=True,
