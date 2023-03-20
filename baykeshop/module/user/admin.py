@@ -38,9 +38,10 @@ class UserAdmin(BaseUserAdmin, BaseModelAdmin):
         return super().get_inline_formsets(request, formsets, inline_instances, obj)
 
     def save_formset(self, request, form, formset, change):
-        cache_balance = cache.get(f"{form.cleaned_data['username']}_balance")
+        cache_balance = cache.get(f"{form.cleaned_data['username']}_balance", 0)
         data = formset.cleaned_data[0]
-        balance = data['balance']
+        balance = data.get('balance', 0)
+        
         if float(balance) > 0 and float(balance) > float(cache_balance):
             item_balance = float(balance) - float(cache_balance)
             BaykeUserBalanceLog.objects.create(
@@ -49,7 +50,7 @@ class UserAdmin(BaseUserAdmin, BaseModelAdmin):
                 change_status=1,
                 change_way=2
             )
-        if float(balance) < float(cache_balance) and float(balance) != 0:
+        elif float(balance) < float(cache_balance) and float(balance) != 0:
             item_balance = float(cache_balance) - float(balance)
             BaykeUserBalanceLog.objects.create(
                 owner=data['owner'],
@@ -57,7 +58,7 @@ class UserAdmin(BaseUserAdmin, BaseModelAdmin):
                 change_status=2,
                 change_way=2
             )
-        if float(balance) == 0 and float(balance) < float(cache_balance):
+        elif float(balance) == 0 and float(balance) < float(cache_balance):
             BaykeUserBalanceLog.objects.create(
                 owner=data['owner'],
                 amount=float(cache_balance),

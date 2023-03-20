@@ -27,12 +27,16 @@ For full documentation visit [bayke.shop（拜客商城系统）](http://www.bay
 
 6、PC端采用django的模板系统开发，移动端通过DRF框架将分离开放标准的RestFull api接口（开发中）
 
+## 演示
+- [演示地址-demo.bayke.shop](http://demo.bayke.shop)
+- 演示账号：demo  密码：demo123zxc
+> 请文明查看演示，为了最大程度让大家感受系统，未全部禁用编辑及删除权限，请不要删除修改演示数据，免得影响别人查看演示！
 
-## 快速上手
-
-### 运行环境
+## 运行环境
 
 > python > 3.8 & django4.1 & Mysql8.0 & redis
+
+## 快速上手
 
 ### 1、克隆项目源码
 ```
