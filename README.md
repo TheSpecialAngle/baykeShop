@@ -30,25 +30,25 @@ For full documentation visit [bayke.shop（拜客商城系统）](http://www.bay
 
 ## 快速上手
 
-1、克隆项目源码
+### 1、克隆项目源码
 ```
 git clone https://gitee.com/bayke/bayke-shop.git
 ```
-2、创建虚拟环境
+### 2、创建虚拟环境
 ```
 cd bayke-shop
 python3 -m venv venv
 ```
-3、激活虚拟环境
+### 3、激活虚拟环境
 ```
 Windows: venv\Scripts\activate
 Liunx: source venv/bin/activate
 ```
-4、安装依赖
+### 4、安装依赖
 ```
 pip install -r requirements.txt
 ```
-5、配置Mysql数据库
+### 5、配置Mysql数据库
 
 > 项目默认配置了Mysql数据库和redis缓存，需要你自行在运行项目前，配置安装好Mysql数据库及redis！
 
@@ -73,7 +73,7 @@ CACHES = {
 }
 ```
 ------------------------------------------------------------------
-### 小白救命招
+#### 小白救命招
 >不使用mysql及redis也可以（不建议），高手可略过....
 
 将`bayke/settings.py`中的mysql及redis配置改为sqlit3和内存缓存
@@ -98,16 +98,16 @@ CACHES = {
 ```
 ------------------------------------------------------------------
 
-6、同步数据库
+### 6、同步数据库
 ```bash
 python manage.py makemigrations
 python manage.py migrate
 ```
-7、创建超级管理员
+### 7、创建超级管理员
 ```python
 python manage.py createsuperuser
 ```
-8、初始化项目
+### 8、初始化项目
 ```python
 # 运行下边命令可自动生成初始的自定义管理菜单
 python manage.py push
@@ -118,11 +118,11 @@ or
 python manage.py push -test
 ```
 
-9、运行项目
+### 9、运行项目
 ```
 python3 manage.py runserver
 ```
-10、查看项目
+### 10、查看项目
 ```
 前台：http://127.0.0.1:8000
 后台：http://127.0.0.1:8000/baykeadmin/
@@ -130,7 +130,7 @@ python3 manage.py runserver
 后台账号及密码是你在第五步创建的！
 ```
 
-6、支付宝配置
+### 11、支付宝配置
 
 虽然你可以通过修改baykeshop/conf/defaults.py中的默认配置来控制全局相关设置，但我不建议你这么做，这个配置文件作为默认选项的回退，尽量不要去修改，而是在项目bayke目录下的settings.py中覆盖默认项配置！
 ```python
@@ -145,6 +145,7 @@ BAYKE_SHOP = {
 ```
 以上就是配置支付宝收款你需要做的全部工作！
 
+### 赞赏支持
 
 如果该项目给您带来了帮助，您可以为该项目点点star或者写写文章宣传宣传！
 
