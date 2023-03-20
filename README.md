@@ -30,36 +30,107 @@ For full documentation visit [bayke.shop（拜客商城系统）](http://www.bay
 
 ## 快速上手
 
-1、克隆项目源码
+### 1、克隆项目源码
 ```
 git clone https://gitee.com/bayke/bayke-shop.git
 ```
-2、创建虚拟环境
+### 2、创建虚拟环境
 ```
 cd bayke-shop
 python3 -m venv venv
 ```
-3、激活虚拟环境
+### 3、激活虚拟环境
 ```
 Windows: venv\Scripts\activate
 Liunx: source venv/bin/activate
 ```
-4、运行项目
+### 4、安装依赖
+```
+pip install -r requirements.txt
+```
+### 5、配置Mysql数据库
+
+> 项目默认配置了Mysql数据库和redis缓存，需要你自行在运行项目前，配置安装好Mysql数据库及redis！
+
+- 配置Mysql数据库
+项目根目录有个mysql.cnf的文件，修改其中的数据库信息为你自己的！
+```
+[client]
+database = baykedb  # 数据库名
+user = root         # 用户名
+password = 123456   # 用户密码
+host = 127.0.0.1
+port = 3306
+default-character-set = utf8
+```
+- redis默认无密码，你也不要配置密码，如果非要配置请在`bayke/settings.py`中的redis配置修改
+```
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
+    }
+}
+```
+------------------------------------------------------------------
+#### 小白救命招
+>不使用mysql及redis也可以（不建议），高手可略过....
+
+将`bayke/settings.py`中的mysql及redis配置改为sqlit3和内存缓存
+
+- 修改Mysql为sqlite3
+```python
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+```
+- 注释掉这段，默认则为内存缓存
+```python
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379',
+    }
+}
+```
+------------------------------------------------------------------
+
+### 6、同步数据库
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+### 7、创建超级管理员
+```python
+python manage.py createsuperuser
+```
+### 8、初始化项目
+```python
+# 运行下边命令可自动生成初始的自定义管理菜单
+python manage.py push
+
+or
+
+# 运行下边命令可自动生成初始的自定义管理菜单及相关演示数据
+python manage.py push -test
+```
+
+### 9、运行项目
 ```
 python3 manage.py runserver
 ```
-5、查看项目
+### 10、查看项目
 ```
 前台：http://127.0.0.1:8000
 后台：http://127.0.0.1:8000/baykeadmin/
-后台账号：admin  密码：admin123qwe
+
+后台账号及密码是你在第五步创建的！
 ```
 
-项目默认配置了sqllite3数据库，项目中已包含，因此上无需再创建数据库迁移命令和数据库同步命令！
-
-> 备注：如果你要配置Mysql或其他数据库命令，可使用django的导出数据库命令把除过contenttypes相关的数据全部导出，配置好其他数据库之后再自行导入！
-
-6、支付宝配置
+### 11、支付宝配置
 
 虽然你可以通过修改baykeshop/conf/defaults.py中的默认配置来控制全局相关设置，但我不建议你这么做，这个配置文件作为默认选项的回退，尽量不要去修改，而是在项目bayke目录下的settings.py中覆盖默认项配置！
 ```python
@@ -71,9 +142,15 @@ BAYKE_SHOP = {
     "ALIPAY_APPID": "支付宝APPID",
     "ALIPAY_SIGN_TYPE": "加密方式，默认是RSA2",
 }
-
 ```
 以上就是配置支付宝收款你需要做的全部工作！
 
+### 赞赏支持
 
+如果该项目给您带来了帮助，您可以为该项目点点star或者写写文章宣传宣传！
 
+当然，如果能给该项目提交PR也是非常欢迎的，开源不易，需要共建！
+>![如果对您有帮助，请我喝杯咖啡吧！](baykeshop/static/baykeshop/img/wx.jpg)
+如果对您有帮助，请我喝杯咖啡吧！
+
+您的支持对我来说，也是非常重要哦，将有利于该项目的长久持续发展！
