@@ -30,6 +30,10 @@ For full documentation visit [bayke.shop（拜客商城系统）](http://www.bay
 
 ## 快速上手
 
+### 运行环境
+
+> python > 3.8 & django4.1 & Mysql8.0 & redis
+
 ### 1、克隆项目源码
 ```
 git clone https://gitee.com/bayke/bayke-shop.git
