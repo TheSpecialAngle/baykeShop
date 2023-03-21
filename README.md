@@ -30,6 +30,7 @@ For full documentation visit [bayke.shop（拜客商城系统）](http://www.bay
 ## 演示
 - [演示地址-demo.bayke.shop](http://demo.bayke.shop)
 - 演示账号：demo  密码：demo123zxc
+- 后台地址：http://demo.bayke.shop/baykeadmin/
 > 请文明查看演示，为了最大程度让大家感受系统，未全部禁用编辑及删除权限，请不要删除修改演示数据，免得影响别人查看演示！
 
 ## 运行环境
