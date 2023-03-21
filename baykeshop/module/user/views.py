@@ -10,7 +10,8 @@ from django.contrib.auth.views import (
 )
 
 from baykeshop.config.settings import bayke_settings
-from baykeshop.module.user.forms import LoginForm, RegisterForm
+from baykeshop.module.user.forms import LoginForm, RegisterForm, UserForm
+from baykeshop.module.user.forms import UpdateUserInfoForm
 from baykeshop.models import BaykeUserInfo, BaykeShopAddress, BaykeUserBalanceLog
 from baykeshop.public.mixins import (
     JsonLoginRequiredMixin, JsonableResponseMixin, LoginRequiredMixin, JsonResponse
@@ -93,32 +94,27 @@ class BaykeUserInfoTemplateView(LoginRequiredMixin, TemplateView):
     template_name = "baykeshop/user/userinfo.html"
     
     def post(self, request, *args, **kwargs):
-        instance, created = BaykeUserInfo.objects.get_or_create(
+        userinfo, created = BaykeUserInfo.objects.get_or_create(
             owner=self.request.user,
-            defaults={'owner': self.request.user}, 
+            defaults={'owner': request.user}, 
         )
-        # 单独修改邮箱
-        if request.POST.get('email'):
-            return self.update_user(request.POST.get('email'))
         
-        return self.update_userinfo(instance)
-    
-    def update_userinfo(self, instance):
-        from baykeshop.module.user.forms import UpdateUserInfoForm
-        form = UpdateUserInfoForm(self.request.POST, self.request.FILES, instance=instance)
-        if form.is_valid():
+        user_form = UserForm(request.POST, instance=self.request.user)
+        form = UpdateUserInfoForm(request.POST, request.FILES, instance=userinfo)
+
+        if user_form.is_valid() and request.POST.get('email'):
+            user_form.save()
+            context = {'code': 'ok', 'message': '邮箱修改成功！' }
+        elif user_form.errors:
+            context = {'code': 'err', 'message': {**user_form.errors} }
+            
+        if form.is_valid() and request.POST.get('email') is None:
             form.save()
-            return JsonResponse({'code':'ok', 'message':'修改成功'})
-        else:
-            errors = {**form.errors}
-            return JsonResponse({'code':'err', 'message':f'{list(errors.values())},数据验证未通过！'})
-    
-    def update_user(self, email):
-        user = self.request.user
-        user.email = email
-        user.save()
-        return JsonResponse({'code':'ok', 'message':'修改成功'})
-     
+            context = {'code': 'ok', 'message': '修改成功！' }
+        elif form.errors:
+            context = {'code': 'err', 'message': {**form.errors} }
+       
+        return JsonResponse(context)
      
 class BaykeUserBalanceLogTemplateView(LoginRequiredMixin, TemplateView):
     """ 余额记录 """

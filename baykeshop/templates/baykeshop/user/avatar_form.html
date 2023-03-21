@@ -33,6 +33,9 @@
             save(){
                 const sendData = new FormData()
                 sendData.append('avatar', this.formProps.dropFiles)
+                sendData.append('phone', '{{ request.user.baykeuserinfo.phone }}')
+                sendData.append('balance', '{{ request.user.baykeuserinfo.balance }}')
+                sendData.append('nickname', '{{ request.user.baykeuserinfo.nickname }}')
                 sendData.append('owner', '{{ request.user.id }}')
                 request({
                     method: 'post',
