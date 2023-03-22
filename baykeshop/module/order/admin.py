@@ -98,6 +98,12 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
             return False
         return super().has_change_permission(request, obj)
     
+    def has_delete_permission(self, request, obj=None) -> bool:
+        # 订单处于待支付状态允许删除，其他状态不允许删除
+        if obj is not None and obj.pay_status != 1:
+            return False
+        return super().has_delete_permission(request, obj)
+    
     class Media:
         css = {'all': ['baykeadmin/css/ordersku.css']}
         
