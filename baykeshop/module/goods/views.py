@@ -121,12 +121,14 @@ class BaykeShopSPUDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['skus'], context['specs'], context['current_ops'] = self.get_skus()
-        
         context['tabs_active'] = self.request.GET.get('tabsActive', 'content')
         context['page_comments'] = self.get_comments_page()
         context['like_rate'], context['score'] = self.get_good_rate()
-        
         context['hot_spus'] = BaykeShopSPU.get_hots()
+        
+        from baykeshop.module.stats.views import BaykeStatsMixins
+        stats = BaykeStatsMixins(self.request)
+        context['stats'] = stats.get_stats(self.model, self.get_object().id)
         return context
     
     def get_banners(self, sku_id=None):
