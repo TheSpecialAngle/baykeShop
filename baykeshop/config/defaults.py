@@ -53,5 +53,10 @@ BAYKE_DEFAULTS = {
     "USER_ORDERINFO_PAGINATE_BY": 5,
     
     # 热销显示数量
-    "HOT_SPUS_LEN": 4
+    "HOT_SPUS_LEN": 4,
+    
+    # 统计pv的间隔时间，即同一个访问者多长时间内多次刷新只记录一次pv
+    "PV_TIMEOUT": 1*60,       # 一分钟
+    # 统计uv的间隔时间，24小时内多次访问只记录一次
+    "UV_TIMEOUT": 24*60*60    # 24小时
 }
