@@ -15,8 +15,6 @@ from baykeshop.public.abstract import AbstractModel, ContentTypeAbstract
 
 class BaykeIPAddress(AbstractModel):
     """ 统计站点来访IP """
-    # 当前 IP：111.18.146.46  来自于：中国 陕西 咸阳  移动
-    # http://myip.ipip.net/
     ip = models.GenericIPAddressField(null=True, blank=True)
     browser = models.TextField(max_length=500, blank=True, default="")
     address = models.CharField(max_length=150, blank=True, default="")
