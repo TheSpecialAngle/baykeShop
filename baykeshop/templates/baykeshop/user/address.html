@@ -154,7 +154,6 @@
                     headers: {'Accept': 'application/json'},
                     data: sendData
                 }).then(res => {
-                    
                     if (res.data.code == 'ok') {
                         navbar.toastMessage('is-success', res.data.message)
                         this.$parent.close()
