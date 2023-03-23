@@ -71,7 +71,7 @@ class RegisterForm(UserCreationForm):
         widget=forms.PasswordInput(attrs={
             'autocomplete': 'new-password', 
             'class': 'input',
-            "placeholder":" 请再次输入用户名..."
+            "placeholder":" 请再次输入密码..."
         }),
         strip=False,
         help_text=_("Enter the same password as before, for verification."),
@@ -84,14 +84,14 @@ class RegisterForm(UserCreationForm):
         
         
 class UserForm(forms.ModelForm):
-    
+    """ 用户信息表单 """
     class Meta:
         model = User
         fields = ['email',]
 
 
 class UpdateUserInfoForm(forms.ModelForm):
-    
+    """ 用户关联信息表单 """
     class Meta:
         model = BaykeUserInfo
         fields = ['owner', 'avatar', 'phone', 'balance', 'nickname']
