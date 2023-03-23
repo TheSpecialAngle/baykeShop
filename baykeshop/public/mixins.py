@@ -33,8 +33,9 @@ class JsonableResponseMixin:
         if self.request.accepts('text/html'):
             return response
         else:
-            errors = {'code':'err', 'message': '发生错误！', **form.errors}
-            return JsonResponse(errors, status=400)
+            errors = {'code':'err', 'message': f'{form.errors}'}
+            # return JsonResponse(errors, status=400)
+            return JsonResponse(errors)
 
     def form_valid(self, form):
         # We make sure to call the parent's form_valid() method because

@@ -69,7 +69,6 @@ class BaykeShopAddressCreateView(JsonLoginRequiredMixin, JsonableResponseMixin, 
     
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        
         # 修改
         if self.request.POST.get('id') and self.request.POST.get('id').isdigit():
             # 查找默认的

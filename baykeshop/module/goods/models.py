@@ -10,6 +10,7 @@
 '''
 
 from django.db import models
+from django.urls import reverse
 
 # Create your models here.
 from baykeshop.config.settings import bayke_settings
@@ -34,6 +35,7 @@ class BaykeShopCategory(CategoryAbstractModel):
     )
 
     class Meta:
+        ordering = ['-add_date']
         verbose_name = '商品分类'
         verbose_name_plural = verbose_name
 
@@ -46,6 +48,9 @@ class BaykeShopCategory(CategoryAbstractModel):
         for cate in cates:
             cate.sub_cates = cate.baykeshopcategory_set.filter(is_home=True)
         return cates
+    
+    def get_absolute_url(self):
+        return reverse('baykeshop:cate_detail', kwargs={'pk': self.pk})
 
 
 class BaykeShopSPU(AbstractModel):
@@ -64,6 +69,7 @@ class BaykeShopSPU(AbstractModel):
     content = models.TextField("商品详情")
 
     class Meta:
+        ordering = ['-add_date']
         verbose_name = '商品管理'
         verbose_name_plural = verbose_name
 
@@ -73,6 +79,9 @@ class BaykeShopSPU(AbstractModel):
     @classmethod
     def get_hots(cls):
         return cls.objects.order_by('-baykeshopsku__sales')[:bayke_settings.HOT_SPUS_LEN]
+    
+    def get_absolute_url(self):
+        return reverse('baykeshop:spu_detail', kwargs={'pk': self.pk})
        
     
 class BaykeShopSpec(AbstractModel):
