@@ -1,5 +1,8 @@
 from django import forms
 from django.forms.widgets import Textarea as BaseTextarea
+from django.contrib.flatpages.forms import FlatpageForm
+from django.contrib.flatpages.models import FlatPage
+
 from baykeshop.config.settings import bayke_settings
 
 
@@ -28,7 +31,7 @@ class BaykeUploadModelForm(forms.ModelForm):
         
 
 class SearchForm(forms.Form):
-    
+    """ 搜索表单 """
     template_name = "baykeshop/search_form.html"
     
     word = forms.CharField(
@@ -43,4 +46,11 @@ class SearchForm(forms.Form):
         )
     )
     
+
+class BaykeFlatpageForm(FlatpageForm):
+    # 单页面应用
     
+    class Meta(FlatpageForm.Meta):
+        widgets = {
+            'content': HTMLTextarea(),
+        }

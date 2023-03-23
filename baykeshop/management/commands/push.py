@@ -44,7 +44,10 @@ class Command(BaseCommand):
                 BaykePermission.objects.update_or_create(permission=perm, menus=menus.filter(name="认证和授权").first(), defaults={'permission': perm})
             elif perm.codename in ['view_baykeshoporderinfo']:
                 BaykePermission.objects.update_or_create(permission=perm, menus=menus.filter(name="订单").first(), defaults={'permission': perm})
-                    
+            elif perm.codename in ['view_flatpage', 'view_site']:
+                BaykePermission.objects.update_or_create(permission=perm, menus=menus.filter(name="内容").first(), defaults={'permission': perm})
+                flatpage_json = f"{settings.BASE_DIR}/baykeshop/config/db/flatpage.json"
+                management.call_command('loaddata', flatpage_json, verbosity=0)
         self.stdout.write(self.style.SUCCESS('Successfully "%s"' % 'push baykeadmin menus'))
         
         if options['test']:
@@ -58,11 +61,13 @@ class Command(BaseCommand):
             spu_json = f"{settings.BASE_DIR}/baykeshop/config/db/baykeshopspu.json"
             spucarousel_json = f"{settings.BASE_DIR}/baykeshop/config/db/baykespucarousel.json"
             sku_json = f"{settings.BASE_DIR}/baykeshop/config/db/baykeshopsku.json"
+            # flatpage_json = f"{settings.BASE_DIR}/baykeshop/config/db/flatpage.json"
             
             management.call_command('loaddata', spec_json, verbosity=0)
             management.call_command('loaddata', specoption_json, verbosity=0)
             management.call_command('loaddata', spu_json, verbosity=0)
             management.call_command('loaddata', spucarousel_json, verbosity=0)
             management.call_command('loaddata', sku_json, verbosity=0)
+            # management.call_command('loaddata', flatpage_json, verbosity=0)
             self.stdout.write(self.style.SUCCESS('Successfully "%s"' % 'push baykeshop test data'))
         

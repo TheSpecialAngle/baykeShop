@@ -25,7 +25,8 @@ from baykeshop.public.sites import bayke_site
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('baykeadmin/', bayke_site.urls),
-    path('', include('baykeshop.urls'))
+    path('', include('baykeshop.urls')),
+    path('pages/', include('django.contrib.flatpages.urls')),
 ]
 
 if settings.DEBUG:
