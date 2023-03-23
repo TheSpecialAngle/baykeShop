@@ -46,15 +46,15 @@
             return {
                 labelPosition: 'on-border',
                 formProps: {
-                    'id': this.id,
-                    'name': this.name,
-                    'phone': this.phone,
-                    'email': this.email,
-                    'province': this.province,
-                    'city': this.city,
-                    'county': this.county,
-                    'address': this.address,
-                    'is_default': this.is_default
+                    'id': this.id || null,
+                    'name': this.name || "",
+                    'phone': this.phone || "",
+                    'email': this.email || "",
+                    'province': this.province || "",
+                    'city': this.city || "",
+                    'county': this.county || "",
+                    'address': this.address || "",
+                    'is_default': this.is_default || false
                 }
             }
         },
@@ -154,6 +154,7 @@
                     headers: {'Accept': 'application/json'},
                     data: sendData
                 }).then(res => {
+                    
                     if (res.data.code == 'ok') {
                         navbar.toastMessage('is-success', res.data.message)
                         this.$parent.close()
