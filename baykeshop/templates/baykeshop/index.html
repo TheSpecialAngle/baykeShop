@@ -19,7 +19,7 @@
         <div class="columns is-multiline is-mobile">
             <div class="column is-4-fullhd is-6-tablet is-12-mobile">
                 <figure class="image is-4by3">
-                    <img src="{{ cate.img_map.url }}" alt="" srcset="">
+                    <img src="{% if cate.img_map %} {{ cate.img_map.url }}{% endif %}" alt="" srcset="">
                 </figure>
             </div>
             {% for spu in cate.spus %}
