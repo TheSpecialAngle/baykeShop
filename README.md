@@ -31,7 +31,7 @@ For full documentation visit [bayke.shop（拜客商城系统）](http://www.bay
 - [演示地址-demo.bayke.shop](http://demo.bayke.shop)
 - 演示账号：demo  密码：demo123zxc
 - 后台地址：http://demo.bayke.shop/baykeadmin/
-> 因为部分恶意测试者，不断删改数据，造成演示站时长崩溃，故后台已禁用所有新增及编辑权限，如有更甚层次使用需求，请拉取到本地测试！
+> 因为部分恶意测试者，不断删改数据，造成演示站崩溃，故后台已禁用所有新增及编辑权限，如有更深层次使用需求，请拉取到本地测试！
 
 ## 运行环境
 
