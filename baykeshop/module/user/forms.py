@@ -100,6 +100,6 @@ class UpdateUserInfoForm(forms.ModelForm):
         import re
         phone = self.cleaned_data['phone']
         reg = re.compile(bayke_settings.PHONE_REGX)
-        if not reg.search(phone):
+        if (phone is not None) and (not reg.search(phone)):
             raise ValidationError("手机号格式有误！")
         return phone
