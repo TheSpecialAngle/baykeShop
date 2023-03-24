@@ -17,8 +17,45 @@
 
 
 {% block content %}
-    <div class="container">
-        sadasasd
+    <div class="container mt-3">
+      <div class="columns">
+        <div class="column is-9">
+          sadasd
+        </div>
+        <div class="column">
+          <div class="box">
+            <h1 class=" is-size-6 has-text-weight-bold">资讯分类</h1>
+            <div class="dropdown-divider"></div>
+            <aside class=" menu">
+              <ul class=" menu-list">
+                {% for cate in cates %}
+                  <li><a href="">{{ cate.name }}</a></li>
+                {% endfor %}
+              </ul>
+            </aside>
+          </div>
+          <div class="box">
+            <h1 class=" is-size-6 has-text-weight-bold">资讯归档</h1>
+            <div class="dropdown-divider"></div>
+            <aside class=" menu">
+              <ul class=" menu-list">
+                {% for cate in cates %}
+                  <li><a href="">{{ cate.name }}</a></li>
+                {% endfor %}
+              </ul>
+            </aside>
+          </div>
+          <div class="box">
+            <h1 class=" is-size-6 has-text-weight-bold">资讯标签</h1>
+            <div class="dropdown-divider"></div>
+            <div class="tags">
+              {% for tag in tags %}
+                <a href="" class="tag">{{ tag.name }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 {% endblock %}
     

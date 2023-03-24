@@ -10,18 +10,25 @@
 '''
 
 from django.views.generic import ListView
-from django.template.response import TemplateResponse
 
-from baykeshop.models import BaykeArticle
-
+from baykeshop.models import BaykeArticle, BaykeArticleCategory, BaykeArticleTags
 
 
-class BaykeArticleListView(ListView):
+class ArticleContext:
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['cates'] = BaykeArticleCategory.objects.all()
+        context['tags'] = BaykeArticleTags.objects.all()
+        return context
+    
+
+class BaykeArticleListView(ArticleContext, ListView):
     """ 文章列表 """
 
     model = BaykeArticle
     template_name = "baykeshop/article/article_list.html"
     context_object_name = "article_list"
     paginate_by = 15
-
-
+    
+    
