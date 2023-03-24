@@ -38,7 +38,6 @@ class BaykeShopCategorySitemap(Sitemap):
         return obj.pub_date
     
 
-
 sitemaps = {
     'spu': BaykeShopSPUSitemap,
     'cate': BaykeShopCategorySitemap,
