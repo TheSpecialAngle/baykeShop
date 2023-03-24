@@ -18,3 +18,4 @@ from baykeshop.module.cart.models import BaykeShopingCart
 from baykeshop.module.order.models import BaykeShopOrderInfo, BaykeShopOrderSKU
 from baykeshop.module.comments.models import BaykeOrderInfoComments
 from baykeshop.module.stats.models import BaykeIPAddress, BaykeStats
+from baykeshop.module.article.models import BaykeArticleCategory, BaykeArticle, BaykeArticleTags

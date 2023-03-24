@@ -196,8 +196,10 @@
             <h1 class="has-text-centered has-background-white pt-3 is-size-6 pb-3 has-text-weight-bold">热销排行</h1>
             <div class=" dropdown-divider is-marginless"></div>
             {% for spu in hot_spus %}
+            <div class="has-background-white">
                 {% spu_box spu %}
-                <div class="dropdown-divider"></div>
+            </div>
+            <div class="dropdown-divider"></div>
             {% endfor %}
                 
         </div>

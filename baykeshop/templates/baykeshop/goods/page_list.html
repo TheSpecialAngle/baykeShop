@@ -4,7 +4,9 @@
     <div class="columns is-multiline">
         {% for spu in page_obj %}
         <div class="column is-3">
-            {% spu_box spu %}
+            <div class="has-background-white">
+                {% spu_box spu %}
+            </div>
         </div>
         {% empty %}
         <div class="is-flex is-align-items-center is-justify-content-center is-flex-direction-column" style="min-height:300px; width:100%">

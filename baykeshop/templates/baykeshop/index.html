@@ -24,7 +24,9 @@
             </div>
             {% for spu in cate.spus %}
             <div class="column is-2-fullhd is-3-tablet is-6-mobile">
-                {% spu_box spu %}
+                <div class="is-flex is-flex-direction-column is-justify-content-space-between has-background-white" style="height:100%">
+                    {% spu_box spu %}
+                </div>
             </div>
             {% endfor %}
         </div>
