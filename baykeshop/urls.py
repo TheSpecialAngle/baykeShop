@@ -11,3 +11,4 @@ urlpatterns = [
     path("order/", include('baykeshop.module.order.urls')),
     path("comments/", include('baykeshop.module.comments.urls')),
 ]
+
