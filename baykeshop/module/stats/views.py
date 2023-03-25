@@ -24,6 +24,8 @@ class BaykeStatsMixins:
     from baykeshop.module.stats.views import BaykeStatsMixins
     stats_cls = BaykeStatsMixins(request)
     stats = stats_cls.get_stats(model, object_id)  model要统计的模型类, 要统计的对象id(int类型)
+    pv = stats.pv
+    uv = stats.uv
     """
     def __init__(self, request) -> None:
         self.request = request
@@ -40,8 +42,8 @@ class BaykeStatsMixins:
         increase_uv = False
         ip = self.get_user_ip()
         
-        pv_key = 'pv:%s:%s' % (ip, self.request.path)
-        uv_key = 'uv:%s:%s:%s' % (ip, str(timezone.now().date()), self.request.path)
+        pv_key = 'pv:%s:%s:%s' % (ip, self.request.path, object_id)
+        uv_key = 'uv:%s:%s:%s:%s' % (ip, str(timezone.now().date()), self.request.path, object_id)
         
         content_type = ContentType.objects.get_for_model(model=model)
         

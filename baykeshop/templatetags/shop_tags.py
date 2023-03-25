@@ -2,8 +2,9 @@ from django.template import Library
 
 from baykeshop.public.forms import SearchForm
 from baykeshop.models import BaykePermission, BaykeShopCategory, BaykeBanner
+from baykeshop.models import BaykeShopingCart, BaykeShopAddress
 from baykeshop.config.settings import bayke_settings
-from baykeshop.models import BaykeShopingCart, BaykeShopAddress, BaykeShopSPU
+
 
 register = Library()
 
@@ -122,3 +123,18 @@ def commented_func(order):
 def is_order_commented(order):
     return commented_func(order)
 
+
+@register.inclusion_tag(filename="baykeshop/page.html")
+def page(page_obj, next_name="Next page", pre_name="Previous", **kwargs):
+    params=[]
+    if kwargs:
+        for k, v in kwargs.items():
+            params.append(f"{k}={v}")
+        params = "&".join(params)
+        
+    return {
+        'page_obj': page_obj,
+        'next_name': next_name,
+        'pre_name': pre_name,
+        'params': f"&{params}" if params else ""
+    }

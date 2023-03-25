@@ -20,7 +20,17 @@ class ArticleContext:
         context = super().get_context_data(**kwargs)
         context['cates'] = BaykeArticleCategory.objects.all()
         context['tags'] = BaykeArticleTags.objects.all()
+        # context['archive'] = BaykeArticle.get_archive()
+        context['tags_classes'] = ['is-danger', 'is-info', 'is-success', 'is-primary', 'is-light', 'is-black']
         return context
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        for qs in queryset:
+            stats = BaykeArticle.get_stats(self.request, qs.id)
+            qs.pv = stats.pv
+            qs.uv = stats.uv
+        return queryset
     
 
 class BaykeArticleListView(ArticleContext, ListView):
@@ -30,5 +40,3 @@ class BaykeArticleListView(ArticleContext, ListView):
     template_name = "baykeshop/article/article_list.html"
     context_object_name = "article_list"
     paginate_by = 15
-    
-    

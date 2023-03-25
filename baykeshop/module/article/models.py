@@ -59,6 +59,17 @@ class BaykeArticle(AbstractModel):
     def get_absolute_url(self):
         return reverse('baykeshop:article_detail', kwargs={'pk': self.pk})
     
+    @classmethod
+    def get_archive(cls):
+        return {date.strftime('%Y年%m月') for date in cls.objects.values_list('add_date', flat=True)}
+    
+    @classmethod
+    def get_stats(cls, request, object_id):
+        from baykeshop.module.stats.views import BaykeStatsMixins
+        stats_cls = BaykeStatsMixins(request)
+        stats = stats_cls.get_stats(cls, object_id)
+        return stats
+    
     
 class BaykeArticleTags(AbstractModel):
     """ 文章标签 """
