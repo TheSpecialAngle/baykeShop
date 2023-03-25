@@ -93,6 +93,9 @@
                                 <b-navbar-item href="{% url 'baykeshop:spus' %}">
                                     全部分类
                                 </b-navbar-item>
+                                <b-navbar-item href="{% url 'baykeshop:article_list' %}">
+                                    商城资讯
+                                </b-navbar-item>
                                 {% navbar_result as cates %}
                                 {% for cate in cates %}
                                 <b-navbar-dropdown label="{{ cate.name }}">

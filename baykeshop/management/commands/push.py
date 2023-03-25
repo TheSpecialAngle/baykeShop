@@ -44,7 +44,7 @@ class Command(BaseCommand):
                 BaykePermission.objects.update_or_create(permission=perm, menus=menus.filter(name="认证和授权").first(), defaults={'permission': perm})
             elif perm.codename in ['view_baykeshoporderinfo']:
                 BaykePermission.objects.update_or_create(permission=perm, menus=menus.filter(name="订单").first(), defaults={'permission': perm})
-            elif perm.codename in ['view_flatpage', 'view_site']:
+            elif perm.codename in ['view_flatpage', 'view_site', 'view_baykearticle', 'view_baykearticlecategory']:
                 BaykePermission.objects.update_or_create(permission=perm, menus=menus.filter(name="内容").first(), defaults={'permission': perm})
                 flatpage_json = f"{settings.BASE_DIR}/baykeshop/config/db/flatpage.json"
                 management.call_command('loaddata', flatpage_json, verbosity=0)
