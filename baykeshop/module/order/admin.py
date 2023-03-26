@@ -93,14 +93,14 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
         return False
     
     def has_change_permission(self, request, obj=None) -> bool:
-        # 订单处于待支付状态允许修改，其他状态不允许修改
-        if obj is not None and obj.pay_status != 1:
+        # 订单处于待支付状态允许修改，其他状态不允许修改，超管不受限制
+        if obj is not None and obj.pay_status != 1 and (not request.user.is_superuser):
             return False
         return super().has_change_permission(request, obj)
     
     def has_delete_permission(self, request, obj=None) -> bool:
-        # 订单处于待支付状态允许删除，其他状态不允许删除
-        if obj is not None and obj.pay_status != 1:
+        # 订单处于待支付状态允许删除，其他状态不允许删除,超管不受限制
+        if obj is not None and obj.pay_status != 1 and (not request.user.is_superuser):
             return False
         return super().has_delete_permission(request, obj)
     
