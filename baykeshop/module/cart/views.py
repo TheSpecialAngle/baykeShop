@@ -36,7 +36,7 @@ class BaykeShopingCartListView(LoginRequiredMixin, ListView):
     context_object_name = "carts"
     
     def get_queryset(self):
-        queryset = BaykeShopingCart.objects.all()
+        queryset = BaykeShopingCart.objects.filter(owner=self.request.user)
         total = 0
         carts = []
         for cart in queryset:
