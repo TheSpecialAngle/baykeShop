@@ -161,57 +161,60 @@ class PayNowView(JsonLoginRequiredMixin, View):
         
         order_sn = cleaned_data['order_sn']
         paymethod = cleaned_data['paymethod']
-        userinfo = request.user.baykeuserinfo
-        order = BaykeShopOrderInfo.objects.filter(owner=request.user, order_sn=order_sn).first()
-        # 支付宝支付
-        if order and int(paymethod) == 2:
-            from baykeshop.module.payment.alipay.pay import alipay
-            from baykeshop.config.settings import bayke_settings
-            url_params = alipay.api_alipay_trade_page_pay(
-                subject=order_sn,
-                total_amount=order.total_amount.to_eng_string(),
-                out_trade_no=order_sn,
-                return_url=f"{request.scheme}://{request.get_host()}{reverse(bayke_settings.ALIPAY_RETURN_URL)}",
-                notify_url=f"{request.scheme}://{request.get_host()}{reverse(bayke_settings.ALIPAY_NOTIFY_URL)}"
-            )
+        try:
+            userinfo = request.user.baykeuserinfo
+            order = BaykeShopOrderInfo.objects.filter(owner=request.user, order_sn=order_sn).first()
+            # 支付宝支付
+            if order and int(paymethod) == 2:
+                from baykeshop.module.payment.alipay.pay import alipay
+                from baykeshop.config.settings import bayke_settings
+                url_params = alipay.api_alipay_trade_page_pay(
+                    subject=order_sn,
+                    total_amount=order.total_amount.to_eng_string(),
+                    out_trade_no=order_sn,
+                    return_url=f"{request.scheme}://{request.get_host()}{reverse(bayke_settings.ALIPAY_RETURN_URL)}",
+                    notify_url=f"{request.scheme}://{request.get_host()}{reverse(bayke_settings.ALIPAY_NOTIFY_URL)}"
+                )
+                
+                code = "ok",
+                message = "支付宝支付地址返回成功！"
+                kwargs['alipay_url'] = f"{alipay._gateway}?{url_params}"
             
-            code = "ok",
-            message = "支付宝支付地址返回成功！"
-            kwargs['alipay_url'] = f"{alipay._gateway}?{url_params}"
-        
-        # 余额支付
-        elif order and int(paymethod) == 4:
-            from django.utils import timezone
-            # 余额存量判断
-            if userinfo.balance < order.total_amount:
-                return JsonResponse({'code':'err', 'message': '余额不足！'})
-            
-            # 扣除余额  
-            BaykeUserInfo.objects.filter(owner=request.user).update(
-                balance=F('balance')-order.total_amount
-            )
-            # 修改订单信息
-            order.pay_status = 2
-            order.trade_sn = f"YE{order_sn}"
-            order.pay_method = 4
-            order.pay_time=timezone.now()
-            order.save()
-            
-            # 记录余额变动日志
-            BaykeUserBalanceLog.objects.create(
-                owner=request.user, 
-                amount=order.total_amount, 
-                change_status=2,
-                change_way=3
-            )
-            # 返回支付结果页
-            code = "ok",
-            message = "支付地址返回成功！"
-            kwargs['alipay_url'] = f"{reverse('baykeshop:order_detail', args=[order.order_sn])}"
-        else:
-            code = "err"
-            message = "暂不支持该支付方式"
+            # 余额支付
+            elif order and int(paymethod) == 4:
+                from django.utils import timezone
+                # 余额存量判断
+                if userinfo.balance < order.total_amount:
+                    return JsonResponse({'code':'err', 'message': '余额不足！'})
+                
+                # 扣除余额  
+                BaykeUserInfo.objects.filter(owner=request.user).update(
+                    balance=F('balance')-order.total_amount
+                )
+                # 修改订单信息
+                order.pay_status = 2
+                order.trade_sn = f"YE{order_sn}"
+                order.pay_method = 4
+                order.pay_time=timezone.now()
+                order.save()
+                
+                # 记录余额变动日志
+                BaykeUserBalanceLog.objects.create(
+                    owner=request.user, 
+                    amount=order.total_amount, 
+                    change_status=2,
+                    change_way=3
+                )
+                # 返回支付结果页
+                code = "ok",
+                message = "支付地址返回成功！"
+                kwargs['alipay_url'] = f"{reverse('baykeshop:order_detail', args=[order.order_sn])}"
+            else:
+                code = "err"
+                message = "暂不支持该支付方式"
 
-        context = {"code": code, "message": message, **kwargs}
-        
-        return JsonResponse(context)
+            context = {"code": code, "message": message, **kwargs}
+            
+            return JsonResponse(context)
+        except BaykeUserInfo.DoesNotExist:
+            return JsonResponse({"code": "err", "message": "该用户信息不完整，请前往个人中心补充！", **kwargs})
