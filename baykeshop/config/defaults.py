@@ -75,5 +75,7 @@ BAYKE_DEFAULTS = {
             'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
             'media', 'table', 'emoticons', 'template', 'help'
         ],
+        # "browser_spellcheck": "true",
+        # "contextmenu": "false"
     }
 }
