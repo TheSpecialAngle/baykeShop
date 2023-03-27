@@ -60,6 +60,20 @@ BAYKE_DEFAULTS = {
     # 统计uv的间隔时间，24小时内多次访问只记录一次
     "UV_TIMEOUT": 24*60*60,    # 24小时
     
-    # page单页面归类
-    "PAGES_CATE": { '常见问题': ['/after/', '/pay/'] }
+    # tinymce富文本编辑器默认配置
+    # https://www.tiny.cloud/docs/tinymce/6/basic-setup/
+    
+    # <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    "TINYMCE_CDN": False,
+    "TINYMCE_API_KEY": "no-api-key",
+    "TINYMCE_DEFAULTS": {
+        # 向用户展开展示的工具栏
+        'toolbar': 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | print preview media | forecolor backcolor emoticons',
+        # 选择要在加载时包含的插件
+        'plugins': [
+            'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+            'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
+            'media', 'table', 'emoticons', 'template', 'help'
+        ],
+    }
 }

@@ -15,6 +15,7 @@ from django.urls import reverse
 from django.utils.translation import gettext
 from django.utils.translation import gettext_lazy as _
 
+from baykeshop.public.tinymce import TinymceField
 from baykeshop.public.abstract import AbstractModel, CategoryAbstractModel
 
 User = get_user_model()
@@ -41,7 +42,8 @@ class BaykeArticle(AbstractModel):
     title = models.CharField(_("标题"), max_length=150)
     desc = models.CharField(_("描述"), max_length=200, blank=True, default="")
     keywords = models.CharField(_("关键字"), max_length=200, blank=True, default="")
-    content = models.TextField(_("内容"))
+    # content = models.TextField(_("内容"))
+    content = TinymceField(_("内容"))
     category = models.ForeignKey(BaykeArticleCategory, on_delete=models.CASCADE, verbose_name=_("文章分类"))
     tags = models.ManyToManyField('BaykeArticleTags', blank=True, verbose_name=_("标签"))
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, editable=False)

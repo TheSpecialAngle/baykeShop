@@ -1,7 +1,6 @@
 from django import forms
 from django.forms.widgets import Textarea as BaseTextarea
 from django.contrib.flatpages.forms import FlatpageForm
-from django.contrib.flatpages.models import FlatPage
 
 from baykeshop.config.settings import bayke_settings
 
