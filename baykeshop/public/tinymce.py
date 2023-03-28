@@ -16,12 +16,13 @@ class Tinymce(forms.Textarea):
         self.tinymce_kwargs = tinymce_kwgrgs or {**bayke_settings.TINYMCE_DEFAULTS}
     
     def render(self, name: str, value, attrs=None, renderer=None):
+        import json
         default_render = super().render(name, value, attrs, renderer)
-        tinymce_default = TinyConfig.format({
+        tinymce_default = TinyConfig.format(json.dumps({
             'selector': f'textarea#{attrs["id"]}', 
             'language': 'zh-Hans' if settings.LANGUAGE_CODE == 'zh-hans' else '',
             **self.tinymce_kwargs
-        })
+        }, ensure_ascii=False))
         return mark_safe(default_render+tinymce_default)
     
     class Media:
