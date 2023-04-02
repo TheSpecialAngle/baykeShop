@@ -18,6 +18,8 @@ from baykeshop.public.abstract import (
     AbstractModel, CategoryAbstractModel, 
     CarouselAbstractModel
 )
+from baykeshop.public.tinymce import TinymceField
+
 
 
 class BaykeShopCategory(CategoryAbstractModel):
@@ -66,7 +68,8 @@ class BaykeShopSPU(AbstractModel):
         "封面图", upload_to="product/cover/spu/%Y/%m", max_length=200)
     freight = models.DecimalField(
         "运费", max_digits=5, decimal_places=2, blank=True, default=0.00)
-    content = models.TextField("商品详情")
+    # content = models.TextField("商品详情")
+    content = TinymceField("商品详情")
 
     class Meta:
         ordering = ['-add_date']
