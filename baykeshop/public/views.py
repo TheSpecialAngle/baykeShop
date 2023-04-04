@@ -19,7 +19,7 @@ class HomeTemplateView(TemplateView):
         queryset = BaykeShopCategory.get_cates()
         for cate in queryset:
             cate.spus = BaykeShopSPU.objects.filter(category__in=cate.sub_cates).distinct()[:bayke_settings.HOME_GOODS_COUNT]
-        return queryset
+        return queryset  
 
 
 def has_upload_perm(request, perm_codename=None):
@@ -36,13 +36,6 @@ def has_upload_perm(request, perm_codename=None):
 class WangEditorUploadImg(View):
     """ 编辑器上传图片接口 """
     def post(self, request, *args, **kwargs):
-        # perms = [
-        #     request.user.is_authenticated,
-        #     request.user.is_active,
-        #     request.user.is_staff,
-        #     request.user.is_superuser,
-        #     request.user.has_perm('baykeshop.add_baykeupload')
-        # ]
         if not has_upload_perm(request, 'add_baykeupload'):
             return JsonResponse({
                 "errno": 1,  # 只要不等于 0 就行

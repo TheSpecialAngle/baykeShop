@@ -86,5 +86,10 @@ BAYKE_DEFAULTS = {
         'file_picker_types': 'file image media',
         'images_upload_url': '/upload/tinymce/',
         'images_reuse_filename': True,   # 是否开启每次为文件生成唯一名称
-    }
+    },
+    
+    
+    # 是否开启邮件通知
+    'HAS_MESSAGE_EAMIL': True
+    
 }

@@ -3,7 +3,7 @@ from django.utils.html import format_html, format_html_join
 from django.contrib import messages
 from django.utils.translation import ngettext
 
-
+from baykeshop.config.settings import bayke_settings
 from baykeshop.public.admin import BaseModelAdmin
 from baykeshop.public.sites import bayke_site
 from baykeshop.models import (
@@ -83,12 +83,26 @@ class BaykeShopOrderInfoModelAdmin(BaseModelAdmin):
     @admin.action(permissions=['change'], description="对选中订单，一键发货")
     def dis_acticon_order(self, request, queryset):
         updated = queryset.filter(pay_status=2).update(pay_status=3)
+        if bayke_settings.HAS_MESSAGE_EAMIL:
+            from django.core.mail import send_mail
+            mail_addrs = queryset.values_list('owner__email', flat=True)
+            mail_num = send_mail(
+                subject="baykeShop发货通知...", 
+                message=f"您在baykeShop订购的商品已发货，请注意查收！http://www.bayke.shop",
+                from_email="2539909370@qq.com",
+                recipient_list=list(mail_addrs),
+                fail_silently=True
+            )
+            print(mail_addrs)
+            print(mail_num)
         self.message_user(request, ngettext(
             '%d 商品支付状态已成功标记为待收货.',
             '%d 商品支付状态已成功标记为待收货.',
             updated,
         ) % updated, messages.SUCCESS)
-    
+        
+        
+        
     def has_add_permission(self, request) -> bool:
         return False
     

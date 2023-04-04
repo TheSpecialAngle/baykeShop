@@ -25,7 +25,7 @@ class AlipayNotifyView(LoginRequiredMixin, View):
             order = BaykeShopOrderInfo.objects.filter(order_sn=order_sn)
             order.update(
                 pay_status=2, 
-                trade_sn=trade_no, 
+                trade_sn=trade_no,
                 pay_time=timezone.now(),
                 pay_method=2
             )
